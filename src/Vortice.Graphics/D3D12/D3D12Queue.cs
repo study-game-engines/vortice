@@ -3,7 +3,7 @@
 
 using Vortice.Direct3D12;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D12;
 
 internal unsafe class D3D12Queue
 {

@@ -4,7 +4,7 @@
 using Microsoft.Toolkit.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D11;
 
 internal static partial class D3D11Utils
 {

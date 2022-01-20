@@ -5,9 +5,9 @@ using Vortice.DXGI;
 using Microsoft.Toolkit.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D;
 
-internal static partial class D3DUtils
+public static partial class Utils
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Format ToDXGISwapChainFormat(TextureFormat format)
@@ -132,6 +132,17 @@ internal static partial class D3DUtils
             TextureSampleCount.Count16 => 16,
             TextureSampleCount.Count32 => 32,
             _ => 1,
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static GpuPreference ToDXGI(GpuPowerPreference powerPreference)
+    {
+        return powerPreference switch
+        {
+            GpuPowerPreference.HighPerformance => GpuPreference.HighPerformance,
+            GpuPowerPreference.LowPower => GpuPreference.MinimumPower,
+            _ => ThrowHelper.ThrowArgumentException<GpuPreference>("Invalid powerPreference"),
         };
     }
 

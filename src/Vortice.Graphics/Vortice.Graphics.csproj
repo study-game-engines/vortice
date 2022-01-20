@@ -9,9 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="D3D/**/*" Condition="'$(ExcludeD3D11)' == 'true' And '$(ExcludeD3D12)' == 'true'" />
     <Compile Remove="D3D11/**/*" Condition="'$(ExcludeD3D11)' == 'true'" />
     <Compile Remove="D3D12/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />
-    <Compile Remove="Vk/**/*" Condition="'$(ExcludeVulkan)' == 'true'" />
+    <Compile Remove="Vulkan/**/*" Condition="'$(ExcludeVulkan)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>

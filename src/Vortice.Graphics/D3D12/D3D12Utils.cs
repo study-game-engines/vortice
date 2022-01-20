@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Toolkit.Diagnostics;
 using Vortice.Direct3D12;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D12;
 
 internal static class D3D12Utils
 {

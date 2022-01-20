@@ -3,9 +3,9 @@
 
 using Microsoft.Toolkit.Diagnostics;
 using Vortice.Direct3D11;
-using static Vortice.Graphics.D3DUtils;
+using static Vortice.Graphics.D3D.Utils;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D11;
 
 internal unsafe class D3D11Texture : Texture
 {

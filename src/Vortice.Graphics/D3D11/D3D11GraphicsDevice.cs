@@ -9,7 +9,7 @@ using Vortice.DXGI.Debug;
 using static Vortice.Direct3D11.D3D11;
 using static Vortice.DXGI.DXGI;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D11;
 
 public unsafe class D3D11GraphicsDevice : GraphicsDevice
 {

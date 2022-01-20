@@ -9,7 +9,7 @@ using Vortice.DXGI.Debug;
 using static Vortice.Direct3D12.D3D12;
 using static Vortice.DXGI.DXGI;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D12;
 
 public unsafe class D3D12GraphicsDevice : GraphicsDevice
 {
@@ -289,7 +289,7 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
 
     private static bool CheckIsSupported()
     {
-        return D3D12.IsSupported(IntPtr.Zero, MinFeatureLevel);
+        return Direct3D12.D3D12.IsSupported(IntPtr.Zero, MinFeatureLevel);
     }
 
     internal readonly IDXGIFactory4 DXGIFactory;
