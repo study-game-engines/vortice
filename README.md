@@ -1,12 +1,12 @@
 [![Build status](https://github.com/amerkoleci/vortice/workflows/Build/badge.svg)](https://github.com/amerkoleci/vortice/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/amerkoleci/vortice/blob/main/LICENSE)
 
-**Vortice** is a modern cross-platform .NET game engine.
+**Vortice** is a modern cross-platform .NET 6.0 game engine.
 
 ## Features
 
 * Support for Windows, Linux, macOS.
-* Modern rendering using Vulkan and Direct3D12.
+* Modern rendering using Vulkan, Direct3D12 and Direct3D11.
 
 ## Sponsors
 Please consider [SPONSOR](https://github.com/sponsors/amerkoleci) me to further help development and to allow faster issue triaging and new features to be implemented.

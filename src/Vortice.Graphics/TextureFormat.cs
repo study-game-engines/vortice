@@ -3,85 +3,6 @@
 
 namespace Vortice.Graphics;
 
-public enum GpuBackend : byte
-{
-    Default = 0,
-    Vulkan,
-    Direct3D12,
-    Direct3D11,
-}
-
-public enum ValidationMode
-{
-    /// <summary>
-    /// No validation is enabled.
-    /// </summary>
-    Disabled,
-    /// <summary>
-    /// Print warnings and errors.
-    /// </summary>
-    Enabled,
-    /// <summary>
-    /// Print all warnings, errors and info messages.
-    /// </summary>
-    Verbose,
-    /// Enable GPU-based validation
-    GPU
-}
-
-public enum GpuPowerPreference
-{
-    HighPerformance,
-    LowPower,
-}
-
-public enum GpuAdapterType
-{
-    DiscreteGPU,
-    IntegratedGPU,
-    CPU,
-    Unknown
-}
-
-public enum GpuVendorId : uint
-{
-    Unknown = 0,
-    NVidia = 0x10DE,
-    AMD = 0x1002,
-    Intel = 0x8086,
-    ARM = 0x13B5,
-    ImgTec = 0x1010,
-    Qualcomm = 0x5143,
-    Samsung = 0x1099,
-    Microsoft = 0x1414,
-}
-
-public enum CommandQueueType
-{
-    Graphics = 0,
-    Compute,
-    Copy,
-    Count
-}
-
-public enum TextureSampleCount
-{
-    Count1,
-    Count2,
-    Count4,
-    Count8,
-    Count16,
-    Count32,
-}
-
-public enum TextureDimension
-{
-    Texture1D,
-    Texture2D,
-    Texture3D,
-    TextureCube
-}
-
 /// <summary>
 /// Defines texture format.
 /// </summary>
@@ -158,18 +79,4 @@ public enum TextureFormat
     BC7RGBAUNormSrgb,
 
     Count
-}
-
-/// <summary>
-/// A bitmask indicating how a <see cref="Texture"/> is permitted to be used.
-/// </summary>
-[Flags]
-public enum TextureUsage
-{
-    None = 0,
-    ShaderRead = 1 << 0,
-    ShaderWrite = 1 << 1,
-    ShaderReadWrite = ShaderRead | ShaderWrite,
-    RenderTarget = 1 << 2,
-    ShadingRate = 1 << 3,
 }
