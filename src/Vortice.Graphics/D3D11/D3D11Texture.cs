@@ -4,13 +4,20 @@
 using Microsoft.Toolkit.Diagnostics;
 using Vortice.Direct3D11;
 using static Vortice.Graphics.D3D.Utils;
+using static Vortice.Graphics.D3D11.D3D11Utils;
 
 namespace Vortice.Graphics.D3D11;
 
 internal unsafe class D3D11Texture : Texture
 {
+    public D3D11Texture(GraphicsDevice device, ID3D11Texture2D handle)
+        : base(device, FromD3D11(handle.Description))
+    {
+        Handle = handle;
+    }
+
     public D3D11Texture(D3D11GraphicsDevice device, in TextureDescriptor descriptor)
-        : base(device, descriptor)
+    : base(device, descriptor)
     {
         Texture2DDescription texture2DDesc = new()
         {

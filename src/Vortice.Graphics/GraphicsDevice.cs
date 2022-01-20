@@ -1,7 +1,6 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Runtime.CompilerServices;
 using Microsoft.Toolkit.Diagnostics;
 
 namespace Vortice.Graphics;
@@ -10,9 +9,8 @@ public abstract class GraphicsDevice : IDisposable
 {
     private volatile int _isDisposed;
 
-    protected GraphicsDevice(GpuBackend backendType)
+    protected GraphicsDevice()
     {
-        BackendType = backendType;
     }
 
     /// <summary>
@@ -29,7 +27,7 @@ public abstract class GraphicsDevice : IDisposable
     /// <summary>
     /// Get the device backend type.
     /// </summary>
-    public GpuBackend BackendType { get; }
+    public abstract GpuBackend BackendType { get; }
 
     public abstract GpuVendorId VendorId { get; }
     public abstract uint AdapterId { get; }

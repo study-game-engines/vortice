@@ -3,7 +3,6 @@
 
 using Vortice.DXGI;
 using Microsoft.Toolkit.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Vortice.Graphics.D3D;
 
@@ -101,6 +100,83 @@ public static partial class Utils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static TextureFormat FromDXGIFormat(Format format)
+    {
+        return format switch
+        {
+            // 8-bit formats
+            Format.R8_UNorm => TextureFormat.R8UNorm,
+            Format.R8_SNorm => TextureFormat.R8SNorm,
+            Format.R8_UInt => TextureFormat.R8UInt,
+            Format.R8_SInt => TextureFormat.R8SInt,
+            // 16-bit formats
+            Format.R16_UNorm => TextureFormat.R16UNorm,
+            Format.R16_SNorm => TextureFormat.R16SNorm,
+            Format.R16_UInt => TextureFormat.R16UInt,
+            Format.R16_SInt => TextureFormat.R16SInt,
+            Format.R16_Float => TextureFormat.R16Float,
+            Format.R8G8_UNorm => TextureFormat.RG8UNorm,
+            Format.R8G8_SNorm => TextureFormat.RG8SNorm,
+            Format.R8G8_UInt => TextureFormat.RG8UInt,
+            Format.R8G8_SInt => TextureFormat.RG8SInt,
+            // 32-bit formats
+            Format.R32_UInt => TextureFormat.R32UInt,
+            Format.R32_SInt => TextureFormat.R32SInt,
+            Format.R32_Float => TextureFormat.R32Float,
+            Format.R16G16_UNorm => TextureFormat.RG16UNorm,
+            Format.R16G16_SNorm => TextureFormat.RG16SNorm,
+            Format.R16G16_UInt => TextureFormat.RG16UInt,
+            Format.R16G16_SInt => TextureFormat.RG16SInt,
+            Format.R16G16_Float => TextureFormat.RG16Float,
+            Format.R8G8B8A8_UNorm => TextureFormat.RGBA8UNorm,
+            Format.R8G8B8A8_UNorm_SRgb => TextureFormat.RGBA8UNormSrgb,
+            Format.R8G8B8A8_SNorm => TextureFormat.RGBA8SNorm,
+            Format.R8G8B8A8_UInt => TextureFormat.RGBA8UInt,
+            Format.R8G8B8A8_SInt => TextureFormat.RGBA8SInt,
+            Format.B8G8R8A8_UNorm => TextureFormat.BGRA8UNorm,
+            Format.B8G8R8A8_UNorm_SRgb => TextureFormat.BGRA8UNormSrgb,
+            // Packed 32-Bit formats
+            Format.R10G10B10A2_UNorm => TextureFormat.RGB10A2UNorm,
+            Format.R11G11B10_Float => TextureFormat.RG11B10Float,
+            Format.R9G9B9E5_SharedExp => TextureFormat.RGB9E5Float,
+            // 64-Bit formats
+            Format.R32G32_UInt => TextureFormat.RG32UInt,
+            Format.R32G32_SInt => TextureFormat.RG32SInt,
+            Format.R32G32_Float => TextureFormat.RG32Float,
+            Format.R16G16B16A16_UNorm => TextureFormat.RGBA16UNorm,
+            Format.R16G16B16A16_SNorm => TextureFormat.RGBA16SNorm,
+            Format.R16G16B16A16_UInt => TextureFormat.RGBA16UInt,
+            Format.R16G16B16A16_SInt => TextureFormat.RGBA16SInt,
+            Format.R16G16B16A16_Float => TextureFormat.RGBA16Float,
+            // 128-Bit formats
+            Format.R32G32B32A32_UInt => TextureFormat.RGBA32UInt,
+            Format.R32G32B32A32_SInt => TextureFormat.RGBA32SInt,
+            Format.R32G32B32A32_Float => TextureFormat.RGBA32Float,
+            // Depth-stencil formats
+            Format.D16_UNorm => TextureFormat.Depth16UNorm,
+            Format.D32_Float => TextureFormat.Depth32Float,
+            Format.D24_UNorm_S8_UInt => TextureFormat.Depth24UNormStencil8,
+            Format.D32_Float_S8X24_UInt => TextureFormat.Depth32FloatStencil8,
+            // Compressed BC formats
+            Format.BC1_UNorm => TextureFormat.BC1RGBAUNorm,
+            Format.BC1_UNorm_SRgb => TextureFormat.BC1RGBAUNormSrgb,
+            Format.BC2_UNorm => TextureFormat.BC2RGBAUNorm,
+            Format.BC2_UNorm_SRgb => TextureFormat.BC2RGBAUNormSrgb,
+            Format.BC3_UNorm => TextureFormat.BC3RGBAUNorm,
+            Format.BC3_UNorm_SRgb => TextureFormat.BC3RGBAUNormSrgb,
+            Format.BC4_SNorm => TextureFormat.BC4RSNorm,
+            Format.BC4_UNorm => TextureFormat.BC4RUNorm,
+            Format.BC5_SNorm => TextureFormat.BC5RGSNorm,
+            Format.BC5_UNorm => TextureFormat.BC5RGUNorm,
+            Format.BC6H_Uf16 => TextureFormat.BC6HRGBUFloat,
+            Format.BC6H_Sf16 => TextureFormat.BC6HRGBFloat,
+            Format.BC7_UNorm => TextureFormat.BC7RGBAUNorm,
+            Format.BC7_UNorm_SRgb => TextureFormat.BC7RGBAUNormSrgb,
+            _ => ThrowHelper.ThrowArgumentException<TextureFormat>("Invalid texture format"),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Format GetTypelessFormatFromDepthFormat(TextureFormat format)
     {
         switch (format)
@@ -123,17 +199,18 @@ public static partial class Utils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int ToD3D(TextureSampleCount sampleCount)
     {
-        return sampleCount switch
-        {
-            TextureSampleCount.Count1 => 1,
-            TextureSampleCount.Count2 => 2,
-            TextureSampleCount.Count4 => 4,
-            TextureSampleCount.Count8 => 8,
-            TextureSampleCount.Count16 => 16,
-            TextureSampleCount.Count32 => 32,
-            _ => 1,
-        };
+        if (sampleCount == TextureSampleCount.None)
+            return 0;
+
+        return (int)sampleCount;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static TextureSampleCount FromD3D(int count)
+    {
+        return (TextureSampleCount)count;
+    }
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static GpuPreference ToDXGI(GpuPowerPreference powerPreference)

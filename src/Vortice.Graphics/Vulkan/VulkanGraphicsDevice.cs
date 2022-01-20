@@ -23,7 +23,6 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     private readonly GraphicsDeviceCaps _caps;
 
     public VulkanGraphicsDevice(ValidationMode validationMode = ValidationMode.Disabled, GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
-        : base(GpuBackend.Vulkan)
     {
         if (!s_isSupported.Value)
         {
@@ -260,6 +259,9 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     public VkInstance Instance => _instance;
     public VkPhysicalDevice PhysicalDevice { get; }
     public VkDevice NativeDevice => _handle;
+
+    // <inheritdoc />
+    public override GpuBackend BackendType => GpuBackend.Vulkan;
 
     // <inheritdoc />
     public override GpuVendorId VendorId { get; }

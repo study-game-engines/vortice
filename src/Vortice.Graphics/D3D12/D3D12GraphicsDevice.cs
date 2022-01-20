@@ -26,7 +26,6 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
     public static bool IsSupported => s_isSupported.Value;
 
     public D3D12GraphicsDevice(ValidationMode validationMode = ValidationMode.Disabled, GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
-        : base(GpuBackend.Direct3D12)
     {
         // Create DXGI factory first
         {
@@ -298,7 +297,8 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
     internal readonly bool IsTearingSupported;
     internal readonly ID3D12Device2 NativeDevice;
 
-    internal D3D12Queue GetQueue(CommandQueueType type = CommandQueueType.Graphics) => _queues[(int)type];
+    internal D3D12Queue GetDirectQueue() => _queues[(int)CommandQueueType.Graphics];
+    internal D3D12Queue GetComputeQueue() => _queues[(int)CommandQueueType.Compute];
 
     internal bool SupportsRenderPass { get; }
 
@@ -306,6 +306,9 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
     /// Gets whether or not the current device has a cache coherent UMA architecture.
     /// </summary>
     internal bool IsCacheCoherentUMA { get; }
+
+    // <inheritdoc />
+    public override GpuBackend BackendType => GpuBackend.Direct3D12;
 
     // <inheritdoc />
     public override GpuVendorId VendorId { get; }

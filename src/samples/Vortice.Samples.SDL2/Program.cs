@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Vortice.Graphics;
+using Vortice.Graphics.D3D11;
 using Vortice.Graphics.D3D12;
 
 namespace Vortice.Samples;

@@ -37,7 +37,6 @@ public unsafe class D3D11GraphicsDevice : GraphicsDevice
     public static bool IsSupported => s_isSupported.Value;
 
     public D3D11GraphicsDevice(ValidationMode validationMode = ValidationMode.Disabled, GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
-        : base(GpuBackend.Direct3D11)
     {
         // Create DXGI factory first
         {
@@ -73,16 +72,6 @@ public unsafe class D3D11GraphicsDevice : GraphicsDevice
             }
 
             DXGIFactory = CreateDXGIFactory2<IDXGIFactory2>(debugDXGI);
-
-            // Check tearing support
-            {
-                IDXGIFactory5? factory5 = DXGIFactory.QueryInterfaceOrNull<IDXGIFactory5>();
-                if (factory5 != null)
-                {
-                    IsTearingSupported = factory5.PresentAllowTearing;
-                    factory5.Dispose();
-                }
-            }
         }
 
         // Get adapter and create device
@@ -301,10 +290,11 @@ public unsafe class D3D11GraphicsDevice : GraphicsDevice
     public IDXGIFactory2 DXGIFactory { get; }
     internal readonly IDXGIAdapter1 Adapter;
 
-    public bool IsTearingSupported { get; private set; }
-
     public ID3D11Device1 NativeDevice => _handle;
     public readonly FeatureLevel FeatureLevel;
+
+    // <inheritdoc />
+    public override GpuBackend BackendType => GpuBackend.Direct3D11;
 
     // <inheritdoc />
     public override GpuVendorId VendorId { get; }

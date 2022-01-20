@@ -3,76 +3,26 @@
 
 using Vortice.Direct3D12;
 using Vortice.DXGI;
+using Vortice.Graphics.D3D;
 using static Vortice.Graphics.D3D.Utils;
 
 namespace Vortice.Graphics.D3D12;
 
-internal class D3D12SwapChain : SwapChain
+internal sealed class D3D12SwapChain : D3DSwapChain
 {
-    private readonly ID3D12Resource[] _renderTargets = new ID3D12Resource[3];
-
-    private readonly int _syncInterval = 1;
-    private readonly PresentFlags _presentFlags = PresentFlags.None;
+    private readonly D3D12Texture[] _backbufferTextures = new D3D12Texture[3];
 
     public D3D12SwapChain(D3D12GraphicsDevice device, in SwapChainSource source, in SwapChainDescriptor descriptor)
-        : base(device, descriptor)
+        : base(device, source, descriptor, device.DXGIFactory, device.GetDirectQueue().Handle)
     {
-        SwapChainDescription1 swapChainDesc = new()
-        {
-            Width = descriptor.Size.Width,
-            Height = descriptor.Size.Height,
-            Format = ToDXGISwapChainFormat(descriptor.ColorFormat),
-            Stereo = false,
-            SampleDescription = new(1, 0),
-            BufferUsage = Usage.RenderTargetOutput,
-            BufferCount = PresentModeToBufferCount(descriptor.PresentMode),
-            Scaling = Scaling.Stretch,
-            SwapEffect = SwapEffect.FlipDiscard,
-            AlphaMode = AlphaMode.Ignore,
-            Flags = device.IsTearingSupported ? SwapChainFlags.AllowTearing : SwapChainFlags.None
-        };
-
-        IDXGISwapChain1 tempSwapChain;
-
-        switch (source.Type)
-        {
-            case SwapChainSourceType.Win32:
-                Win32SwapChainSource win32Source = (Win32SwapChainSource)source;
-                SwapChainFullscreenDescription fsSwapChainDesc = new()
-                {
-                    Windowed = descriptor.IsFullscreen ? false : true
-                };
-
-                tempSwapChain = device.DXGIFactory.CreateSwapChainForHwnd(
-                    device.GetQueue().Handle,
-                    win32Source.Hwnd,
-                    swapChainDesc,
-                    fsSwapChainDesc,
-                    null);
-
-                // This class does not support exclusive full-screen mode and prevents DXGI from responding to the ALT+ENTER shortcut
-                device.DXGIFactory.MakeWindowAssociation(win32Source.Hwnd, WindowAssociationFlags.IgnoreAltEnter).CheckError();
-                break;
-
-            default:
-                throw new GraphicsException("Surface not supported");
-        }
-
-        Handle = tempSwapChain.QueryInterface<IDXGISwapChain3>();
-        tempSwapChain.Dispose();
-
-        _syncInterval = PresentModeToSwapInterval(descriptor.PresentMode);
-        if (!descriptor.IsFullscreen
-            && _syncInterval == 0
-            && device.IsTearingSupported)
-        {
-            _presentFlags |= PresentFlags.AllowTearing;
-        }
-
-        AfterReset();
+        
     }
 
-    public IDXGISwapChain3 Handle { get; }
+    // <inheritdoc />
+    public override Texture? CurrentBackBuffer => null;
+
+    // <inheritdoc />
+    public override int CurrentBackBufferIndex => Handle3!.CurrentBackBufferIndex;
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
@@ -81,36 +31,24 @@ internal class D3D12SwapChain : SwapChain
         {
             for (uint i = 0; i < 3; i++)
             {
-                _renderTargets[i].Dispose();
+                _backbufferTextures[i].Dispose();
             }
 
-            Handle.Dispose();
+            base.Dispose(disposing);
         }
     }
 
-    /// <inheritdoc />
-    public override void Present()
-    {
-        Handle.Present(_syncInterval, _presentFlags).CheckError();
-    }
 
-    private void AfterReset()
+    // <inheritdoc />
+    protected override void AfterReset()
     {
-        // Handle color space settings for HDR
-        UpdateColorSpace();
-
-        SwapChainDescription1 swapChainDesc = Handle.Description1;
+        base.AfterReset();
 
         // Obtain the back buffers for this window which will be the final render targets
         // and create render target views for each of them.
-        for (int i = 0; i < swapChainDesc.BufferCount; i++)
+        for (int i = 0; i < BackBufferCount; i++)
         {
-            _renderTargets[i] = Handle.GetBuffer<ID3D12Resource>(i);
+            _backbufferTextures[i] = new D3D12Texture(Device, Handle.GetBuffer<ID3D12Resource>(i));
         }
-    }
-
-    private void UpdateColorSpace()
-    {
-
     }
 }

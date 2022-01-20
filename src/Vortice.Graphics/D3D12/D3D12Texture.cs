@@ -3,17 +3,24 @@
 
 using Vortice.Direct3D12;
 using static Vortice.Graphics.D3D.Utils;
+using static Vortice.Graphics.D3D12.D3D12Utils;
 
 namespace Vortice.Graphics.D3D12;
 
-internal unsafe class D3D12Texture : Texture
+internal class D3D12Texture : Texture
 {
+    public D3D12Texture(GraphicsDevice device, ID3D12Resource handle)
+        : base(device, FromD3D12(handle.Description))
+    {
+        Handle = handle;
+    }
+
     public D3D12Texture(D3D12GraphicsDevice device, in TextureDescriptor descriptor)
         : base(device, descriptor)
     {
         ResourceDescription resourceDesc = new()
         {
-            Dimension = descriptor.Dimension.ToD3D12(),
+            Dimension = ToD3D12(descriptor.Dimension),
             Alignment = 0u,
             Width = (ulong)descriptor.Width,
             Height = descriptor.Height,

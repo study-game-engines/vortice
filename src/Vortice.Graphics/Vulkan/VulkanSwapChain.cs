@@ -40,6 +40,15 @@ internal unsafe class VulkanSwapChain : SwapChain
 
     public VkSwapchainKHR Handle { get; private set; } = VkSwapchainKHR.Null;
 
+    // <inheritdoc />
+    public override Texture? CurrentBackBuffer => null;
+
+    // <inheritdoc />
+    public override int CurrentBackBufferIndex => 0;
+
+    // <inheritdoc />
+    public override int BackBufferCount => 1;
+
     public void Resize(int width, int height)
     {
         //VkDevice vkDevice = ((GraphicsDeviceVulkan)Device).NativeDevice;

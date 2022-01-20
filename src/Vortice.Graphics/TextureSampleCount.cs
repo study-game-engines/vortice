@@ -3,12 +3,17 @@
 
 namespace Vortice.Graphics;
 
+[Flags]
 public enum TextureSampleCount
 {
-    Count1,
-    Count2,
-    Count4,
-    Count8,
-    Count16,
-    Count32,
+    None = 0,
+    Count1 = 1,
+    Count2 = 2,
+    Count4 = 4,
+    Count8 = 8,
+    Count16 = 16,
+    Count32 = 32,
+    Count64 = 64,
+    Max = Count64,
+    All = (Max << 1) - 1,
 }

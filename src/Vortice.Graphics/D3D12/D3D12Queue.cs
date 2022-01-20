@@ -2,10 +2,11 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Vortice.Direct3D12;
+using static Vortice.Graphics.D3D12.D3D12Utils;
 
 namespace Vortice.Graphics.D3D12;
 
-internal unsafe class D3D12Queue
+internal class D3D12Queue
 {
     private readonly ID3D12Fence _fence;
     private readonly AutoResetEvent _fenceEvent;
@@ -14,9 +15,9 @@ internal unsafe class D3D12Queue
 
     public D3D12Queue(D3D12GraphicsDevice device, CommandQueueType type)
     {
-        CommandQueueDescription queueDesc = new CommandQueueDescription
+        CommandQueueDescription queueDesc = new()
         {
-            Type = type.ToD3D12(),
+            Type = ToD3D12(type),
             Priority = (int)CommandQueuePriority.Normal,
             Flags = CommandQueueFlags.None,
             NodeMask = 0
