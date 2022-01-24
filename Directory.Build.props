@@ -21,7 +21,6 @@
     <PackageProjectUrl>https://github.com/amerkoleci/vortice</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Copyright>Copyright © 2021-2022 Amer Koleci and Contributors</Copyright>
-    <PackageVersion>0.1.0-alpha1</PackageVersion>
     <PackageOutputPath>$(MSBuildThisFileDirectory)packages</PackageOutputPath>
   </PropertyGroup>
 
