@@ -4,14 +4,23 @@
 using Vortice.XAudio2;
 using static Vortice.XAudio2.XAudio2;
 
-namespace Vortice.Audio;
+namespace Vortice.Audio.XAudio2;
 
-public unsafe class XAudio2System : AudioSystem
+internal unsafe class XAudio2Engine : AudioEngine
 {
     private readonly IXAudio2 _xaudio2;
 
-    public XAudio2System()
+    public XAudio2Engine()
     {
         _xaudio2 = XAudio2Create(ProcessorSpecifier.DefaultProcessor, registerCallback: true);
     }
+
+    /// <inheritdoc />
+    protected override void OnDispose()
+    {
+        _xaudio2.Dispose();
+    }
+
+    // <inheritdoc />
+    public override AudioBackend BackendType => AudioBackend.XAudio2;
 }
