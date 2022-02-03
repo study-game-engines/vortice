@@ -1,7 +1,6 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
@@ -14,26 +13,34 @@ internal unsafe class VulkanSwapChain : SwapChain
     public VulkanSwapChain(VulkanGraphicsDevice device, in SwapChainSource source, in SwapChainDescriptor descriptor)
         : base(device, descriptor)
     {
-        switch (source.Type)
-        {
-            case SwapChainSourceType.Win32:
-                Win32SwapChainSource win32Source = (Win32SwapChainSource)source;
-                VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR
-                {
-                    sType = VkStructureType.Win32SurfaceCreateInfoKHR,
-                    hinstance = GetModuleHandleW(lpModuleName: null),
-                    hwnd = win32Source.Hwnd
-                };
-
-                vkCreateWin32SurfaceKHR(device.Instance, &surfaceCreateInfo, null, out _surface).CheckResult();
-                break;
-
-            default:
-                throw new GraphicsException("Surface not supported");
-
-        }
-
+        _surface = CreateVkSurface(source);
         Resize(descriptor.Size.Width, descriptor.Size.Height);
+
+        VkSurfaceKHR CreateVkSurface(in SwapChainSource source)
+        {
+            VkSurfaceKHR surface;
+
+            switch (source.Type)
+            {
+                case SwapChainSourceType.Win32:
+                    Win32SwapChainSource win32Source = (Win32SwapChainSource)source;
+                    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR
+                    {
+                        sType = VkStructureType.Win32SurfaceCreateInfoKHR,
+                        hinstance = GetModuleHandleW(lpModuleName: null),
+                        hwnd = win32Source.Hwnd
+                    };
+
+                    vkCreateWin32SurfaceKHR(device.Instance, &surfaceCreateInfo, null, &surface).CheckResult();
+                    break;
+
+                default:
+                    throw new GraphicsException("Surface not supported");
+
+            }
+
+            return surface;
+        }
     }
 
     public VkSurfaceKHR Surface { get; }
