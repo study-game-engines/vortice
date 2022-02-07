@@ -347,10 +347,12 @@ public unsafe class D3D11GraphicsDevice : GraphicsDevice
     public override void WaitIdle()
     {
     }
-
+    
     /// <inheritdoc />
-    protected override SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor) => new D3D11SwapChain(this, source, descriptor);
+    protected override Buffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => new D3D11Buffer(this, descriptor, initialData);
 
     /// <inheritdoc />
     protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D11Texture(this, descriptor);
+    /// <inheritdoc />
+    protected override SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor) => new D3D11SwapChain(this, source, descriptor);
 }

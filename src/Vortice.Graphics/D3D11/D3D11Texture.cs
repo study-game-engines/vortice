@@ -58,8 +58,6 @@ internal unsafe class D3D11Texture : Texture
 
     public ID3D11Resource Handle { get; }
 
-    //public D3D12_RESOURCE_STATES State = D3D12_RESOURCE_STATE_COMMON;
-
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {

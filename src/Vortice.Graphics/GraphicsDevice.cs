@@ -83,11 +83,23 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     public abstract void WaitIdle();
 
-    public SwapChain CreateSwapChain(in SwapChainSource source, in SwapChainDescriptor descriptor)
+    public Buffer CreateBuffer(in BufferDescriptor descriptor)
     {
-        Guard.IsNotNull(source, nameof(source));
+        Guard.IsGreaterThanOrEqualTo(descriptor.Size, 1, nameof(BufferDescriptor.Size));
 
-        return CreateSwapChainCore(source, descriptor);
+        return CreateBufferCore(descriptor, IntPtr.Zero);
+    }
+
+    public Buffer CreateBuffer<T>(Span<T> data, BufferUsage usage = BufferUsage.ShaderReadWrite) where T : unmanaged
+    {
+        unsafe
+        {
+            BufferDescriptor descriptor = new BufferDescriptor(usage, (ulong)(data.Length * sizeof(T)));
+            fixed (T* dataPtr = data)
+            {
+                return CreateBufferCore(descriptor, (IntPtr)dataPtr);
+            }
+        }
     }
 
     public Texture CreateTexture(in TextureDescriptor descriptor)
@@ -99,7 +111,15 @@ public abstract class GraphicsDevice : IDisposable
         return CreateTextureCore(descriptor);
     }
 
+    public SwapChain CreateSwapChain(in SwapChainSource source, in SwapChainDescriptor descriptor)
+    {
+        Guard.IsNotNull(source, nameof(source));
+
+        return CreateSwapChainCore(source, descriptor);
+    }
+
     protected abstract SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor);
 
     protected abstract Texture CreateTextureCore(in TextureDescriptor descriptor);
+    protected abstract Buffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData);
 }
