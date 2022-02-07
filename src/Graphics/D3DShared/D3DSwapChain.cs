@@ -2,11 +2,10 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using SharpGen.Runtime;
-using Vortice.Direct3D12;
 using Vortice.DXGI;
-using static Vortice.Graphics.D3D.Utils;
+using static Vortice.Graphics.Utils;
 
-namespace Vortice.Graphics.D3D;
+namespace Vortice.Graphics;
 
 internal abstract class D3DSwapChain : SwapChain
 {

@@ -3,7 +3,7 @@
 
 using Vortice.Direct3D11;
 
-namespace Vortice.Graphics.D3D11;
+namespace Vortice.Graphics;
 
 internal unsafe class D3D11Buffer : Buffer
 {

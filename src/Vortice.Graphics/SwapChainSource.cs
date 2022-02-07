@@ -25,7 +25,7 @@ public abstract class SwapChainSource
     public static SwapChainSource CreateWin32(IntPtr hinstance, IntPtr hwnd) => new Win32SwapChainSource(hinstance, hwnd);
 }
 
-internal class Win32SwapChainSource : SwapChainSource
+public sealed class Win32SwapChainSource : SwapChainSource
 {
     internal Win32SwapChainSource(IntPtr hinstance, IntPtr hwnd)
     {
@@ -40,7 +40,7 @@ internal class Win32SwapChainSource : SwapChainSource
     public override SwapChainSourceType Type => SwapChainSourceType.Win32;
 }
 
-internal class CoreWindowChainSource : SwapChainSource
+public sealed class CoreWindowChainSource : SwapChainSource
 {
     internal CoreWindowChainSource(IntPtr coreWindow)
     {

@@ -11,6 +11,8 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\Graphics\Vortice.Graphics.Direct3D11\Vortice.Graphics.Direct3D11.csproj" />
+    <ProjectReference Include="..\..\Graphics\Vortice.Graphics.Direct3D12\Vortice.Graphics.Direct3D12.csproj" />
     <ProjectReference Include="..\..\Platforms\Vortice.Platform.SDL2\Vortice.Platform.SDL2.csproj" />
     <ProjectReference Include="..\Vortice.Samples\Vortice.Samples.csproj" />
   </ItemGroup>

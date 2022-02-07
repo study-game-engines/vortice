@@ -3,10 +3,9 @@
 
 using Vortice.Direct3D12;
 using Vortice.DXGI;
-using Vortice.Graphics.D3D;
-using static Vortice.Graphics.D3D.Utils;
+using static Vortice.Graphics.Utils;
 
-namespace Vortice.Graphics.D3D12;
+namespace Vortice.Graphics;
 
 internal sealed class D3D12SwapChain : D3DSwapChain
 {

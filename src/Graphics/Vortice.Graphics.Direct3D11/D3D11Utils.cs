@@ -1,10 +1,10 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using static Vortice.Graphics.D3D.Utils;
+using static Vortice.Graphics.Utils;
 using Vortice.Direct3D11;
 
-namespace Vortice.Graphics.D3D11;
+namespace Vortice.Graphics;
 
 internal static partial class D3D11Utils
 {

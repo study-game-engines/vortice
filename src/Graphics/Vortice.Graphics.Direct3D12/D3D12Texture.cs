@@ -2,10 +2,10 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Vortice.Direct3D12;
-using static Vortice.Graphics.D3D.Utils;
-using static Vortice.Graphics.D3D12.D3D12Utils;
+using static Vortice.Graphics.Utils;
+using static Vortice.Graphics.D3D12Utils;
 
-namespace Vortice.Graphics.D3D12;
+namespace Vortice.Graphics;
 
 internal class D3D12Texture : Texture
 {

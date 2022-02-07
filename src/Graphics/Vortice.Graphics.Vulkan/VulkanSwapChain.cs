@@ -1,6 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
@@ -97,5 +98,5 @@ internal unsafe class VulkanSwapChain : SwapChain
     }
 
     [DllImport("kernel32", ExactSpelling = true, SetLastError = true)]
-    private static extern unsafe nint GetModuleHandleW(ushort* lpModuleName);
+    private static extern unsafe IntPtr GetModuleHandleW(ushort* lpModuleName);
 }

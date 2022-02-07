@@ -2,9 +2,8 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Vortice.Direct3D11;
-using Vortice.Graphics.D3D;
 
-namespace Vortice.Graphics.D3D11;
+namespace Vortice.Graphics;
 
 internal class D3D11SwapChain : D3DSwapChain
 {

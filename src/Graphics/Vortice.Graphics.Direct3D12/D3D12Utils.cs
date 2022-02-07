@@ -1,11 +1,12 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using static Vortice.Graphics.D3D.Utils;
+using static Vortice.Graphics.Utils;
 using Microsoft.Toolkit.Diagnostics;
 using Vortice.Direct3D12;
+using System.Runtime.CompilerServices;
 
-namespace Vortice.Graphics.D3D12;
+namespace Vortice.Graphics;
 
 internal static class D3D12Utils
 {

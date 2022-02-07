@@ -3,8 +3,9 @@
 
 using Vortice.DXGI;
 using Microsoft.Toolkit.Diagnostics;
+using System.Runtime.CompilerServices;
 
-namespace Vortice.Graphics.D3D;
+namespace Vortice.Graphics;
 
 public static partial class Utils
 {
