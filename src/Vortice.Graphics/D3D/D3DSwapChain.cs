@@ -27,8 +27,6 @@ internal abstract class D3DSwapChain : SwapChain
             }
         }
 
-        BackBufferCount = PresentModeToBufferCount(descriptor.PresentMode);
-
         SwapChainDescription1 swapChainDesc = new()
         {
             Width = descriptor.Size.Width,
@@ -37,7 +35,7 @@ internal abstract class D3DSwapChain : SwapChain
             Stereo = false,
             SampleDescription = new(1, 0),
             BufferUsage = Usage.RenderTargetOutput,
-            BufferCount = BackBufferCount,
+            BufferCount = PresentModeToBufferCount(descriptor.PresentMode),
             Scaling = Scaling.Stretch,
             SwapEffect = SwapEffect.FlipDiscard,
             AlphaMode = AlphaMode.Ignore,
@@ -135,22 +133,24 @@ internal abstract class D3DSwapChain : SwapChain
         if (Handle != null)
         {
             // Until - we fix this
-            //IDXGIOutput output = Handle.GetContainingOutput();
-            //if (SUCCEEDED(Handle.GetContainingOutput(output.GetAddressOf())))
-            //{
-            //    ComPtr<IDXGIOutput6> output6;
-            //    if (SUCCEEDED(output.As(&output6)))
-            //    {
-            //        DXGI_OUTPUT_DESC1 desc;
-            //        ThrowIfFailed(output6->GetDesc1(&desc));
-            //
-            //        if (desc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020)
-            //        {
-            //            // Display output is HDR10.
-            //            isDisplayHDR10 = true;
-            //        }
-            //    }
-            //}
+            if (Handle.GetContainingOutput(out IDXGIOutput? output).Success)
+            {
+                IDXGIOutput6? output6 = output.QueryInterfaceOrNull<IDXGIOutput6>();
+                if (output6 != null)
+                {
+                    OutputDescription1 desc = output6.Description1;
+
+                    if (desc.ColorSpace == ColorSpaceType.RgbFullG2084NoneP2020)
+                    {
+                        // Display output is HDR10.
+                        isDisplayHDR10 = true;
+                    }
+
+                    output6.Dispose();
+                }
+
+                output.Dispose();
+            }
         }
     }
 }

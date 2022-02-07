@@ -1,7 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Drawing;
+using Vortice.Mathematics;
 
 namespace Vortice.Graphics;
 
@@ -16,7 +16,7 @@ public abstract class SwapChain : GraphicsResource
         IsFullscreen = descriptor.IsFullscreen;
     }
 
-    public Size Size { get; protected set; }
+    public SizeI Size { get; protected set; }
 
     public TextureFormat ColorFormat { get; protected set; }
     public PresentMode PresentMode { get; }

@@ -1,20 +1,20 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Drawing;
+using Vortice.Mathematics;
 
 namespace Vortice.Graphics;
 
 public readonly struct SwapChainDescriptor : IEquatable<SwapChainDescriptor>
 {
-    public Size Size { get; init; }
+    public SizeI Size { get; init; }
     public TextureFormat ColorFormat { get; init; }
     public PresentMode PresentMode { get; init; }
     public bool IsFullscreen { get; init; }
 
     public string? Label { get; init; }
 
-    public SwapChainDescriptor(Size size,
+    public SwapChainDescriptor(SizeI size,
         TextureFormat colorFormat = TextureFormat.BGRA8UNormSrgb,
         PresentMode presentMode = PresentMode.Fifo,
         bool isFullscreen = false,

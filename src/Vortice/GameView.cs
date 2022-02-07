@@ -1,7 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Drawing;
+using Vortice.Mathematics;
 using Vortice.Graphics;
 
 namespace Vortice;
@@ -10,7 +10,7 @@ public abstract class GameView
 {
     public event EventHandler? SizeChanged;
 
-    public abstract SizeF ClientSize { get; }
+    public abstract SizeI ClientSize { get; }
 
     public abstract SwapChainSource Source { get; }
 
@@ -20,7 +20,7 @@ public abstract class GameView
     {
         SwapChainDescriptor descriptor = new()
         {
-            Size = new Size((int)ClientSize.Width, (int)ClientSize.Height),
+            Size = ClientSize,
         };
 
         SwapChain = device.CreateSwapChain(Source, descriptor);

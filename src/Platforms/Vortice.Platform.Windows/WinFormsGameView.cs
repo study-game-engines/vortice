@@ -3,6 +3,7 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Vortice.Mathematics;
 using Vortice.Graphics;
 
 namespace Vortice;
@@ -24,7 +25,7 @@ internal class WinFormsGameView : GameView
     }
 
     /// <inheritdoc />
-    public override SizeF ClientSize => _control.ClientSize;
+    public override SizeI ClientSize => new SizeI(_control.ClientSize.Width, _control.ClientSize.Height);
 
     /// <inheritdoc />
     public override SwapChainSource Source { get; }

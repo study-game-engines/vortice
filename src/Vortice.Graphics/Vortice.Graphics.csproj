@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants Condition="'$(ExcludeD3D11)' == 'true'">$(DefineConstants);EXCLUDE_D3D11_BACKEND</DefineConstants>
     <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>
@@ -11,7 +11,7 @@
   <ItemGroup>
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.Runtime.CompilerServices" />
-    
+
     <Compile Remove="D3D/**/*" Condition="'$(ExcludeD3D11)' == 'true' And '$(ExcludeD3D12)' == 'true'" />
     <Compile Remove="D3D11/**/*" Condition="'$(ExcludeD3D11)' == 'true'" />
     <Compile Remove="D3D12/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />

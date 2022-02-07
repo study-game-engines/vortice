@@ -1,7 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Drawing;
+using Vortice.Mathematics;
 using Vortice.Graphics;
 using static SDL2.SDL;
 using static SDL2.SDL.SDL_WindowFlags;
@@ -19,7 +19,7 @@ internal class SDL2GameView : GameView
         _window = SDL_CreateWindow("Vortice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 800, flags);
 
         SDL_GetWindowSize(_window, out int width, out int height);
-        ClientSize = new Size(width, height);
+        ClientSize = new(width, height);
 
         // Native handle
         var wmInfo = new SDL_SysWMinfo();
@@ -64,7 +64,7 @@ internal class SDL2GameView : GameView
     }
 
     /// <inheritdoc />
-    public override SizeF ClientSize { get; }
+    public override SizeI ClientSize { get; }
 
     /// <inheritdoc />
     public override SwapChainSource Source { get; }
