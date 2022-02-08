@@ -8,10 +8,11 @@ namespace Vortice.Graphics;
 /// </summary>
 public record struct BufferDescriptor : IEquatable<BufferDescriptor>
 {
-    public BufferDescriptor(BufferUsage usage, ulong size, string? label = default)
+    public BufferDescriptor(BufferUsage usage, ulong size, CpuAccess access = CpuAccess.None, string? label = default)
     {
         Usage = usage;
         Size = size;
+        Access = access;
         Label = label;
     }
 
@@ -24,6 +25,11 @@ public record struct BufferDescriptor : IEquatable<BufferDescriptor>
     /// Size in bytes of <see cref="Buffer"/>
     /// </summary>
     public ulong Size { get; init; }
+
+    /// <summary>
+    /// CPU access of <see cref="Buffer"/>
+    /// </summary>
+    public CpuAccess Access { get; init; }
 
     public string? Label { get; init; }
 }

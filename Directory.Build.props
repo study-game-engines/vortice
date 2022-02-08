@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
+    <_MauiDotNetVersion Condition="'$(_MauiDotNetVersion)' == ''">6.0</_MauiDotNetVersion>
+    <_MauiDotNetTfm Condition="'$(_MauiDotNetTfm)' == ''">net$(_MauiDotNetVersion)</_MauiDotNetTfm>
+    <_VorticeTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_VorticeTargetPlatformIdentifier>
+    <_VorticeTargetPlatformIsAndroid Condition="'$(_VorticeTargetPlatformIdentifier)' == 'android'">True</_VorticeTargetPlatformIsAndroid>
+    <_VorticeTargetPlatformIsiOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'ios'">True</_VorticeTargetPlatformIsiOS>
+    <_VorticeTargetPlatformIsMacCatalyst Condition="'$(_VorticeTargetPlatformIdentifier)' == 'maccatalyst'">True</_VorticeTargetPlatformIsMacCatalyst>
+    <_VorticeTargetPlatformIsmacOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'macos'">True</_VorticeTargetPlatformIsmacOS>
+    <_VorticeTargetPlatformIstvOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'tvos'">True</_VorticeTargetPlatformIstvOS>
+    <_VorticeTargetPlatformIsWindows Condition="$(_VorticeTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_VorticeTargetPlatformIsWindows>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
+    <DebugType>portable</DebugType>
+    
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
@@ -24,35 +37,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VorticeMathematicsVersion>1.4.2</VorticeMathematicsVersion>
+    <VorticeMathematicsVersion>1.4.4</VorticeMathematicsVersion>
     <VorticeVulkanVersion>1.5.0</VorticeVulkanVersion>
-    <VorticeWindowsVersion>2.1.1-beta9</VorticeWindowsVersion>
-  </PropertyGroup>
-
-  <!-- platform version number information -->
-  <PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
-    <SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion>10.0</TargetPlatformMinVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.Contains('-tvos'))">
-    <SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion>10.0</TargetPlatformMinVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst'))">
-    <SupportedOSPlatformVersion>13.1</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion>13.1</TargetPlatformMinVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.Contains('-macos'))">
-    <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion>10.14</TargetPlatformMinVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.Contains('-android'))">
-    <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion>21.0</TargetPlatformMinVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.Contains('-windows10'))">
-    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <VorticeWindowsVersion>2.1.1-beta10</VorticeWindowsVersion>
   </PropertyGroup>
   
 </Project>

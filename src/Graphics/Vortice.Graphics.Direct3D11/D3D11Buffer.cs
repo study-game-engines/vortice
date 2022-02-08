@@ -13,12 +13,28 @@ internal unsafe class D3D11Buffer : Buffer
         BufferDescription d3dDesc = new()
         {
             SizeInBytes = (int)descriptor.Size,
-            Usage = ResourceUsage.Default,
-            CpuAccessFlags = CpuAccessFlags.None,
             BindFlags = BindFlags.None,
             OptionFlags = ResourceOptionFlags.None,
             StructureByteStride = 0,
         };
+
+        switch (descriptor.Access)
+        {
+            case CpuAccess.Write:
+                d3dDesc.Usage = ResourceUsage.Dynamic;
+                d3dDesc.CpuAccessFlags = CpuAccessFlags.Write;
+                break;
+
+            case CpuAccess.Read:
+                d3dDesc.Usage = ResourceUsage.Staging;
+                d3dDesc.CpuAccessFlags = CpuAccessFlags.Read;
+                break;
+
+            default:
+                d3dDesc.Usage = ResourceUsage.Default;
+                d3dDesc.CpuAccessFlags = CpuAccessFlags.None;
+                break;
+        }
 
         if ((descriptor.Usage & BufferUsage.Vertex) != 0)
         {

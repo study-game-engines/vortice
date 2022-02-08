@@ -77,7 +77,6 @@ public abstract class GraphicsDevice : IDisposable
         }
     }
 
-
     /// <summary>
     /// Wait for device to finish pending GPU operations.
     /// </summary>
