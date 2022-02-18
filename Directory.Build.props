@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <_MauiDotNetVersion Condition="'$(_MauiDotNetVersion)' == ''">6.0</_MauiDotNetVersion>
-    <_MauiDotNetTfm Condition="'$(_MauiDotNetTfm)' == ''">net$(_MauiDotNetVersion)</_MauiDotNetTfm>
     <_VorticeTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_VorticeTargetPlatformIdentifier>
     <_VorticeTargetPlatformIsAndroid Condition="'$(_VorticeTargetPlatformIdentifier)' == 'android'">True</_VorticeTargetPlatformIsAndroid>
     <_VorticeTargetPlatformIsiOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'ios'">True</_VorticeTargetPlatformIsiOS>
@@ -32,14 +30,14 @@
     <RepositoryUrl>https://github.com/amerkoleci/vortice.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/amerkoleci/vortice</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright © 2021-2022 Amer Koleci and Contributors</Copyright>
+    <Copyright>Copyright © 2022 Amer Koleci and Contributors</Copyright>
     <PackageOutputPath>$(MSBuildThisFileDirectory)packages</PackageOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
     <VorticeMathematicsVersion>1.4.4</VorticeMathematicsVersion>
-    <VorticeVulkanVersion>1.5.0</VorticeVulkanVersion>
-    <VorticeWindowsVersion>2.1.1-beta10</VorticeWindowsVersion>
+    <VorticeVulkanVersion>1.5.1</VorticeVulkanVersion>
+    <VorticeWindowsVersion>2.1.1-beta11</VorticeWindowsVersion>
   </PropertyGroup>
   
 </Project>

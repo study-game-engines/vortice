@@ -349,7 +349,7 @@ public unsafe class D3D11GraphicsDevice : GraphicsDevice
     }
     
     /// <inheritdoc />
-    protected override Buffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => new D3D11Buffer(this, descriptor, initialData);
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => new D3D11Buffer(this, descriptor, initialData);
 
     /// <inheritdoc />
     protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D11Texture(this, descriptor);

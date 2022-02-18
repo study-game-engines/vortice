@@ -6,7 +6,7 @@ using static Vortice.Audio.OpenAL.OpenALNative;
 
 namespace Vortice.Audio.OpenAL;
 
-internal unsafe class OpenALEngine : AudioEngine
+internal unsafe class OpenALEngine : AudioDevice
 {
     private readonly IntPtr _device;
 

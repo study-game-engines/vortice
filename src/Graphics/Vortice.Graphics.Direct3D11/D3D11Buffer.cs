@@ -5,7 +5,7 @@ using Vortice.Direct3D11;
 
 namespace Vortice.Graphics;
 
-internal unsafe class D3D11Buffer : Buffer
+internal unsafe class D3D11Buffer : GraphicsBuffer
 {
     public D3D11Buffer(D3D11GraphicsDevice device, in BufferDescriptor descriptor, IntPtr initialData)
     : base(device, descriptor)

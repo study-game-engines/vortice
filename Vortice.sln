@@ -43,8 +43,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics.Direct3D11
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics.Direct3D12", "src\Graphics\Vortice.Graphics.Direct3D12\Vortice.Graphics.Direct3D12.csproj", "{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics.Vulkan", "src\Graphics\Vortice.Graphics.Vulkan\Vortice.Graphics.Vulkan.csproj", "{047848E6-6840-4380-BFA8-B30A772F5B7E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,18 +185,6 @@ Global
 		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|ARM64.Build.0 = Release|Any CPU
 		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|x64.ActiveCfg = Release|Any CPU
 		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|x64.Build.0 = Release|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Debug|x64.Build.0 = Debug|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Release|ARM64.Build.0 = Release|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Release|x64.ActiveCfg = Release|Any CPU
-		{047848E6-6840-4380-BFA8-B30A772F5B7E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,7 +197,6 @@ Global
 		{75D7E79F-6D04-431B-A268-7BB61925B75B} = {D8EC0278-B4F9-4EF5-A4BE-FE2284C6ECED}
 		{73D98EF9-55E5-46D9-B97D-55CE5650B32C} = {5810D06A-2697-41C0-B575-3B7B9C9BF255}
 		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81} = {5810D06A-2697-41C0-B575-3B7B9C9BF255}
-		{047848E6-6840-4380-BFA8-B30A772F5B7E} = {5810D06A-2697-41C0-B575-3B7B9C9BF255}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85020CE7-9EF6-4502-94F6-98643E762B78}

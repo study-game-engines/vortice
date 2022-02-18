@@ -3,18 +3,18 @@
 
 namespace Vortice.Audio;
 
-public abstract class AudioEngine : IDisposable
+public abstract class AudioDevice : IDisposable
 {
     private volatile int _isDisposed;
 
-    protected AudioEngine()
+    protected AudioDevice()
     {
     }
 
     /// <summary>
     /// Releases unmanaged resources and performs other cleanup operations.
     /// </summary>
-    ~AudioEngine()
+    ~AudioDevice()
     {
         if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 0)
         {

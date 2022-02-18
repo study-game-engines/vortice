@@ -4,11 +4,11 @@
 namespace Vortice.Graphics;
 
 /// <summary>
-/// Defines a GPU buffer
+/// Defines a Graphics buffer.
 /// </summary>
-public abstract class Buffer : GraphicsResource
+public abstract class GraphicsBuffer : GraphicsResource
 {
-    protected Buffer(GraphicsDevice device, in BufferDescriptor descriptor)
+    protected GraphicsBuffer(GraphicsDevice device, in BufferDescriptor descriptor)
         : base(device)
     {
         Usage = descriptor.Usage;

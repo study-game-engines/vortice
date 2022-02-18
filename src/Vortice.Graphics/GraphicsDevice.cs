@@ -82,14 +82,14 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     public abstract void WaitIdle();
 
-    public Buffer CreateBuffer(in BufferDescriptor descriptor)
+    public GraphicsBuffer CreateBuffer(in BufferDescriptor descriptor)
     {
         Guard.IsGreaterThanOrEqualTo(descriptor.Size, 1, nameof(BufferDescriptor.Size));
 
         return CreateBufferCore(descriptor, IntPtr.Zero);
     }
 
-    public Buffer CreateBuffer<T>(Span<T> data, BufferUsage usage = BufferUsage.ShaderReadWrite) where T : unmanaged
+    public GraphicsBuffer CreateBuffer<T>(Span<T> data, BufferUsage usage = BufferUsage.ShaderReadWrite) where T : unmanaged
     {
         unsafe
         {
@@ -120,5 +120,5 @@ public abstract class GraphicsDevice : IDisposable
     protected abstract SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor);
 
     protected abstract Texture CreateTextureCore(in TextureDescriptor descriptor);
-    protected abstract Buffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData);
+    protected abstract GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData);
 }

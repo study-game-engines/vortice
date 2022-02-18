@@ -6,7 +6,7 @@ using static Vortice.XAudio2.XAudio2;
 
 namespace Vortice.Audio.XAudio2;
 
-internal unsafe class XAudio2Engine : AudioEngine
+internal unsafe class XAudio2Engine : AudioDevice
 {
     private readonly IXAudio2 _xaudio2;
 
