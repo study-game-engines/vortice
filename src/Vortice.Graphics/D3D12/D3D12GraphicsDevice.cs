@@ -13,6 +13,9 @@ using static TerraFX.Interop.DirectX.D3D12_FEATURE;
 using static TerraFX.Interop.DirectX.D3D12;
 using static TerraFX.Interop.DirectX.D3D12_RENDER_PASS_TIER;
 using static TerraFX.Interop.DirectX.D3D12_RAYTRACING_TIER;
+using static TerraFX.Interop.DirectX.D3D12_MESSAGE_SEVERITY;
+using static TerraFX.Interop.DirectX.D3D12_MESSAGE_ID;
+using static TerraFX.Interop.DirectX.D3D12_RLDO_FLAGS;
 using static Vortice.Graphics.D3DUtilities;
 using System.Diagnostics;
 
@@ -152,6 +155,60 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
 
             if (validationMode != ValidationMode.Disabled)
             {
+                // Configure debug device (if active).
+                using ComPtr<ID3D12InfoQueue> infoQueue = default;
+                if (_d3dDevice.CopyTo(infoQueue.GetAddressOf()).SUCCEEDED)
+                {
+                    infoQueue.Get()->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+                    infoQueue.Get()->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+
+                    // These severities should be seen all the time
+                    uint severitiesCount = 4;
+                    if (validationMode == ValidationMode.Verbose)
+                    {
+                        // Verbose only filters
+                        severitiesCount = 5;
+                    }
+
+                    D3D12_MESSAGE_SEVERITY* enabledSeverities = stackalloc D3D12_MESSAGE_SEVERITY[5]
+                    {
+                        D3D12_MESSAGE_SEVERITY_CORRUPTION,
+                        D3D12_MESSAGE_SEVERITY_ERROR,
+                        D3D12_MESSAGE_SEVERITY_WARNING,
+                        D3D12_MESSAGE_SEVERITY_MESSAGE,
+                        // Verbose only filters
+                        D3D12_MESSAGE_SEVERITY_INFO
+                    };
+
+                    uint disabledMessagesCount = 6;
+                    D3D12_MESSAGE_ID* disabledMessages = stackalloc D3D12_MESSAGE_ID[6]
+                    {
+                        D3D12_MESSAGE_ID_CLEARRENDERTARGETVIEW_MISMATCHINGCLEARVALUE,
+                        D3D12_MESSAGE_ID_CLEARDEPTHSTENCILVIEW_MISMATCHINGCLEARVALUE,
+                        D3D12_MESSAGE_ID_MAP_INVALID_NULLRANGE,
+                        D3D12_MESSAGE_ID_UNMAP_INVALID_NULLRANGE,
+                        D3D12_MESSAGE_ID_EXECUTECOMMANDLISTS_WRONGSWAPCHAINBUFFERREFERENCE,
+                        D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+                    };
+
+
+#if VORTICE_DX12_USE_PIPELINE_LIBRARY
+                    disabledMessages.Add(D3D12_MESSAGE_ID_LOADPIPELINE_NAMENOTFOUND);
+                    disabledMessages.Add(D3D12_MESSAGE_ID_STOREPIPELINE_DUPLICATENAME);
+#endif
+
+                    D3D12_INFO_QUEUE_FILTER filter = new D3D12_INFO_QUEUE_FILTER();
+                    filter.AllowList.NumSeverities = severitiesCount;
+                    filter.AllowList.pSeverityList = enabledSeverities;
+                    filter.DenyList.NumIDs = disabledMessagesCount;
+                    filter.DenyList.pIDList = disabledMessages;
+
+                    // Clear out the existing filters since we're taking full control of them
+                    infoQueue.Get()->PushEmptyStorageFilter();
+
+                    ThrowIfFailed(infoQueue.Get()->AddStorageFilterEntries(&filter));
+                    //ThrowIfFailed(infoQueue.Get()->AddApplicationMessage(D3D12_MESSAGE_SEVERITY_MESSAGE, "D3D12 Debug Filters setup"));
+                }
             }
 
             ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&adapterDesc));
@@ -198,7 +255,7 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
                     TextureCompressionASTC_LDR = false,
                     TextureCompressionBC = true,
                     TextureCubeArray = true,
-                    Raytracing = featureDataOptions5.RaytracingTier >=  D3D12_RAYTRACING_TIER_1_0
+                    Raytracing = featureDataOptions5.RaytracingTier >= D3D12_RAYTRACING_TIER_1_0
                 },
                 Limits = new GraphicsDeviceLimits
                 {
@@ -269,6 +326,21 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     protected override void OnDispose()
     {
+#if DEBUG
+        uint refCount = _d3dDevice.Get()->Release();
+        if (refCount > 0)
+        {
+            Debug.WriteLine($"Direct3D12: There are {refCount} unreleased references left on the device");
+
+            using ComPtr<ID3D12DebugDevice> debugDevice = default;
+            if (_d3dDevice.CopyTo(debugDevice.GetAddressOf()).SUCCEEDED)
+            {
+                debugDevice.Get()->ReportLiveDeviceObjects(D3D12_RLDO_FLAGS.D3D12_RLDO_DETAIL | D3D12_RLDO_FLAGS.D3D12_RLDO_IGNORE_INTERNAL);
+            }
+        }
+#else
+        _d3dDevice.Dispose();
+#endif
         _factory.Dispose();
     }
 

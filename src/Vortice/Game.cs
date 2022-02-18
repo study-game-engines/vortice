@@ -75,6 +75,8 @@ public abstract class Game : IGame, IDisposable
     {
         if (dispose && !IsDisposed)
         {
+            GraphicsDevice.Dispose();
+
             Disposed?.Invoke(this, EventArgs.Empty);
             IsDisposed = true;
         }
