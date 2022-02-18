@@ -19,5 +19,5 @@ internal partial struct DXGI_SWAP_CHAIN_DESC1
     public DXGI_SCALING Scaling;
     public DXGI_SWAP_EFFECT SwapEffect;
     public DXGI_ALPHA_MODE AlphaMode;
-    public uint Flags;
+    public DXGI_SWAP_CHAIN_FLAG Flags;
 }

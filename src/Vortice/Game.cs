@@ -75,6 +75,8 @@ public abstract class Game : IGame, IDisposable
     {
         if (dispose && !IsDisposed)
         {
+            GraphicsDevice.WaitIdle();
+            View.SwapChain?.Dispose();
             GraphicsDevice.Dispose();
 
             Disposed?.Invoke(this, EventArgs.Empty);
@@ -108,7 +110,7 @@ public abstract class Game : IGame, IDisposable
 
     private void InitializeBeforeRun()
     {
-        //View.CreateSwapChain(GraphicsDevice);
+        View.CreateSwapChain(GraphicsDevice);
 
         Initialize();
 

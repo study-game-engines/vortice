@@ -97,9 +97,6 @@ internal unsafe partial struct ID3D12Device5
         return feature;
     }
 
-
-#if TODO
-    /// <inheritdoc cref="ID3D12Device.CreateCommandQueue" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(8)]
     public HRESULT CreateCommandQueue([NativeTypeName("const D3D12_COMMAND_QUEUE_DESC *")] D3D12_COMMAND_QUEUE_DESC* pDesc, [NativeTypeName("const IID &")] Guid* riid, void** ppCommandQueue)
@@ -107,6 +104,7 @@ internal unsafe partial struct ID3D12Device5
         return ((delegate* unmanaged<ID3D12Device5*, D3D12_COMMAND_QUEUE_DESC*, Guid*, void**, int>)(lpVtbl[8]))((ID3D12Device5*)Unsafe.AsPointer(ref this), pDesc, riid, ppCommandQueue);
     }
 
+#if TODO
     /// <inheritdoc cref="ID3D12Device.CreateCommandAllocator" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(9)]
@@ -245,8 +243,8 @@ internal unsafe partial struct ID3D12Device5
         D3D12_RESOURCE_ALLOCATION_INFO result;
         return *((delegate* unmanaged<ID3D12Device5*, D3D12_RESOURCE_ALLOCATION_INFO*, uint, uint, D3D12_RESOURCE_DESC*, D3D12_RESOURCE_ALLOCATION_INFO*>)(lpVtbl[25]))((ID3D12Device5*)Unsafe.AsPointer(ref this), &result, visibleMask, numResourceDescs, pResourceDescs);
     }
+#endif
 
-    /// <inheritdoc cref="ID3D12Device.GetCustomHeapProperties" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(26)]
     public D3D12_HEAP_PROPERTIES GetCustomHeapProperties(uint nodeMask, D3D12_HEAP_TYPE heapType)
@@ -263,6 +261,7 @@ internal unsafe partial struct ID3D12Device5
         return ((delegate* unmanaged<ID3D12Device5*, D3D12_HEAP_PROPERTIES*, D3D12_HEAP_FLAGS, D3D12_RESOURCE_DESC*, D3D12_RESOURCE_STATES, D3D12_CLEAR_VALUE*, Guid*, void**, int>)(lpVtbl[27]))((ID3D12Device5*)Unsafe.AsPointer(ref this), pHeapProperties, HeapFlags, pDesc, InitialResourceState, pOptimizedClearValue, riidResource, ppvResource);
     }
 
+#if TODO
     /// <inheritdoc cref="ID3D12Device.CreateHeap" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(28)]
@@ -326,8 +325,8 @@ internal unsafe partial struct ID3D12Device5
     {
         return ((delegate* unmanaged<ID3D12Device5*, uint, ID3D12Pageable**, int>)(lpVtbl[35]))((ID3D12Device5*)Unsafe.AsPointer(ref this), NumObjects, ppObjects);
     }
+#endif
 
-    /// <inheritdoc cref="ID3D12Device.CreateFence" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(36)]
     public HRESULT CreateFence([NativeTypeName("UINT64")] ulong InitialValue, D3D12_FENCE_FLAGS Flags, [NativeTypeName("const IID &")] Guid* riid, void** ppFence)
@@ -343,6 +342,7 @@ internal unsafe partial struct ID3D12Device5
         return ((delegate* unmanaged<ID3D12Device5*, int>)(lpVtbl[37]))((ID3D12Device5*)Unsafe.AsPointer(ref this));
     }
 
+#if TODO
     /// <inheritdoc cref="ID3D12Device.GetCopyableFootprints" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(38)]

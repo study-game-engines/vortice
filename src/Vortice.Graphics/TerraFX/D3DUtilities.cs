@@ -208,7 +208,7 @@ internal static class D3DUtilities
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static TextureSampleCount FromD3D(int count)
+    public static TextureSampleCount FromD3D(uint count)
     {
         return (TextureSampleCount)count;
     }

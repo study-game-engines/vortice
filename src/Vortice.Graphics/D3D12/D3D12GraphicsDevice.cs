@@ -16,6 +16,8 @@ using static TerraFX.Interop.DirectX.D3D12_RAYTRACING_TIER;
 using static TerraFX.Interop.DirectX.D3D12_MESSAGE_SEVERITY;
 using static TerraFX.Interop.DirectX.D3D12_MESSAGE_ID;
 using static TerraFX.Interop.DirectX.D3D12_RLDO_FLAGS;
+using static TerraFX.Interop.DirectX.D3D12_COMMAND_LIST_TYPE;
+using static TerraFX.Interop.DirectX.D3D12_FENCE_FLAGS;
 using static Vortice.Graphics.D3DUtilities;
 using System.Diagnostics;
 
@@ -26,8 +28,9 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
     private readonly GraphicsDeviceCaps _caps;
     private readonly ComPtr<IDXGIFactory4> _factory;
-    private readonly bool _tearingSupported;
     private readonly ComPtr<ID3D12Device5> _d3dDevice;
+    private readonly ComPtr<ID3D12CommandQueue> _graphicsQueue;
+    private readonly ComPtr<ID3D12Fence> _graphicsFence;
 
     public D3D12GraphicsDevice(
             ValidationMode validationMode = ValidationMode.Disabled,
@@ -89,12 +92,12 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
 
             if (hr.FAILED || !allowTearing)
             {
-                _tearingSupported = false;
+                TearingSupported = false;
                 Debug.WriteLine("WARNING: Variable refresh rate displays not supported");
             }
             else
             {
-                _tearingSupported = true;
+                TearingSupported = true;
             }
         }
 
@@ -133,7 +136,7 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
                 ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&adapterDesc));
 
                 // Don't select the Basic Render Driver adapter.
-                if ((adapterDesc.Flags & (uint)DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
+                if ((adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
                 {
                     continue;
                 }
@@ -217,7 +220,7 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
             VendorId = (GpuVendorId)adapterDesc.VendorId;
             AdapterId = (uint)adapterDesc.DeviceId;
 
-            if ((adapterDesc.Flags & (uint)DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
+            if ((adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
             {
                 AdapterType = GpuAdapterType.CPU;
             }
@@ -289,11 +292,40 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
                 }
             };
         }
+
+        // Create command queue's
+        D3D12_COMMAND_QUEUE_DESC commandQueueDesc = new D3D12_COMMAND_QUEUE_DESC
+        {
+            Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
+            Priority = (int)D3D12_COMMAND_QUEUE_PRIORITY.D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+            Flags = D3D12_COMMAND_QUEUE_FLAGS.D3D12_COMMAND_QUEUE_FLAG_NONE,
+            NodeMask = 0
+        };
+
+        ThrowIfFailed(_d3dDevice.Get()->CreateCommandQueue(
+            &commandQueueDesc,
+            __uuidof<ID3D12CommandQueue>(),
+            (void**)_graphicsQueue.GetAddressOf())
+            );
+
+        _graphicsQueue.Get()->SetName($"{CommandQueueType.Graphics} Command Queue");
+
+        ThrowIfFailed(_d3dDevice.Get()->CreateFence(0,
+            D3D12_FENCE_FLAG_NONE,
+            __uuidof<ID3D12Fence>(),
+            (void**)_graphicsFence.GetAddressOf())
+            );
     }
 
     /// <inheritdoc />
     public override void WaitIdle()
     {
+        ThrowIfFailed(_graphicsQueue.Get()->Signal(_graphicsFence.Get(), 1));
+        if (_graphicsFence.Get()->GetCompletedValue() < 1)
+        {
+            ThrowIfFailed(_graphicsFence.Get()->SetEventOnCompletion(1, HANDLE.NULL));
+        }
+        ThrowIfFailed(_graphicsFence.Get()->Signal(0));
     }
 
     // <inheritdoc />
@@ -314,6 +346,8 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     public override GraphicsDeviceCaps Capabilities => _caps;
 
+    internal bool TearingSupported { get; }
+
     internal bool SupportsRenderPass { get; }
 
     /// <summary>
@@ -321,11 +355,19 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
     /// </summary>
     internal bool IsCacheCoherentUMA { get; }
 
+    internal IDXGIFactory4* Factory => _factory.Get();
+
     internal ID3D12Device5* NativeDevice => _d3dDevice.Get();
+    internal ID3D12CommandQueue* GraphicsQueue => _graphicsQueue.Get();
 
     /// <inheritdoc />
     protected override void OnDispose()
     {
+        WaitIdle();
+
+        _graphicsFence.Dispose();
+        _graphicsQueue.Dispose();
+
 #if DEBUG
         uint refCount = _d3dDevice.Get()->Release();
         if (refCount > 0)
@@ -335,7 +377,7 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
             using ComPtr<ID3D12DebugDevice> debugDevice = default;
             if (_d3dDevice.CopyTo(debugDevice.GetAddressOf()).SUCCEEDED)
             {
-                debugDevice.Get()->ReportLiveDeviceObjects(D3D12_RLDO_FLAGS.D3D12_RLDO_DETAIL | D3D12_RLDO_FLAGS.D3D12_RLDO_IGNORE_INTERNAL);
+                debugDevice.Get()->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
             }
         }
 #else
@@ -366,14 +408,15 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
                 ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&adapterDesc));
 
                 // Don't select the Basic Render Driver adapter.
-                if ((adapterDesc.Flags & (uint)DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
+                if ((adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
                 {
                     continue;
                 }
 
                 // Check to see if the adapter supports Direct3D 12,
                 // but don't create the actual device.
-                if (D3D12CreateDevice((IUnknown*)dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_0, __uuidof<ID3D12Device>(), null).SUCCEEDED)
+                Guid IID_ID3D12Device = new Guid("189819F1-1DB6-4B57-BE54-1821339B85F7");
+                if (D3D12CreateDevice((IUnknown*)dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_0, &IID_ID3D12Device, null).SUCCEEDED)
                 {
                     foundCompatibleDevice = true;
                     break;
@@ -396,7 +439,7 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => throw new NotImplementedException();
     /// <inheritdoc />
-    protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => throw new NotImplementedException();
+    protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D12.D3D12Texture(this, descriptor);
     /// <inheritdoc />
-    protected override SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor) => throw new NotImplementedException();
+    protected override SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor) => new D3D12.D3D12SwapChain(this, source, descriptor);
 }

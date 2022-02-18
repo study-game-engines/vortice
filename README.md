@@ -17,6 +17,7 @@ Uses the following open-source and third-party libraries:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan): Cross platform .NET bindings for Vulkan
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows): .NET bindings for Direct3D12, Direct3D11, WIC, Direct2D1, XInput, XAudio, X3DAudio, DXC, Direct3D9 and DirectInput.
+- [terrafx.interop.windows](https://github.com/terrafx/terrafx.interop.windows): Interop bindings for Windows.
 
 ## License
 

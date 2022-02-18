@@ -42,6 +42,13 @@ internal unsafe partial struct IDXGIFactory4
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [VtblIndex(8)]
+    public HRESULT MakeWindowAssociation(IntPtr WindowHandle, uint Flags)
+    {
+        return ((delegate* unmanaged<IDXGIFactory4*, IntPtr, uint, int>)(lpVtbl[8]))((IDXGIFactory4*)Unsafe.AsPointer(ref this), WindowHandle, Flags);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(12)]
     public HRESULT EnumAdapters1(uint Adapter, IDXGIAdapter1** ppAdapter)
     {

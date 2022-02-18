@@ -41,8 +41,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphics", "Graphics", "{58
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics.Direct3D11", "src\Graphics\Vortice.Graphics.Direct3D11\Vortice.Graphics.Direct3D11.csproj", "{73D98EF9-55E5-46D9-B97D-55CE5650B32C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics.Direct3D12", "src\Graphics\Vortice.Graphics.Direct3D12\Vortice.Graphics.Direct3D12.csproj", "{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,18 +171,6 @@ Global
 		{73D98EF9-55E5-46D9-B97D-55CE5650B32C}.Release|ARM64.Build.0 = Release|Any CPU
 		{73D98EF9-55E5-46D9-B97D-55CE5650B32C}.Release|x64.ActiveCfg = Release|Any CPU
 		{73D98EF9-55E5-46D9-B97D-55CE5650B32C}.Release|x64.Build.0 = Release|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Debug|x64.Build.0 = Debug|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|ARM64.Build.0 = Release|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|x64.ActiveCfg = Release|Any CPU
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -196,7 +182,6 @@ Global
 		{96F40ED5-9D9E-4D06-A308-BA76E0F3616C} = {D8EC0278-B4F9-4EF5-A4BE-FE2284C6ECED}
 		{75D7E79F-6D04-431B-A268-7BB61925B75B} = {D8EC0278-B4F9-4EF5-A4BE-FE2284C6ECED}
 		{73D98EF9-55E5-46D9-B97D-55CE5650B32C} = {5810D06A-2697-41C0-B575-3B7B9C9BF255}
-		{91E12419-E19C-4C1B-93AF-0FC2BED3EF81} = {5810D06A-2697-41C0-B575-3B7B9C9BF255}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85020CE7-9EF6-4502-94F6-98643E762B78}

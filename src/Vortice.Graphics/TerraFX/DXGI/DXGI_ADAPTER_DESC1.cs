@@ -23,5 +23,5 @@ internal unsafe partial struct DXGI_ADAPTER_DESC1
     [NativeTypeName("SIZE_T")]
     public nuint SharedSystemMemory;
     public LUID AdapterLuid;
-    public uint Flags;
+    public DXGI_ADAPTER_FLAG Flags;
 }

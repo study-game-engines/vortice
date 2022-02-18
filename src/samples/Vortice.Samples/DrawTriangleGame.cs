@@ -30,9 +30,9 @@ public sealed class DrawTriangleGame : Game
         //{
         //}
         //
-        //using (var texture = GraphicsDevice.CreateTexture(TextureDescriptor.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
-        //{
-        //}
+        using (var texture = GraphicsDevice.CreateTexture(TextureDescriptor.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
+        {
+        }
     }
 
     public readonly struct VertexPositionColor

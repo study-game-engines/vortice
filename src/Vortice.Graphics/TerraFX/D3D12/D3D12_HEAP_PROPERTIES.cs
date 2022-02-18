@@ -1,0 +1,59 @@
+// Copyright © Tanner Gooding and Contributors. Licensed under the MIT License (MIT). See License.md in the repository root for more information.
+
+// Ported from um/d3d12.h in the Windows SDK for Windows 10.0.22000.0
+// Original source is Copyright © Microsoft. All rights reserved.
+
+namespace TerraFX.Interop.DirectX;
+
+internal enum D3D12_HEAP_TYPE
+{
+    D3D12_HEAP_TYPE_DEFAULT = 1,
+    D3D12_HEAP_TYPE_UPLOAD = 2,
+    D3D12_HEAP_TYPE_READBACK = 3,
+    D3D12_HEAP_TYPE_CUSTOM = 4,
+}
+
+internal enum D3D12_CPU_PAGE_PROPERTY
+{
+    D3D12_CPU_PAGE_PROPERTY_UNKNOWN = 0,
+    D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE = 1,
+    D3D12_CPU_PAGE_PROPERTY_WRITE_COMBINE = 2,
+    D3D12_CPU_PAGE_PROPERTY_WRITE_BACK = 3,
+}
+
+internal enum D3D12_MEMORY_POOL
+{
+    D3D12_MEMORY_POOL_UNKNOWN = 0,
+    D3D12_MEMORY_POOL_L0 = 1,
+    D3D12_MEMORY_POOL_L1 = 2,
+}
+
+[Flags]
+internal enum D3D12_HEAP_FLAGS
+{
+    D3D12_HEAP_FLAG_NONE = 0,
+    D3D12_HEAP_FLAG_SHARED = 0x1,
+    D3D12_HEAP_FLAG_DENY_BUFFERS = 0x4,
+    D3D12_HEAP_FLAG_ALLOW_DISPLAY = 0x8,
+    D3D12_HEAP_FLAG_SHARED_CROSS_ADAPTER = 0x20,
+    D3D12_HEAP_FLAG_DENY_RT_DS_TEXTURES = 0x40,
+    D3D12_HEAP_FLAG_DENY_NON_RT_DS_TEXTURES = 0x80,
+    D3D12_HEAP_FLAG_HARDWARE_PROTECTED = 0x100,
+    D3D12_HEAP_FLAG_ALLOW_WRITE_WATCH = 0x200,
+    D3D12_HEAP_FLAG_ALLOW_SHADER_ATOMICS = 0x400,
+    D3D12_HEAP_FLAG_CREATE_NOT_RESIDENT = 0x800,
+    D3D12_HEAP_FLAG_CREATE_NOT_ZEROED = 0x1000,
+    D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES = 0,
+    D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS = 0xc0,
+    D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES = 0x44,
+    D3D12_HEAP_FLAG_ALLOW_ONLY_RT_DS_TEXTURES = 0x84,
+}
+
+internal partial struct D3D12_HEAP_PROPERTIES
+{
+    public D3D12_HEAP_TYPE Type;
+    public D3D12_CPU_PAGE_PROPERTY CPUPageProperty;
+    public D3D12_MEMORY_POOL MemoryPoolPreference;
+    public uint CreationNodeMask;
+    public uint VisibleNodeMask;
+}
