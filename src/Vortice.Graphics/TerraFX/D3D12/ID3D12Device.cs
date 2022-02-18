@@ -11,7 +11,7 @@ namespace TerraFX.Interop.DirectX;
 [Guid("189819F1-1DB6-4B57-BE54-1821339B85F7")]
 [NativeTypeName("struct ID3D12Device : ID3D12Object")]
 [NativeInheritance("ID3D12Object")]
-internal unsafe partial struct ID3D12Device : ID3D12Device.Interface
+internal unsafe partial struct ID3D12Device
 {
     public void** lpVtbl;
 
@@ -67,9 +67,5 @@ internal unsafe partial struct ID3D12Device : ID3D12Device.Interface
     public HRESULT SetName([NativeTypeName("LPCWSTR")] ushort* Name)
     {
         return ((delegate* unmanaged<ID3D12Device*, ushort*, int>)(lpVtbl[6]))((ID3D12Device*)Unsafe.AsPointer(ref this), Name);
-    }
-
-    public interface Interface : ID3D12Object.Interface
-    {
     }
 }

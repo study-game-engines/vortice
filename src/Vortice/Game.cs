@@ -106,7 +106,7 @@ public abstract class Game : IGame, IDisposable
 
     private void InitializeBeforeRun()
     {
-        View.CreateSwapChain(GraphicsDevice);
+        //View.CreateSwapChain(GraphicsDevice);
 
         Initialize();
 

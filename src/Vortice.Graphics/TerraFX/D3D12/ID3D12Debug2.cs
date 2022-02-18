@@ -11,7 +11,7 @@ namespace TerraFX.Interop.DirectX;
 [Guid("93A665C4-A3B2-4E5D-B692-A26AE14E3374")]
 [NativeTypeName("struct ID3D12Debug2 : IUnknown")]
 [NativeInheritance("IUnknown")]
-internal unsafe partial struct ID3D12Debug2 : ID3D12Debug2.Interface
+internal unsafe partial struct ID3D12Debug2
 {
     public void** lpVtbl;
 
@@ -47,27 +47,5 @@ internal unsafe partial struct ID3D12Debug2 : ID3D12Debug2.Interface
     public void SetGPUBasedValidationFlags(D3D12_GPU_BASED_VALIDATION_FLAGS Flags)
     {
         ((delegate* unmanaged<ID3D12Debug2*, D3D12_GPU_BASED_VALIDATION_FLAGS, void>)(lpVtbl[3]))((ID3D12Debug2*)Unsafe.AsPointer(ref this), Flags);
-    }
-
-    public interface Interface : IUnknown.Interface
-    {
-        [VtblIndex(3)]
-        void SetGPUBasedValidationFlags(D3D12_GPU_BASED_VALIDATION_FLAGS Flags);
-    }
-
-    public partial struct Vtbl<TSelf>
-        where TSelf : unmanaged, Interface
-    {
-        [NativeTypeName("HRESULT (const IID &, void **) __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, Guid*, void**, int> QueryInterface;
-
-        [NativeTypeName("ULONG () __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, uint> AddRef;
-
-        [NativeTypeName("ULONG () __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, uint> Release;
-
-        [NativeTypeName("void (D3D12_GPU_BASED_VALIDATION_FLAGS) __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, D3D12_GPU_BASED_VALIDATION_FLAGS, void> SetGPUBasedValidationFlags;
     }
 }

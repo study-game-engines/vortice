@@ -10,7 +10,7 @@ namespace TerraFX.Interop.DirectX;
 [Guid("344488B7-6846-474B-B989-F027448245E0")]
 [NativeTypeName("struct ID3D12Debug : IUnknown")]
 [NativeInheritance("IUnknown")]
-internal unsafe partial struct ID3D12Debug : ID3D12Debug.Interface
+internal unsafe partial struct ID3D12Debug
 {
     public void** lpVtbl;
 
@@ -45,27 +45,5 @@ internal unsafe partial struct ID3D12Debug : ID3D12Debug.Interface
     public void EnableDebugLayer()
     {
         ((delegate* unmanaged<ID3D12Debug*, void>)(lpVtbl[3]))((ID3D12Debug*)Unsafe.AsPointer(ref this));
-    }
-
-    public interface Interface : IUnknown.Interface
-    {
-        [VtblIndex(3)]
-        void EnableDebugLayer();
-    }
-
-    public partial struct Vtbl<TSelf>
-        where TSelf : unmanaged, Interface
-    {
-        [NativeTypeName("HRESULT (const IID &, void **) __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, Guid*, void**, int> QueryInterface;
-
-        [NativeTypeName("ULONG () __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, uint> AddRef;
-
-        [NativeTypeName("ULONG () __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, uint> Release;
-
-        [NativeTypeName("void () __attribute__((stdcall))")]
-        public delegate* unmanaged<TSelf*, void> EnableDebugLayer;
     }
 }

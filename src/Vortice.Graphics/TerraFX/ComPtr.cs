@@ -12,7 +12,7 @@ namespace TerraFX.Interop.Windows;
 /// <summary>A type that allows working with pointers to COM objects more securely.</summary>
 /// <typeparam name="T">The type to wrap in the current <see cref="ComPtr{T}"/> instance.</typeparam>
 /// <remarks>While this type is not marked as <see langword="ref"/> so that it can also be used in fields, make sure to keep the reference counts properly tracked if you do store <see cref="ComPtr{T}"/> instances on the heap.</remarks>
-internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Interface
+internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged
 {
     /// <summary>The raw pointer to a COM object, if existing.</summary>
     private T* ptr_;
@@ -51,9 +51,9 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     /// <returns>The result of <see cref="IUnknown.QueryInterface"/> for the target type <typeparamref name="U"/>.</returns>
     /// <remarks>This method will automatically release the target COM object pointed to by <paramref name="p"/>, if any.</remarks>
     public readonly HRESULT As<U>(ComPtr<U>* p)
-        where U : unmanaged, IUnknown.Interface
+        where U : unmanaged
     {
-        return ptr_->QueryInterface(__uuidof<U>(), (void**)p->ReleaseAndGetAddressOf());
+        return ((IUnknown*)ptr_)->QueryInterface(__uuidof<U>(), (void**)p->ReleaseAndGetAddressOf());
     }
 
     /// <summary>Converts the current object reference to type <typeparamref name="U"/> and assigns that to a target <see cref="ComPtr{T}"/> value.</summary>
@@ -61,11 +61,10 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     /// <param name="other">A reference to the target <see cref="ComPtr{T}"/> value to write to.</param>
     /// <returns>The result of <see cref="IUnknown.QueryInterface"/> for the target type <typeparamref name="U"/>.</returns>
     /// <remarks>This method will automatically release the target COM object pointed to by <paramref name="other"/>, if any.</remarks>
-    public readonly HRESULT As<U>(ref ComPtr<U> other)
-        where U : unmanaged, IUnknown.Interface
+    public readonly HRESULT As<U>(ref ComPtr<U> other) where U : unmanaged
     {
         U* ptr;
-        HRESULT result = ptr_->QueryInterface(__uuidof<U>(), (void**)&ptr);
+        HRESULT result = ((IUnknown*)ptr_)->QueryInterface(__uuidof<U>(), (void**)&ptr);
 
         other.Attach(ptr);
         return result;
@@ -78,7 +77,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     /// <remarks>This method will automatically release the target COM object pointed to by <paramref name="other"/>, if any.</remarks>
     public readonly HRESULT AsIID(Guid* riid, ComPtr<IUnknown>* other)
     {
-        return ptr_->QueryInterface(riid, (void**)other->ReleaseAndGetAddressOf());
+        return ((IUnknown*)ptr_)->QueryInterface(riid, (void**)other->ReleaseAndGetAddressOf());
     }
 
     /// <summary>Converts the current object reference to a type indicated by the given IID and assigns that to a target <see cref="ComPtr{T}"/> value.</summary>
@@ -89,7 +88,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     public readonly HRESULT AsIID(Guid* riid, ref ComPtr<IUnknown> other)
     {
         IUnknown* ptr;
-        HRESULT result = ptr_->QueryInterface(riid, (void**)&ptr);
+        HRESULT result = ((IUnknown*)ptr_)->QueryInterface(riid, (void**)&ptr);
 
         other.Attach(ptr);
         return result;
@@ -102,7 +101,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     {
         if (ptr_ != null)
         {
-            var @ref = ptr_->Release();
+            var @ref = ((IUnknown*)ptr_)->Release();
             Debug.Assert((@ref != 0) || (ptr_ != other));
         }
         ptr_ = other;
@@ -151,29 +150,26 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     /// <summary>Converts the current COM object reference to a given interface type and assigns that to a target raw pointer.</summary>
     /// <param name="ptr">The target raw pointer to copy the address of the current COM object to.</param>
     /// <returns>The result of <see cref="IUnknown.QueryInterface"/> for the target type <typeparamref name="U"/>.</returns>
-    public readonly HRESULT CopyTo<U>(U** ptr)
-        where U : unmanaged, IUnknown.Interface
+    public readonly HRESULT CopyTo<U>(U** ptr) where U : unmanaged
     {
-        return ptr_->QueryInterface(__uuidof<U>(), (void**)ptr);
+        return ((IUnknown*)ptr_)->QueryInterface(__uuidof<U>(), (void**)ptr);
     }
 
     /// <summary>Converts the current COM object reference to a given interface type and assigns that to a target <see cref="ComPtr{T}"/>.</summary>
     /// <param name="p">The target raw pointer to copy the address of the current COM object to.</param>
     /// <returns>The result of <see cref="IUnknown.QueryInterface"/> for the target type <typeparamref name="U"/>.</returns>
-    public readonly HRESULT CopyTo<U>(ComPtr<U>* p)
-        where U : unmanaged, IUnknown.Interface
+    public readonly HRESULT CopyTo<U>(ComPtr<U>* p) where U : unmanaged
     {
-        return ptr_->QueryInterface(__uuidof<U>(), (void**)p->ReleaseAndGetAddressOf());
+        return ((IUnknown*)ptr_)->QueryInterface(__uuidof<U>(), (void**)p->ReleaseAndGetAddressOf());
     }
 
     /// <summary>Converts the current COM object reference to a given interface type and assigns that to a target <see cref="ComPtr{T}"/>.</summary>
     /// <param name="other">The target reference to copy the address of the current COM object to.</param>
     /// <returns>The result of <see cref="IUnknown.QueryInterface"/> for the target type <typeparamref name="U"/>.</returns>
-    public readonly HRESULT CopyTo<U>(ref ComPtr<U> other)
-        where U : unmanaged, IUnknown.Interface
+    public readonly HRESULT CopyTo<U>(ref ComPtr<U> other) where U : unmanaged
     {
         U* ptr;
-        HRESULT result = ptr_->QueryInterface(__uuidof<U>(), (void**)&ptr);
+        HRESULT result = ((IUnknown*)ptr_)->QueryInterface(__uuidof<U>(), (void**)&ptr);
 
         other.Attach(ptr);
         return result;
@@ -185,7 +181,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     /// <returns>The result of <see cref="IUnknown.QueryInterface"/> for the target IID.</returns>
     public readonly HRESULT CopyTo(Guid* riid, void** ptr)
     {
-        return ptr_->QueryInterface(riid, ptr);
+        return ((IUnknown*)ptr_)->QueryInterface(riid, ptr);
     }
 
     /// <summary>Converts the current object reference to a type indicated by the given IID and assigns that to a target <see cref="ComPtr{T}"/> value.</summary>
@@ -194,7 +190,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     /// <returns>The result of <see cref="IUnknown.QueryInterface"/> for the target IID.</returns>
     public readonly HRESULT CopyTo(Guid* riid, ComPtr<IUnknown>* p)
     {
-        return ptr_->QueryInterface(riid, (void**)p->ReleaseAndGetAddressOf());
+        return ((IUnknown*)ptr_)->QueryInterface(riid, (void**)p->ReleaseAndGetAddressOf());
     }
 
     /// <summary>Converts the current object reference to a type indicated by the given IID and assigns that to a target <see cref="ComPtr{T}"/> value.</summary>
@@ -204,7 +200,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
     public readonly HRESULT CopyTo(Guid* riid, ref ComPtr<IUnknown> other)
     {
         IUnknown* ptr;
-        HRESULT result = ptr_->QueryInterface(riid, (void**)&ptr);
+        HRESULT result = ((IUnknown*)ptr_)->QueryInterface(riid, (void**)&ptr);
 
         other.Attach(ptr);
         return result;
@@ -219,7 +215,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
         if (pointer != null)
         {
             ptr_ = null;
-            _ = pointer->Release();
+            _ = ((IUnknown*)pointer)->Release();
         }
     }
 
@@ -323,7 +319,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
 
         if (temp != null)
         {
-            _ = temp->AddRef();
+            _ = ((IUnknown*)temp)->AddRef();
         }
     }
 
@@ -336,7 +332,7 @@ internal unsafe struct ComPtr<T> : IDisposable where T : unmanaged, IUnknown.Int
         if (temp != null)
         {
             ptr_ = null;
-            @ref = temp->Release();
+            @ref = ((IUnknown*)temp)->Release();
         }
 
         return @ref;

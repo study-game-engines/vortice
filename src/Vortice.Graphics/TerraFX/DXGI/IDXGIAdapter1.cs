@@ -11,7 +11,7 @@ namespace TerraFX.Interop.DirectX;
 [Guid("29038F61-3839-4626-91FD-086879011A05")]
 [NativeTypeName("struct IDXGIAdapter1 : IDXGIAdapter")]
 [NativeInheritance("IDXGIAdapter")]
-internal unsafe partial struct IDXGIAdapter1 : IDXGIAdapter1.Interface
+internal unsafe partial struct IDXGIAdapter1
 {
     public void** lpVtbl;
 
@@ -47,11 +47,5 @@ internal unsafe partial struct IDXGIAdapter1 : IDXGIAdapter1.Interface
     public HRESULT GetDesc1(DXGI_ADAPTER_DESC1* pDesc)
     {
         return ((delegate* unmanaged<IDXGIAdapter1*, DXGI_ADAPTER_DESC1*, int>)(lpVtbl[10]))((IDXGIAdapter1*)Unsafe.AsPointer(ref this), pDesc);
-    }
-
-    public interface Interface : IUnknown.Interface
-    {
-        [VtblIndex(10)]
-        HRESULT GetDesc1(DXGI_ADAPTER_DESC1* pDesc);
     }
 }

@@ -11,7 +11,7 @@ namespace TerraFX.Interop.DirectX;
 [Guid("1BC6EA02-EF36-464F-BF0C-21CA39E5168A")]
 [NativeTypeName("struct IDXGIFactory4 : IDXGIFactory3")]
 [NativeInheritance("IDXGIFactory3")]
-internal unsafe partial struct IDXGIFactory4 : IDXGIFactory4.Interface
+internal unsafe partial struct IDXGIFactory4 
 {
     public void** lpVtbl;
 
@@ -94,14 +94,5 @@ internal unsafe partial struct IDXGIFactory4 : IDXGIFactory4.Interface
     public HRESULT EnumWarpAdapter([NativeTypeName("const IID &")] Guid* riid, void** ppvAdapter)
     {
         return ((delegate* unmanaged<IDXGIFactory4*, Guid*, void**, int>)(lpVtbl[27]))((IDXGIFactory4*)Unsafe.AsPointer(ref this), riid, ppvAdapter);
-    }
-
-    public interface Interface : IUnknown.Interface
-    {
-        [VtblIndex(26)]
-        HRESULT EnumAdapterByLuid(LUID AdapterLuid, [NativeTypeName("const IID &")] Guid* riid, void** ppvAdapter);
-
-        [VtblIndex(27)]
-        HRESULT EnumWarpAdapter([NativeTypeName("const IID &")] Guid* riid, void** ppvAdapter);
     }
 }
