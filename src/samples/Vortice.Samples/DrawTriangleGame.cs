@@ -19,20 +19,25 @@ public sealed class DrawTriangleGame : Game
     {
         base.Initialize();
 
-        //Span<VertexPositionColor> triangleVertices = new VertexPositionColor[]
-        //{
-        //    new VertexPositionColor(new Vector3(0f, 0.5f, 0.5f), Colors.Red),
-        //    new VertexPositionColor(new Vector3(0.5f, -0.5f, 0.5f), Colors.LightBlue),
-        //    new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
-        //};
-        //
-        //using (var vertexBuffer = GraphicsDevice.CreateBuffer(triangleVertices, BufferUsage.Vertex))
-        //{
-        //}
-        //
+        Span<VertexPositionColor> triangleVertices = new VertexPositionColor[]
+        {
+            new VertexPositionColor(new Vector3(0f, 0.5f, 0.5f), Colors.Red),
+            new VertexPositionColor(new Vector3(0.5f, -0.5f, 0.5f), Colors.LightBlue),
+            new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
+        };
+
+        using GraphicsBuffer vertexBuffer = GraphicsDevice.CreateBuffer(triangleVertices, BufferUsage.Vertex);
+        
         using (var texture = GraphicsDevice.CreateTexture(TextureDescriptor.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
         {
         }
+    }
+
+    public override void Draw(GameTime gameTime)
+    {
+        base.Draw(gameTime);
+
+        using CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer();
     }
 
     public readonly struct VertexPositionColor

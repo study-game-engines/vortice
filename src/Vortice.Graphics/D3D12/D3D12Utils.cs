@@ -10,7 +10,7 @@ using static Vortice.Graphics.D3DUtilities;
 
 namespace Vortice.Graphics.D3D12;
 
-internal static class D3D12Utils
+internal static unsafe class D3D12Utils
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static D3D12_RESOURCE_DIMENSION ToD3D12(TextureDimension dimension)
@@ -67,7 +67,6 @@ internal static class D3D12Utils
         return usage;
     }
 
-
     public static TextureDescriptor FromD3D12(D3D12_RESOURCE_DESC d3dDesc)
     {
         TextureDimension dimension = FromD3D12(d3dDesc.Dimension);
@@ -82,5 +81,26 @@ internal static class D3D12Utils
             d3dDesc.MipLevels,
             usage,
             sampleCount);
+    }
+
+    public static void GetCopyableFootprint(this ref ID3D12Device5 device,
+        D3D12_RESOURCE_DESC* pResourceDesc,
+        out D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint,
+        out uint numRows,
+        out ulong rowSizeInBytes,
+        out ulong totalSizeInBytes)
+    {
+        uint pNumRows;
+        ulong pRowSizeInBytes;
+        ulong pTotalBytes;
+
+        fixed (D3D12_PLACED_SUBRESOURCE_FOOTPRINT* pFootprint = &footprint)
+        {
+            device.GetCopyableFootprints(pResourceDesc, 0, 1, 0, pFootprint, &pNumRows, &pRowSizeInBytes, &pTotalBytes);
+        }
+
+        numRows = pNumRows;
+        rowSizeInBytes = pRowSizeInBytes;
+        totalSizeInBytes = pTotalBytes;
     }
 }

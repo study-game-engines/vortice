@@ -17,4 +17,5 @@ public enum BufferUsage
     ShaderWrite = 1 << 4,
     ShaderReadWrite = ShaderRead | ShaderWrite,
     Indirect = 1 << 5,
+    RayTracing = 1 << 6,
 }

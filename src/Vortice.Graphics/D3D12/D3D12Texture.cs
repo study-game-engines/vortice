@@ -17,6 +17,8 @@ namespace Vortice.Graphics.D3D12;
 internal unsafe class D3D12Texture : Texture
 {
     private readonly ComPtr<ID3D12Resource> _handle;
+    private readonly D3D12_PLACED_SUBRESOURCE_FOOTPRINT _footprint;
+    private readonly ulong _allocatedSize;
 
     public D3D12Texture(GraphicsDevice device, ID3D12Resource* handle)
         : base(device, FromD3D12(handle->GetDesc()))
@@ -29,7 +31,7 @@ internal unsafe class D3D12Texture : Texture
     {
         D3D12_RESOURCE_DESC resourceDesc = new()
         {
-            Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D, // ToD3D12(descriptor.Dimension),
+            Dimension = ToD3D12(descriptor.Dimension),
             Alignment = 0u,
             Width = (ulong)descriptor.Width,
             Height = (uint)descriptor.Height,
@@ -99,7 +101,10 @@ internal unsafe class D3D12Texture : Texture
 
         if (hr.FAILED)
         {
+            ThrowIfFailed(hr);
         }
+
+        device.NativeDevice->GetCopyableFootprint(&resourceDesc, out _footprint, out _, out _, out _allocatedSize);
     }
 
     public ID3D12Resource* Handle => _handle;

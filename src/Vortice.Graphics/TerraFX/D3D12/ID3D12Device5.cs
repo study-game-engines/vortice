@@ -104,7 +104,6 @@ internal unsafe partial struct ID3D12Device5
         return ((delegate* unmanaged<ID3D12Device5*, D3D12_COMMAND_QUEUE_DESC*, Guid*, void**, int>)(lpVtbl[8]))((ID3D12Device5*)Unsafe.AsPointer(ref this), pDesc, riid, ppCommandQueue);
     }
 
-#if TODO
     /// <inheritdoc cref="ID3D12Device.CreateCommandAllocator" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(9)]
@@ -113,6 +112,7 @@ internal unsafe partial struct ID3D12Device5
         return ((delegate* unmanaged<ID3D12Device5*, D3D12_COMMAND_LIST_TYPE, Guid*, void**, int>)(lpVtbl[9]))((ID3D12Device5*)Unsafe.AsPointer(ref this), type, riid, ppCommandAllocator);
     }
 
+#if TODO
     /// <inheritdoc cref="ID3D12Device.CreateGraphicsPipelineState" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(10)]
@@ -342,7 +342,6 @@ internal unsafe partial struct ID3D12Device5
         return ((delegate* unmanaged<ID3D12Device5*, int>)(lpVtbl[37]))((ID3D12Device5*)Unsafe.AsPointer(ref this));
     }
 
-#if TODO
     /// <inheritdoc cref="ID3D12Device.GetCopyableFootprints" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(38)]
@@ -351,6 +350,7 @@ internal unsafe partial struct ID3D12Device5
         ((delegate* unmanaged<ID3D12Device5*, D3D12_RESOURCE_DESC*, uint, uint, ulong, D3D12_PLACED_SUBRESOURCE_FOOTPRINT*, uint*, ulong*, ulong*, void>)(lpVtbl[38]))((ID3D12Device5*)Unsafe.AsPointer(ref this), pResourceDesc, FirstSubresource, NumSubresources, BaseOffset, pLayouts, pNumRows, pRowSizeInBytes, pTotalBytes);
     }
 
+#if TODO
     /// <inheritdoc cref="ID3D12Device.CreateQueryHeap" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(39)]
@@ -447,6 +447,7 @@ internal unsafe partial struct ID3D12Device5
     {
         return ((delegate* unmanaged<ID3D12Device5*, D3D12_RESIDENCY_FLAGS, uint, ID3D12Pageable**, ID3D12Fence*, ulong, int>)(lpVtbl[50]))((ID3D12Device5*)Unsafe.AsPointer(ref this), Flags, NumObjects, ppObjects, pFenceToSignal, FenceValueToSignal);
     }
+#endif
 
     /// <inheritdoc cref="ID3D12Device4.CreateCommandList1" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -456,6 +457,7 @@ internal unsafe partial struct ID3D12Device5
         return ((delegate* unmanaged<ID3D12Device5*, uint, D3D12_COMMAND_LIST_TYPE, D3D12_COMMAND_LIST_FLAGS, Guid*, void**, int>)(lpVtbl[51]))((ID3D12Device5*)Unsafe.AsPointer(ref this), nodeMask, type, flags, riid, ppCommandList);
     }
 
+#if TODO
     /// <inheritdoc cref="ID3D12Device4.CreateProtectedResourceSession" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(52)]

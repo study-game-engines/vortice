@@ -437,7 +437,10 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => throw new NotImplementedException();
+    public override CommandBuffer BeginCommandBuffer(CommandQueueType queueType = CommandQueueType.Graphics) => new D3D12.D3D12CommandBuffer(this, queueType);
+
+    /// <inheritdoc />
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => new D3D12.D3D12Buffer(this, descriptor, initialData);
     /// <inheritdoc />
     protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D12.D3D12Texture(this, descriptor);
     /// <inheritdoc />

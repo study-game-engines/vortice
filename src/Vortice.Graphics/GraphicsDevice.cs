@@ -82,6 +82,8 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     public abstract void WaitIdle();
 
+    public abstract CommandBuffer BeginCommandBuffer(CommandQueueType queueType = CommandQueueType.Graphics);
+
     public GraphicsBuffer CreateBuffer(in BufferDescriptor descriptor)
     {
         Guard.IsGreaterThanOrEqualTo(descriptor.Size, 1, nameof(BufferDescriptor.Size));
