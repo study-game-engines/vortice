@@ -1,6 +1,14 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+#if !EXCLUDE_XAUDIO2_BACKEND
+using Vortice.Audio.XAudio2;
+#endif
+
+#if !EXCLUDE_OPENAL_BACKEND
+using Vortice.Audio.OpenAL;
+#endif
+
 namespace Vortice.Audio;
 
 public abstract class AudioDevice : IDisposable
@@ -63,5 +71,16 @@ public abstract class AudioDevice : IDisposable
         {
             throw new ObjectDisposedException(ToString());
         }
+    }
+
+    public static AudioDevice CreateDefault()
+    {
+#if !EXCLUDE_XAUDIO2_BACKEND
+        return new XAudio2Engine();
+#elif !EXCLUDE_OPENAL_BACKEND
+        return new OpenALEngine();
+#endif
+
+        throw new PlatformNotSupportedException("Cannot find capable audio device");
     }
 }

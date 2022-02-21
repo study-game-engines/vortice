@@ -90,9 +90,6 @@ internal unsafe class D3D12CommandQueue : IDisposable
     public void GetCommandListAndAllocator(out ID3D12GraphicsCommandList4* commandList, out ID3D12CommandAllocator* commandAllocator)
     {
         _allocatorPool.Rent(Device.NativeDevice, null, out commandList, out commandAllocator);
-
-        //ulong completedFence = _fence.Get()->GetCompletedValue();
-        //_allocatorPool.RequestAllocator(Device.NativeDevice, completedFence, out commandAllocator);
     }
 
     /// <summary>

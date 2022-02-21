@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace TerraFX.Interop.Windows;
 
-public static unsafe partial class Windows
+internal static unsafe partial class Windows
 {
     [NativeTypeName("#define S_OK ((HRESULT)0L)")]
     public const int S_OK = 0;

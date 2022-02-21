@@ -32,7 +32,15 @@ public abstract class Game : IGame, IDisposable
         GraphicsDevice = _serviceProvider.GetRequiredService<GraphicsDevice>();
 
         // Get optional services.
-        Audio = _serviceProvider.GetService<AudioSystem>();
+        AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();
+        if (audioDevice == null)
+        {
+            AudioDevice = AudioDevice.CreateDefault();
+        }
+        else
+        {
+            AudioDevice = audioDevice!;
+        }
     }
 
     ~Game()
@@ -61,7 +69,7 @@ public abstract class Game : IGame, IDisposable
 
     public GraphicsDevice GraphicsDevice { get; }
 
-    public AudioSystem? Audio { get; }
+    public AudioDevice AudioDevice { get; }
 
     public IList<IGameSystem> GameSystems { get; } = new List<IGameSystem>();
 
@@ -78,6 +86,8 @@ public abstract class Game : IGame, IDisposable
             GraphicsDevice.WaitIdle();
             View.SwapChain?.Dispose();
             GraphicsDevice.Dispose();
+
+            AudioDevice.Dispose();
 
             Disposed?.Invoke(this, EventArgs.Empty);
             IsDisposed = true;
