@@ -7,6 +7,8 @@ using static TerraFX.Interop.DirectX.D3D12_RESOURCE_DIMENSION;
 using static TerraFX.Interop.DirectX.D3D12_COMMAND_LIST_TYPE;
 using static TerraFX.Interop.DirectX.D3D12_RESOURCE_FLAGS;
 using static Vortice.Graphics.D3DUtilities;
+using TerraFX.Interop.Windows;
+using static TerraFX.Interop.Windows.Windows;
 
 namespace Vortice.Graphics.D3D12;
 
@@ -103,4 +105,55 @@ internal static unsafe class D3D12Utils
         rowSizeInBytes = pRowSizeInBytes;
         totalSizeInBytes = pTotalBytes;
     }
+
+    /// <summary>
+    /// Creates a new <see cref="ID3D12CommandAllocator"/> for a given device.
+    /// </summary>
+    /// <param name="device">The target <see cref="ID3D12Device"/> to use to create the command allocator.</param>
+    /// <param name="commandListType">The type of command list allocator to create.</param>
+    /// <returns>A pointer to the newly allocated <see cref="ID3D12CommandAllocator"/> instance.</returns>
+    /// <exception cref="Exception">Thrown when the creation of the command allocator fails.</exception>
+    public static ComPtr<ID3D12CommandAllocator> CreateCommandAllocator(this ref ID3D12Device5 device, D3D12_COMMAND_LIST_TYPE commandListType)
+    {
+        using ComPtr<ID3D12CommandAllocator> commandAllocator = default;
+
+        ThrowIfFailed(
+            device.CreateCommandAllocator(
+            commandListType,
+            Windows.__uuidof<ID3D12CommandAllocator>(),
+            commandAllocator.GetVoidAddressOf())
+            );
+
+        return commandAllocator.Move();
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="ID3D12GraphicsCommandList4"/> for a given device.
+    /// </summary>
+    /// <param name="d3D12Device">The target <see cref="ID3D12Device"/> to use to create the command list.</param>
+    /// <param name="d3D12CommandListType">The type of command list to create.</param>
+    /// <param name="d3D12CommandAllocator">The command allocator to use to create the command list.</param>
+    /// <param name="d3D12PipelineState">The initial <see cref="ID3D12PipelineState"/> object, if present.</param>
+    /// <returns>A pointer to the newly allocated <see cref="ID3D12GraphicsCommandList4"/> instance.</returns>
+    /// <exception cref="Exception">Thrown when the creation of the command list fails.</exception>
+    public static ComPtr<ID3D12GraphicsCommandList4> CreateCommandList(
+        this ref ID3D12Device5 d3D12Device,
+        D3D12_COMMAND_LIST_TYPE d3D12CommandListType,
+        ID3D12CommandAllocator* d3D12CommandAllocator,
+        ID3D12PipelineState* d3D12PipelineState)
+    {
+        using ComPtr<ID3D12GraphicsCommandList4> d3D12GraphicsCommandList = default;
+
+        ThrowIfFailed(d3D12Device.CreateCommandList(
+            0,
+            d3D12CommandListType,
+            d3D12CommandAllocator,
+            d3D12PipelineState,
+            __uuidof<ID3D12GraphicsCommandList4>(),
+            d3D12GraphicsCommandList.GetVoidAddressOf())
+            );
+
+        return d3D12GraphicsCommandList.Move();
+    }
+
 }

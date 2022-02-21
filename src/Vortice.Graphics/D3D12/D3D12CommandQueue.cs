@@ -55,7 +55,9 @@ internal unsafe class D3D12CommandQueue : IDisposable
 
     public void Dispose()
     {
+        _allocatorPool.Dispose();
         _handle.Dispose();
+        _fence.Dispose();
         GC.SuppressFinalize(this);
     }
 
@@ -88,5 +90,29 @@ internal unsafe class D3D12CommandQueue : IDisposable
     public void GetCommandListAndAllocator(out ID3D12GraphicsCommandList4* commandList, out ID3D12CommandAllocator* commandAllocator)
     {
         _allocatorPool.Rent(Device.NativeDevice, null, out commandList, out commandAllocator);
+
+        //ulong completedFence = _fence.Get()->GetCompletedValue();
+        //_allocatorPool.RequestAllocator(Device.NativeDevice, completedFence, out commandAllocator);
+    }
+
+    /// <summary>
+    /// Executes a given command list and waits for the operation to be completed.
+    /// </summary>
+    /// <param name="commandBuffer">The input <see cref="D3D12CommandBuffer"/> to execute.</param>
+    internal void ExecuteCommandList(D3D12CommandBuffer commandBuffer)
+    {
+        // Execute the command list
+        _handle.Get()->ExecuteCommandLists(1, commandBuffer.GetD3D12CommandListAddressOf());
+
+        ulong nextFenceValue = Signal();
+
+        // If the fence value hasn't been reached, wait until the operation completes
+        if (nextFenceValue > _fence.Get()->GetCompletedValue())
+        {
+            ThrowIfFailed(_fence.Get()->SetEventOnCompletion(nextFenceValue, default));
+        }
+
+        // Return the rented command list and command allocator so that they can be reused
+       _allocatorPool.Return(commandBuffer.DetachD3D12CommandList(), commandBuffer.DetachD3D12CommandAllocator());
     }
 }

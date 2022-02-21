@@ -1,9 +1,11 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+// This file includes code based on code from https://github.com/Sergio0694/ComputeSharp
+// The original code is Copyright (c) 2019 Sergio Pedri. All rights reserved. Licensed under the MIT License (MIT).
+
 using TerraFX.Interop.DirectX;
 using TerraFX.Interop.Windows;
-using static TerraFX.Interop.DirectX.D3D12_COMMAND_LIST_FLAGS;
 using static TerraFX.Interop.Windows.Windows;
 
 namespace Vortice.Graphics.D3D12;
@@ -11,40 +13,33 @@ namespace Vortice.Graphics.D3D12;
 internal readonly unsafe struct D3D12CommandAllocatorPool : IDisposable
 {
     private readonly D3D12_COMMAND_LIST_TYPE _queueType;
-    private readonly Queue<D3D12CommandListBundle> _bundles;
+    private readonly Queue<D3D12CommandListBundle> _bundleQueue;
 
     public D3D12CommandAllocatorPool(D3D12_COMMAND_LIST_TYPE queueType)
     {
         _queueType = queueType;
-        _bundles = new Queue<D3D12CommandListBundle>();
+        _bundleQueue = new Queue<D3D12CommandListBundle>();
     }
 
     public void Dispose()
     {
-        lock (_bundles)
+        lock (_bundleQueue)
         {
-            foreach (D3D12CommandListBundle d3D12CommandListBundle in _bundles)
+            foreach (D3D12CommandListBundle commandListBundle in _bundleQueue)
             {
-                d3D12CommandListBundle.D3D12CommandList->Release();
-                d3D12CommandListBundle.D3D12CommandAllocator->Release();
+                commandListBundle.D3D12CommandList->Release();
+                commandListBundle.D3D12CommandAllocator->Release();
             }
 
-            _bundles.Clear();
+            _bundleQueue.Clear();
         }
     }
 
-    /// <summary>
-    /// Rents a <see cref="ID3D12GraphicsCommandList4"/> and <see cref="ID3D12CommandAllocator"/> pair.
-    /// </summary>
-    /// <param name="device">The <see cref="ID3D12Device5"/> renting the command list.</param>
-    /// <param name="pipelineState">The <see cref="ID3D12PipelineState"/> instance to use for the new command list.</param>
-    /// <param name="commandList">The resulting <see cref="ID3D12GraphicsCommandList"/> value.</param>
-    /// <param name="commandAllocator">The resulting <see cref="ID3D12CommandAllocator"/> value.</param>
-    public void Rent(ID3D12Device5* device, ID3D12PipelineState* pipelineState, out ID3D12GraphicsCommandList4* commandList, out ID3D12CommandAllocator* commandAllocator)
+    public void Rent(ID3D12Device5* d3D12Device, ID3D12PipelineState* pipelineState, out ID3D12GraphicsCommandList4* commandList, out ID3D12CommandAllocator* commandAllocator)
     {
-        lock (_bundles)
+        lock (_bundleQueue)
         {
-            if (_bundles.TryDequeue(out D3D12CommandListBundle d3D12CommandListBundle))
+            if (_bundleQueue.TryDequeue(out D3D12CommandListBundle d3D12CommandListBundle))
             {
                 commandList = d3D12CommandListBundle.D3D12CommandList;
                 commandAllocator = d3D12CommandListBundle.D3D12CommandAllocator;
@@ -66,52 +61,41 @@ internal readonly unsafe struct D3D12CommandAllocatorPool : IDisposable
         }
         else
         {
-            CreateCommandListAndAllocator(device, pipelineState, out commandList, out commandAllocator);
+            CreateCommandListAndAllocator(d3D12Device, pipelineState, out commandList, out commandAllocator);
         }
     }
 
     /// <summary>
-    /// Returns a <see cref="ID3D12GraphicsCommandList4"/> and <see cref="ID3D12CommandAllocator"/> pair.
+    /// Returns a <see cref="ID3D12GraphicsCommandLis4t"/> and <see cref="ID3D12CommandAllocator"/> pair.
     /// </summary>
-    /// <param name="commandList">The returned <see cref="ID3D12GraphicsCommandList4"/> value.</param>
-    /// <param name="commandAllocator">The returned <see cref="ID3D12CommandAllocator"/> value.</param>
-    public void Return(ID3D12GraphicsCommandList4* commandList, ID3D12CommandAllocator* commandAllocator)
+    /// <param name="d3D12CommandList">The returned <see cref="ID3D12GraphicsCommandList"/> value.</param>
+    /// <param name="d3D12CommandAllocator">The returned <see cref="ID3D12CommandAllocator"/> value.</param>
+    public void Return(ID3D12GraphicsCommandList4* d3D12CommandList, ID3D12CommandAllocator* d3D12CommandAllocator)
     {
-        lock (_bundles)
+        lock (_bundleQueue)
         {
-            _bundles.Enqueue(new D3D12CommandListBundle(commandList, commandAllocator));
+            _bundleQueue.Enqueue(new D3D12CommandListBundle(d3D12CommandList, d3D12CommandAllocator));
         }
     }
 
     /// <summary>
     /// Creates a new <see cref="ID3D12CommandList"/> and <see cref="ID3D12CommandAllocator"/> pair.
     /// </summary>
-    /// <param name="device">The <see cref="ID3D12Device5"/> renting the command list.</param>
-    /// <param name="pipelineState">The <see cref="ID3D12PipelineState"/> instance to use for the new command list.</param>
-    /// <param name="commandList">The resulting <see cref="ID3D12GraphicsCommandList"/> value.</param>
-    /// <param name="commandAllocator">The resulting <see cref="ID3D12CommandAllocator"/> value.</param>
+    /// <param name="d3D12Device">The <see cref="ID3D12Device"/> renting the command list.</param>
+    /// <param name="d3D12PipelineState">The <see cref="ID3D12PipelineState"/> instance to use for the new command list.</param>
+    /// <param name="d3D12CommandList">The resulting <see cref="ID3D12GraphicsCommandList"/> value.</param>
+    /// <param name="d3D12CommandAllocator">The resulting <see cref="ID3D12CommandAllocator"/> value.</param>
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private void CreateCommandListAndAllocator(ID3D12Device5* device, ID3D12PipelineState* pipelineState, out ID3D12GraphicsCommandList4* commandList, out ID3D12CommandAllocator* commandAllocator)
+    private void CreateCommandListAndAllocator(ID3D12Device5* d3D12Device, ID3D12PipelineState* d3D12PipelineState, out ID3D12GraphicsCommandList4* d3D12CommandList, out ID3D12CommandAllocator* d3D12CommandAllocator)
     {
-        using ComPtr<ID3D12CommandAllocator> commandAllocatorComPtr = default;
-        using ComPtr<ID3D12GraphicsCommandList4> commandListComPtr = default;
+        using ComPtr<ID3D12CommandAllocator> d3D12CommandAllocatorComPtr = d3D12Device->CreateCommandAllocator(_queueType);
+        using ComPtr<ID3D12GraphicsCommandList4> d3D12CommandListComPtr = d3D12Device->CreateCommandList(_queueType, d3D12CommandAllocatorComPtr.Get(), d3D12PipelineState);
 
-        ThrowIfFailed(
-                device->CreateCommandAllocator(_queueType, __uuidof<ID3D12CommandAllocator>(), commandAllocatorComPtr.GetVoidAddressOf())
-                );
-
-        ThrowIfFailed(device->CreateCommandList1(0,
-            _queueType,
-            D3D12_COMMAND_LIST_FLAG_NONE,
-            __uuidof<ID3D12GraphicsCommandList4>(),
-            commandListComPtr.GetVoidAddressOf()
-            ));
-
-        fixed (ID3D12GraphicsCommandList4** returnCommandList = &commandList)
-        fixed (ID3D12CommandAllocator** returnCommandAllocator = &commandAllocator)
+        fixed (ID3D12GraphicsCommandList4** d3D12CommandListPtr = &d3D12CommandList)
+        fixed (ID3D12CommandAllocator** d3D12CommandAllocatorPtr = &d3D12CommandAllocator)
         {
-            commandListComPtr.CopyTo(returnCommandList);
-            commandAllocatorComPtr.CopyTo(returnCommandAllocator);
+            d3D12CommandListComPtr.CopyTo(d3D12CommandListPtr);
+            d3D12CommandAllocatorComPtr.CopyTo(d3D12CommandAllocatorPtr);
         }
     }
 

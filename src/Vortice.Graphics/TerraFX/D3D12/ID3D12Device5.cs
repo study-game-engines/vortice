@@ -128,6 +128,7 @@ internal unsafe partial struct ID3D12Device5
     {
         return ((delegate* unmanaged<ID3D12Device5*, D3D12_COMPUTE_PIPELINE_STATE_DESC*, Guid*, void**, int>)(lpVtbl[11]))((ID3D12Device5*)Unsafe.AsPointer(ref this), pDesc, riid, ppPipelineState);
     }
+#endif
 
     /// <inheritdoc cref="ID3D12Device.CreateCommandList" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -136,7 +137,6 @@ internal unsafe partial struct ID3D12Device5
     {
         return ((delegate* unmanaged<ID3D12Device5*, uint, D3D12_COMMAND_LIST_TYPE, ID3D12CommandAllocator*, ID3D12PipelineState*, Guid*, void**, int>)(lpVtbl[12]))((ID3D12Device5*)Unsafe.AsPointer(ref this), nodeMask, type, pCommandAllocator, pInitialState, riid, ppCommandList);
     }
-#endif
 
     /// <inheritdoc cref="ID3D12Device.CheckFeatureSupport" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

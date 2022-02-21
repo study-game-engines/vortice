@@ -38,6 +38,7 @@ public sealed class DrawTriangleGame : Game
         base.Draw(gameTime);
 
         using CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer();
+        commandBuffer.ExecuteAndWaitForCompletion();
     }
 
     public readonly struct VertexPositionColor

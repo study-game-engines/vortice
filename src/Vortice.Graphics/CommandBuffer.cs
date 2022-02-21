@@ -9,4 +9,9 @@ public abstract class CommandBuffer : GraphicsResource
         : base(device)
     {
     }
+
+    /// <summary>
+    /// Executes the commands in the current commands list, and waits for completion.
+    /// </summary>
+    public abstract void ExecuteAndWaitForCompletion();
 }
