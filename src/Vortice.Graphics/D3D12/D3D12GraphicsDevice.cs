@@ -16,25 +16,26 @@ using static TerraFX.Interop.DirectX.D3D12_RAYTRACING_TIER;
 using static TerraFX.Interop.DirectX.D3D12_MESSAGE_SEVERITY;
 using static TerraFX.Interop.DirectX.D3D12_MESSAGE_ID;
 using static TerraFX.Interop.DirectX.D3D12_RLDO_FLAGS;
-using static TerraFX.Interop.DirectX.D3D12_COMMAND_LIST_TYPE;
-using static TerraFX.Interop.DirectX.D3D12_FENCE_FLAGS;
 using static Vortice.Graphics.D3DUtilities;
+using static Vortice.Graphics.D3D12.D3D12Utils;
 using System.Diagnostics;
+using System.Reflection;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.D3D12;
 
-public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
+internal unsafe class D3D12GraphicsDevice : GraphicsDevice
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
     private readonly GraphicsDeviceCaps _caps;
     private readonly ComPtr<IDXGIFactory4> _factory;
     private readonly ComPtr<ID3D12Device5> _d3dDevice;
-    private readonly ComPtr<ID3D12CommandQueue> _graphicsQueue;
-    private readonly ComPtr<ID3D12Fence> _graphicsFence;
+    private readonly D3D12CommandQueue _graphicsQueue;
+    private readonly D3D12CommandQueue _computeQueue;
+    private readonly D3D12CommandQueue _copyQueue;
 
-    public D3D12GraphicsDevice(
-            ValidationMode validationMode = ValidationMode.Disabled,
-            GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
+    public static bool IsSupported => s_isSupported.Value;
+
+    public D3D12GraphicsDevice(ValidationMode validationMode, GpuPowerPreference powerPreference)
     {
         if (!s_isSupported.Value)
         {
@@ -231,7 +232,13 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
                 IsCacheCoherentUMA = architecture1.CacheCoherentUMA;
             }
 
-            //AdapterName = adapterDesc.Description;
+            string? managedString = Marshal.PtrToStringUni((IntPtr)adapterDesc.Description);
+            if (managedString != null && managedString.Length > 128)
+            {
+                managedString = managedString!.Substring(0, 128);
+            }
+
+            AdapterName = managedString ?? string.Empty;
             D3D12_FEATURE_DATA_D3D12_OPTIONS1 featureDataOptions1 = _d3dDevice.Get()->CheckFeatureSupport<D3D12_FEATURE_DATA_D3D12_OPTIONS1>(D3D12_FEATURE_D3D12_OPTIONS1);
             D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureDataOptions5 = _d3dDevice.Get()->CheckFeatureSupport<D3D12_FEATURE_DATA_D3D12_OPTIONS5>(D3D12_FEATURE_D3D12_OPTIONS5);
 
@@ -294,38 +301,18 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
         }
 
         // Create command queue's
-        D3D12_COMMAND_QUEUE_DESC commandQueueDesc = new D3D12_COMMAND_QUEUE_DESC
-        {
-            Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
-            Priority = (int)D3D12_COMMAND_QUEUE_PRIORITY.D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
-            Flags = D3D12_COMMAND_QUEUE_FLAGS.D3D12_COMMAND_QUEUE_FLAG_NONE,
-            NodeMask = 0
-        };
-
-        ThrowIfFailed(_d3dDevice.Get()->CreateCommandQueue(
-            &commandQueueDesc,
-            __uuidof<ID3D12CommandQueue>(),
-            (void**)_graphicsQueue.GetAddressOf())
-            );
-
-        _graphicsQueue.Get()->SetName($"{CommandQueueType.Graphics} Command Queue");
-
-        ThrowIfFailed(_d3dDevice.Get()->CreateFence(0,
-            D3D12_FENCE_FLAG_NONE,
-            __uuidof<ID3D12Fence>(),
-            (void**)_graphicsFence.GetAddressOf())
-            );
+        _graphicsQueue = new(this, CommandQueueType.Graphics);
+        _computeQueue = new(this, CommandQueueType.Compute);
+        _copyQueue = new(this, CommandQueueType.Copy);
     }
 
     /// <inheritdoc />
     public override void WaitIdle()
     {
-        ThrowIfFailed(_graphicsQueue.Get()->Signal(_graphicsFence.Get(), 1));
-        if (_graphicsFence.Get()->GetCompletedValue() < 1)
-        {
-            ThrowIfFailed(_graphicsFence.Get()->SetEventOnCompletion(1, HANDLE.NULL));
-        }
-        ThrowIfFailed(_graphicsFence.Get()->Signal(0));
+        // Wait on all queues
+        _copyQueue.WaitIdle();
+        _computeQueue.WaitIdle();
+        _graphicsQueue.WaitIdle();
     }
 
     // <inheritdoc />
@@ -358,14 +345,17 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
     internal IDXGIFactory4* Factory => _factory.Get();
 
     internal ID3D12Device5* NativeDevice => _d3dDevice.Get();
-    internal ID3D12CommandQueue* GraphicsQueue => _graphicsQueue.Get();
+    internal D3D12CommandQueue GraphicsQueue => _graphicsQueue;
+    internal D3D12CommandQueue ComputeQueue => _computeQueue;
+    internal D3D12CommandQueue CopyQueue => _copyQueue;
 
     /// <inheritdoc />
     protected override void OnDispose()
     {
         WaitIdle();
 
-        _graphicsFence.Dispose();
+        _copyQueue.Dispose();
+        _computeQueue.Dispose();
         _graphicsQueue.Dispose();
 
 #if DEBUG
@@ -436,13 +426,28 @@ public sealed unsafe class D3D12GraphicsDevice : GraphicsDevice
         }
     }
 
-    /// <inheritdoc />
-    public override CommandBuffer BeginCommandBuffer(CommandQueueType queueType = CommandQueueType.Graphics) => new D3D12.D3D12CommandBuffer(this, queueType);
+    private D3D12CommandQueue GetQueue(CommandQueueType queueType)
+    {
+        switch (queueType)
+        {
+            case CommandQueueType.Compute:
+                return _computeQueue;
+
+            case CommandQueueType.Copy:
+                return _copyQueue;
+
+            default:
+                return _graphicsQueue;
+        }
+    }
 
     /// <inheritdoc />
-    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => new D3D12.D3D12Buffer(this, descriptor, initialData);
+    public override CommandBuffer BeginCommandBuffer(CommandQueueType queueType = CommandQueueType.Graphics) => new D3D12CommandBuffer(this, GetQueue(queueType));
+
     /// <inheritdoc />
-    protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D12.D3D12Texture(this, descriptor);
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => new D3D12Buffer(this, descriptor, initialData);
     /// <inheritdoc />
-    protected override SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor) => new D3D12.D3D12SwapChain(this, source, descriptor);
+    protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D12Texture(this, descriptor);
+    /// <inheritdoc />
+    protected override SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor) => new D3D12SwapChain(this, source, descriptor);
 }

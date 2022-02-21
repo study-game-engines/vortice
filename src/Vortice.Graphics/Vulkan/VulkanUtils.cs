@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Toolkit.Diagnostics;
 using Vortice.Vulkan;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.Vulkan;
 
 internal static unsafe class VulkanUtils
 {

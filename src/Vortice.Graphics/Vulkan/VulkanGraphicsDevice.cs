@@ -1,13 +1,12 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.Vulkan;
 
-public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
+internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
     private static readonly VkString s_appName = new("Vortice");
     private static readonly VkString s_engineName = new("Vortice");
@@ -22,7 +21,9 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     private readonly VkDevice _handle;
     private readonly GraphicsDeviceCaps _caps;
 
-    public VulkanGraphicsDevice(ValidationMode validationMode = ValidationMode.Disabled, GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
+    public static bool IsSupported => s_isSupported.Value;
+
+    public VulkanGraphicsDevice(ValidationMode validationMode, GpuPowerPreference powerPreference)
     {
         if (!s_isSupported.Value)
         {

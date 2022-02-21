@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants Condition="'$(ExcludeXAudio2)' == 'true'">$(DefineConstants);EXCLUDE_XAUDIO2_BACKEND</DefineConstants>
     <DefineConstants Condition="'$(ExcludeOpenAL)' == 'true'">$(DefineConstants);EXCLUDE_OPENAL_BACKEND</DefineConstants>
   </PropertyGroup>

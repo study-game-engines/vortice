@@ -53,7 +53,7 @@ internal unsafe class D3D12SwapChain : SwapChain
                 };
 
                 HRESULT hr = device.Factory->CreateSwapChainForHwnd(
-                    (IUnknown*)device.GraphicsQueue,
+                    (IUnknown*)device.GraphicsQueue.Handle,
                     win32Source.Hwnd,
                     &swapChainDesc,
                     &fsSwapChainDesc,
@@ -70,7 +70,7 @@ internal unsafe class D3D12SwapChain : SwapChain
                 CoreWindowChainSource coreSource = (CoreWindowChainSource)source;
 
                 ThrowIfFailed(device.Factory->CreateSwapChainForCoreWindow(
-                    (IUnknown*)device.GraphicsQueue,
+                    (IUnknown*)device.GraphicsQueue.Handle,
                     (IUnknown*)coreSource.CoreWindow,
                     &swapChainDesc,
                     null,
