@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Numerics;
+using Microsoft.Extensions.DependencyInjection;
 using Vortice.Engine;
 using Vortice.Graphics;
 using Vortice.Mathematics;

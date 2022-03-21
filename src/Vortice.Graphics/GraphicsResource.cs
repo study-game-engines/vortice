@@ -7,6 +7,8 @@ namespace Vortice.Graphics;
 
 public abstract class GraphicsResource : IDisposable
 {
+    private volatile int _isDisposed;
+
     protected GraphicsResource(GraphicsDevice device)
     {
         Guard.IsNotNull(device, nameof(device));
@@ -20,20 +22,23 @@ public abstract class GraphicsResource : IDisposable
     public GraphicsDevice Device { get; }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="GraphicsResource" /> class.
+    /// Releases unmanaged resources and performs other cleanup operations.
     /// </summary>
-    ~GraphicsResource() => Dispose(disposing: false);
+    ~GraphicsResource()
+    {
+        if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 0)
+        {
+            OnDispose();
+        }
+    }
 
     /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
-        Dispose(disposing: true);
+        OnDispose();
         GC.SuppressFinalize(this);
     }
 
-    /// <inheritdoc cref="Dispose()" />
-    /// <param name="disposing"><c>true</c> if the method was called from <see cref="Dispose()" />; otherwise, <c>false</c>.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-    }
+    protected abstract void OnDispose();
 }

@@ -12,7 +12,7 @@ public abstract class GameView
 
     public abstract SizeI ClientSize { get; }
 
-    public abstract SwapChainSource Source { get; }
+    public abstract GraphicsSurface Surface { get; }
 
     public SwapChain? SwapChain { get; private set; }
 
@@ -23,7 +23,7 @@ public abstract class GameView
             Size = ClientSize,
         };
         
-        SwapChain = device.CreateSwapChain(Source, descriptor);
+        SwapChain = device.CreateSwapChain(Surface, descriptor);
     }
 
     public void Present()

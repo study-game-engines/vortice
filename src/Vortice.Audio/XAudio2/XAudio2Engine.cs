@@ -26,9 +26,11 @@ internal class XAudio2Engine : AudioDevice
 #if DEBUG
         //if (mEngineFlags & AudioEngine_Debug)
         {
-            DebugConfiguration debug = new DebugConfiguration();
-            debug.TraceMask = LogType.Errors | LogType.Warnings;
-            debug.BreakMask = LogType.Errors;
+            DebugConfiguration debug = new()
+            {
+                TraceMask = LogType.Errors | LogType.Warnings,
+                BreakMask = LogType.Errors
+            };
             _xaudio2.SetDebugConfiguration(debug);
             Debug.WriteLine("INFO: XAudio 2.9 debugging enabled");
 

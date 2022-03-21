@@ -20,22 +20,3 @@ public abstract class GameContext
 
     public abstract void RunMainLoop(Action init, Action callback);
 }
-
-public abstract class GameContextWithGraphics : GameContext
-{
-    public GraphicsDevice GraphicsDevice { get; set; }
-
-    public GameContextWithGraphics(GraphicsDevice graphicsDevice)
-    {
-        Guard.IsNotNull(graphicsDevice, nameof(graphicsDevice));
-
-        GraphicsDevice = graphicsDevice;
-    }
-
-    public override void ConfigureServices(IServiceCollection services)
-    {
-        base.ConfigureServices(services);
-
-        services.AddSingleton(GraphicsDevice);
-    }
-}

@@ -29,9 +29,24 @@ public abstract class Game : IGame, IDisposable
 
         // Get required services.
         Input = _serviceProvider.GetRequiredService<InputManager>();
-        GraphicsDevice = _serviceProvider.GetRequiredService<GraphicsDevice>();
 
         // Get optional services.
+        GraphicsDevice? graphicsDevice = _serviceProvider.GetService<GraphicsDevice>();
+        if (graphicsDevice == null)
+        {
+            ValidationMode validationMode = ValidationMode.Disabled;
+            if (GraphicsDevice.IsDebugOutputEnabled)
+            {
+                validationMode = ValidationMode.Enabled;
+            }
+
+            GraphicsDevice = GraphicsDevice.Create(validationMode);
+        }
+        else
+        {
+            GraphicsDevice = graphicsDevice!;
+        }
+
         AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();
         if (audioDevice == null)
         {

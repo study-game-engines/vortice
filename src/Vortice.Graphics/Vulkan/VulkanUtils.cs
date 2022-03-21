@@ -4,149 +4,355 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Toolkit.Diagnostics;
 using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Vortice.Graphics.Vulkan;
 
 internal static unsafe class VulkanUtils
 {
+    private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
+
+    private static bool CheckIsSupported()
+    {
+        try
+        {
+            VkResult result = vkInitialize();
+            if (result != VkResult.Success)
+            {
+                return false;
+            }
+
+            int count = 0;
+            result = vkEnumerateInstanceExtensionProperties((byte*)null, &count, null);
+            if (result != VkResult.Success || count == 0)
+            {
+                return false;
+            }
+
+            // TODO: Should we enumerate physical devices and try to create instance?
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+
+    public static bool IsSupported() => s_isSupported.Value;
+
+    public static string[] EnumerateInstanceExtensions()
+    {
+        if (!IsSupported())
+        {
+            return Array.Empty<string>();
+        }
+
+        int count = 0;
+        VkResult result = vkEnumerateInstanceExtensionProperties((byte*)null, &count, null);
+        if (result != VkResult.Success)
+        {
+            return Array.Empty<string>();
+        }
+
+        if (count == 0)
+        {
+            return Array.Empty<string>();
+        }
+
+        VkExtensionProperties* properties = stackalloc VkExtensionProperties[count];
+        vkEnumerateInstanceExtensionProperties((byte*)null, &count, properties).CheckResult();
+
+        string[] resultExt = new string[count];
+        for (int i = 0; i < count; i++)
+        {
+            resultExt[i] = properties[i].GetExtensionName();
+        }
+
+        return resultExt;
+    }
+
+    public static string[] EnumerateInstanceLayers()
+    {
+        if (!IsSupported())
+        {
+            return Array.Empty<string>();
+        }
+
+        int count = 0;
+        VkResult result = vkEnumerateInstanceLayerProperties(&count, null);
+        if (result != VkResult.Success)
+        {
+            return Array.Empty<string>();
+        }
+
+        if (count == 0)
+        {
+            return Array.Empty<string>();
+        }
+
+        VkLayerProperties* properties = stackalloc VkLayerProperties[count];
+        vkEnumerateInstanceLayerProperties(&count, properties).CheckResult();
+
+        string[] resultExt = new string[count];
+        for (int i = 0; i < count; i++)
+        {
+            resultExt[i] = properties[i].GetLayerName();
+        }
+
+        return resultExt;
+    }
+
+    public static string[] GetOptimalValidationLayers(HashSet<string> supportedInstanceLayers)
+    {
+        // The preferred validation layer is "VK_LAYER_KHRONOS_validation"
+        string[] requiredLayers = new[] { "VK_LAYER_KHRONOS_validation" };
+        if (ValidateLayers(requiredLayers, supportedInstanceLayers))
+        {
+            return requiredLayers;
+        }
+        //Log.Warn("Couldn't enable validation layers (see log for error) - falling back");
+
+        // Otherwise we fallback to using the LunarG meta layer
+        requiredLayers = new[] { "VK_LAYER_LUNARG_standard_validation" };
+        if (ValidateLayers(requiredLayers, supportedInstanceLayers))
+        {
+            return requiredLayers;
+        }
+        //Log.Warn("Couldn't enable validation layers (see log for error) - falling back");
+
+        // Otherwise we attempt to enable the individual layers that compose the LunarG meta layer since it doesn't exist
+        requiredLayers = new[] {
+            "VK_LAYER_GOOGLE_threading",
+            "VK_LAYER_LUNARG_parameter_validation",
+            "VK_LAYER_LUNARG_object_tracker",
+            "VK_LAYER_LUNARG_core_validation",
+            "VK_LAYER_GOOGLE_unique_objects"
+        };
+        if (ValidateLayers(requiredLayers, supportedInstanceLayers))
+        {
+            return requiredLayers;
+        }
+        //Log.Warn("Couldn't enable validation layers (see log for error) - falling back");
+
+        // Otherwise as a last resort we fallback to attempting to enable the LunarG core layer
+        requiredLayers = new[] { "VK_LAYER_LUNARG_core_validation" };
+        if (ValidateLayers(requiredLayers, supportedInstanceLayers))
+        {
+            return requiredLayers;
+        }
+
+        // Else return nothing
+        return Array.Empty<string>();
+    }
+
+    private static bool ValidateLayers(string[] required, HashSet<string> supportedInstanceLayers)
+    {
+        for (int i = 0; i < required.Length; ++i)
+        {
+            bool found = false;
+            foreach (string availableLayer in supportedInstanceLayers)
+            {
+                if (availableLayer == required[i])
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                //Log.Warn("Validation Layer '{}' not found", layer);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static VkPhysicalDeviceExtensions QueryPhysicalDeviceExtensions(VkPhysicalDevice physicalDevice)
+    {
+        int count = 0;
+        VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, null, &count, null);
+        if (result != VkResult.Success)
+            return default;
+
+        VkExtensionProperties* vk_extensions = stackalloc VkExtensionProperties[count];
+        vkEnumerateDeviceExtensionProperties(physicalDevice, null, &count, vk_extensions);
+
+        VkPhysicalDeviceExtensions extensions = default;
+
+        for (int i = 0; i < count; ++i)
+        {
+            string extensionName = vk_extensions[i].GetExtensionName();
+
+            if (extensionName == VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+            {
+                extensions.swapchain = true;
+            }
+            else if (extensionName == VK_EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME)
+            {
+                extensions.depth_clip_enable = true;
+            }
+            else if (extensionName == VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)
+            {
+                extensions.memory_budget = true;
+            }
+            else if (extensionName == VK_KHR_PERFORMANCE_QUERY_EXTENSION_NAME)
+            {
+                extensions.performance_query = true;
+            }
+            else if (extensionName == VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME)
+            {
+                extensions.deferred_host_operations = true;
+            }
+            else if (extensionName == VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME)
+            {
+                extensions.renderPass2 = true;
+            }
+            else if (extensionName == VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME)
+            {
+                extensions.accelerationStructure = true;
+            }
+            else if (extensionName == VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME)
+            {
+                extensions.raytracingPipeline = true;
+            }
+            else if (extensionName == VK_KHR_RAY_QUERY_EXTENSION_NAME)
+            {
+                extensions.rayQuery = true;
+            }
+            else if (extensionName == VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME)
+            {
+                extensions.fragment_shading_rate = true;
+            }
+            else if (extensionName == VK_NV_MESH_SHADER_EXTENSION_NAME)
+            {
+                extensions.NV_mesh_shader = true;
+            }
+            else if (extensionName == VK_EXT_CONDITIONAL_RENDERING_EXTENSION_NAME)
+            {
+                extensions.EXT_conditional_rendering = true;
+            }
+            else if (extensionName == VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME)
+            {
+                extensions.vertex_attribute_divisor = true;
+            }
+            else if (extensionName == VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME)
+            {
+                extensions.extended_dynamic_state = true;
+            }
+            else if (extensionName == VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME)
+            {
+                extensions.vertex_input_dynamic_state = true;
+            }
+            else if (extensionName == VK_EXT_EXTENDED_DYNAMIC_STATE_2_EXTENSION_NAME)
+            {
+                extensions.extended_dynamic_state2 = true;
+            }
+            else if (extensionName == VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME)
+            {
+                extensions.dynamic_rendering = true;
+            }
+            else if (extensionName == "VK_EXT_full_screen_exclusive")
+            {
+                extensions.win32_full_screen_exclusive = true;
+            }
+        }
+
+        vkGetPhysicalDeviceProperties(physicalDevice, out VkPhysicalDeviceProperties properties);
+
+        // Core 1.2
+        if (properties.apiVersion >= VkVersion.Version_1_2)
+        {
+            extensions.renderPass2 = true;
+        }
+
+        // Core 1.3
+        if (properties.apiVersion >= VkVersion.Version_1_3)
+        {
+        }
+
+        return extensions;
+    }
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static VkFormat ToVulkanFormat(this TextureFormat format)
     {
-        switch (format)
+        return format switch
         {
             // 8-bit formats
-            case TextureFormat.R8UNorm:
-                return VkFormat.R8UNorm;
-            case TextureFormat.R8SNorm:
-                return VkFormat.R8SNorm;
-            case TextureFormat.R8UInt:
-                return VkFormat.R8UInt;
-            case TextureFormat.R8SInt:
-                return VkFormat.R8SInt;
+            TextureFormat.R8UNorm => VkFormat.R8UNorm,
+            TextureFormat.R8SNorm => VkFormat.R8SNorm,
+            TextureFormat.R8UInt => VkFormat.R8UInt,
+            TextureFormat.R8SInt => VkFormat.R8SInt,
             // 16-bit formats
-            case TextureFormat.R16UNorm:
-                return VkFormat.R16UNorm;
-            case TextureFormat.R16SNorm:
-                return VkFormat.R16SNorm;
-            case TextureFormat.R16UInt:
-                return VkFormat.R16UInt;
-            case TextureFormat.R16SInt:
-                return VkFormat.R16SInt;
-            case TextureFormat.R16Float:
-                return VkFormat.R16SFloat;
-            case TextureFormat.RG8UNorm:
-                return VkFormat.R8G8UNorm;
-            case TextureFormat.RG8SNorm:
-                return VkFormat.R8G8SNorm;
-            case TextureFormat.RG8UInt:
-                return VkFormat.R8G8UInt;
-            case TextureFormat.RG8SInt:
-                return VkFormat.R8G8SInt;
+            TextureFormat.R16UNorm => VkFormat.R16UNorm,
+            TextureFormat.R16SNorm => VkFormat.R16SNorm,
+            TextureFormat.R16UInt => VkFormat.R16UInt,
+            TextureFormat.R16SInt => VkFormat.R16SInt,
+            TextureFormat.R16Float => VkFormat.R16SFloat,
+            TextureFormat.RG8UNorm => VkFormat.R8G8UNorm,
+            TextureFormat.RG8SNorm => VkFormat.R8G8SNorm,
+            TextureFormat.RG8UInt => VkFormat.R8G8UInt,
+            TextureFormat.RG8SInt => VkFormat.R8G8SInt,
             // 32-bit formats
-            case TextureFormat.R32UInt:
-                return VkFormat.R32UInt;
-            case TextureFormat.R32SInt:
-                return VkFormat.R32SInt;
-            case TextureFormat.R32Float:
-                return VkFormat.R32SFloat;
-            case TextureFormat.RG16UNorm:
-                return VkFormat.R16G16UNorm;
-            case TextureFormat.RG16SNorm:
-                return VkFormat.R16G16SNorm;
-            case TextureFormat.RG16UInt:
-                return VkFormat.R16G16UInt;
-            case TextureFormat.RG16SInt:
-                return VkFormat.R16G16SInt;
-            case TextureFormat.RG16Float:
-                return VkFormat.R16G16SFloat;
-            case TextureFormat.RGBA8UNorm:
-                return VkFormat.R8G8B8A8UNorm;
-            case TextureFormat.RGBA8UNormSrgb:
-                return VkFormat.R8G8B8A8SRgb;
-            case TextureFormat.RGBA8SNorm:
-                return VkFormat.R8G8B8A8SNorm;
-            case TextureFormat.RGBA8UInt:
-                return VkFormat.R8G8B8A8UInt;
-            case TextureFormat.RGBA8SInt:
-                return VkFormat.R8G8B8A8SInt;
-            case TextureFormat.BGRA8UNorm:
-                return VkFormat.B8G8R8A8UNorm;
-            case TextureFormat.BGRA8UNormSrgb:
-                return VkFormat.B8G8R8A8SRgb;
+            TextureFormat.R32UInt => VkFormat.R32UInt,
+            TextureFormat.R32SInt => VkFormat.R32SInt,
+            TextureFormat.R32Float => VkFormat.R32SFloat,
+            TextureFormat.RG16UNorm => VkFormat.R16G16UNorm,
+            TextureFormat.RG16SNorm => VkFormat.R16G16SNorm,
+            TextureFormat.RG16UInt => VkFormat.R16G16UInt,
+            TextureFormat.RG16SInt => VkFormat.R16G16SInt,
+            TextureFormat.RG16Float => VkFormat.R16G16SFloat,
+            TextureFormat.RGBA8UNorm => VkFormat.R8G8B8A8UNorm,
+            TextureFormat.RGBA8UNormSrgb => VkFormat.R8G8B8A8SRgb,
+            TextureFormat.RGBA8SNorm => VkFormat.R8G8B8A8SNorm,
+            TextureFormat.RGBA8UInt => VkFormat.R8G8B8A8UInt,
+            TextureFormat.RGBA8SInt => VkFormat.R8G8B8A8SInt,
+            TextureFormat.BGRA8UNorm => VkFormat.B8G8R8A8UNorm,
+            TextureFormat.BGRA8UNormSrgb => VkFormat.B8G8R8A8SRgb,
             // Packed 32-Bit formats
-            case TextureFormat.RGB10A2UNorm:
-                return VkFormat.A2B10G10R10UNormPack32;
-            case TextureFormat.RG11B10Float:
-                return VkFormat.B10G11R11UFloatPack32;
-            case TextureFormat.RGB9E5Float:
-                return VkFormat.E5B9G9R9UFloatPack32;
+            TextureFormat.RGB10A2UNorm => VkFormat.A2B10G10R10UNormPack32,
+            TextureFormat.RG11B10Float => VkFormat.B10G11R11UFloatPack32,
+            TextureFormat.RGB9E5Float => VkFormat.E5B9G9R9UFloatPack32,
             // 64-Bit formats
-            case TextureFormat.RG32UInt:
-                return VkFormat.R32G32UInt;
-            case TextureFormat.RG32SInt:
-                return VkFormat.R32G32SInt;
-            case TextureFormat.RG32Float:
-                return VkFormat.R32G32SFloat;
-            case TextureFormat.RGBA16UNorm:
-                return VkFormat.R16G16B16A16UNorm;
-            case TextureFormat.RGBA16SNorm:
-                return VkFormat.R16G16B16A16SNorm;
-            case TextureFormat.RGBA16UInt:
-                return VkFormat.R16G16B16A16UInt;
-            case TextureFormat.RGBA16SInt:
-                return VkFormat.R16G16B16A16SInt;
-            case TextureFormat.RGBA16Float:
-                return VkFormat.R16G16B16A16SFloat;
+            TextureFormat.RG32UInt => VkFormat.R32G32UInt,
+            TextureFormat.RG32SInt => VkFormat.R32G32SInt,
+            TextureFormat.RG32Float => VkFormat.R32G32SFloat,
+            TextureFormat.RGBA16UNorm => VkFormat.R16G16B16A16UNorm,
+            TextureFormat.RGBA16SNorm => VkFormat.R16G16B16A16SNorm,
+            TextureFormat.RGBA16UInt => VkFormat.R16G16B16A16UInt,
+            TextureFormat.RGBA16SInt => VkFormat.R16G16B16A16SInt,
+            TextureFormat.RGBA16Float => VkFormat.R16G16B16A16SFloat,
             // 128-Bit formats
-            case TextureFormat.RGBA32UInt:
-                return VkFormat.R32G32B32A32UInt;
-            case TextureFormat.RGBA32SInt:
-                return VkFormat.R32G32B32A32SInt;
-            case TextureFormat.RGBA32Float:
-                return VkFormat.R32G32B32A32SFloat;
+            TextureFormat.RGBA32UInt => VkFormat.R32G32B32A32UInt,
+            TextureFormat.RGBA32SInt => VkFormat.R32G32B32A32SInt,
+            TextureFormat.RGBA32Float => VkFormat.R32G32B32A32SFloat,
             // Depth-stencil formats
-            case TextureFormat.Depth16UNorm:
-                return VkFormat.D16UNorm;
-            case TextureFormat.Depth32Float:
-                return VkFormat.D32SFloat;
-            case TextureFormat.Depth24UNormStencil8:
-                return VkFormat.D24UNormS8UInt;
-            case TextureFormat.Depth32FloatStencil8:
-                return VkFormat.D32SFloatS8UInt;
+            TextureFormat.Depth16UNorm => VkFormat.D16UNorm,
+            TextureFormat.Depth32Float => VkFormat.D32SFloat,
+            TextureFormat.Depth24UNormStencil8 => VkFormat.D24UNormS8UInt,
+            TextureFormat.Depth32FloatStencil8 => VkFormat.D32SFloatS8UInt,
             // Compressed BC formats
-            case TextureFormat.BC1RGBAUNorm:
-                return VkFormat.BC1RGBAUNormBlock;
-            case TextureFormat.BC1RGBAUNormSrgb:
-                return VkFormat.BC1RGBASRgbBlock;
-            case TextureFormat.BC2RGBAUNorm:
-                return VkFormat.BC2UNormBlock;
-            case TextureFormat.BC2RGBAUNormSrgb:
-                return VkFormat.BC2SRgbBlock;
-            case TextureFormat.BC3RGBAUNorm:
-                return VkFormat.BC3UNormBlock;
-            case TextureFormat.BC3RGBAUNormSrgb:
-                return VkFormat.BC3SRgbBlock;
-            case TextureFormat.BC4RSNorm:
-                return VkFormat.BC4SNormBlock;
-            case TextureFormat.BC4RUNorm:
-                return VkFormat.BC4UNormBlock;
-            case TextureFormat.BC5RGSNorm:
-                return VkFormat.BC5SNormBlock;
-            case TextureFormat.BC5RGUNorm:
-                return VkFormat.BC5UNormBlock;
-            case TextureFormat.BC6HRGBUFloat:
-                return VkFormat.BC6HUFloatBlock;
-            case TextureFormat.BC6HRGBFloat:
-                return VkFormat.BC6HSFloatBlock;
-            case TextureFormat.BC7RGBAUNorm:
-                return VkFormat.BC7UNormBlock;
-            case TextureFormat.BC7RGBAUNormSrgb:
-                return VkFormat.BC7SRgbBlock;
-
-            default:
-                return ThrowHelper.ThrowArgumentException<VkFormat>("Invalid texture format");
-        }
+            TextureFormat.BC1RGBAUNorm => VkFormat.BC1RGBAUNormBlock,
+            TextureFormat.BC1RGBAUNormSrgb => VkFormat.BC1RGBASRgbBlock,
+            TextureFormat.BC2RGBAUNorm => VkFormat.BC2UNormBlock,
+            TextureFormat.BC2RGBAUNormSrgb => VkFormat.BC2SRgbBlock,
+            TextureFormat.BC3RGBAUNorm => VkFormat.BC3UNormBlock,
+            TextureFormat.BC3RGBAUNormSrgb => VkFormat.BC3SRgbBlock,
+            TextureFormat.BC4RSNorm => VkFormat.BC4SNormBlock,
+            TextureFormat.BC4RUNorm => VkFormat.BC4UNormBlock,
+            TextureFormat.BC5RGSNorm => VkFormat.BC5SNormBlock,
+            TextureFormat.BC5RGUNorm => VkFormat.BC5UNormBlock,
+            TextureFormat.BC6HRGBUFloat => VkFormat.BC6HUFloatBlock,
+            TextureFormat.BC6HRGBFloat => VkFormat.BC6HSFloatBlock,
+            TextureFormat.BC7RGBAUNorm => VkFormat.BC7UNormBlock,
+            TextureFormat.BC7RGBAUNormSrgb => VkFormat.BC7SRgbBlock,
+            _ => ThrowHelper.ThrowArgumentException<VkFormat>("Invalid texture format"),
+        };
     }
 
     public static VkMemoryHeap GetMemoryHeap(this VkPhysicalDeviceMemoryProperties memoryProperties, uint index)
@@ -154,3 +360,25 @@ internal static unsafe class VulkanUtils
         return (&memoryProperties.memoryHeaps_0)[index];
     }
 }
+
+public struct VkPhysicalDeviceExtensions
+{
+    public bool swapchain;
+    public bool depth_clip_enable;
+    public bool memory_budget;
+    public bool performance_query;
+    public bool deferred_host_operations;
+    public bool renderPass2;
+    public bool accelerationStructure;
+    public bool raytracingPipeline;
+    public bool rayQuery;
+    public bool fragment_shading_rate;
+    public bool NV_mesh_shader;
+    public bool EXT_conditional_rendering;
+    public bool win32_full_screen_exclusive;
+    public bool vertex_attribute_divisor;
+    public bool extended_dynamic_state;
+    public bool vertex_input_dynamic_state;
+    public bool extended_dynamic_state2;
+    public bool dynamic_rendering;
+};

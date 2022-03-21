@@ -23,10 +23,7 @@ internal unsafe class VulkanTexture : Texture
     public VkImage Handle => _handle;
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    protected override void OnDispose()
     {
-        if (disposing)
-        {
-        }
     }
 }

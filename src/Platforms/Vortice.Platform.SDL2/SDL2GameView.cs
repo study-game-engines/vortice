@@ -30,10 +30,14 @@ internal class SDL2GameView : GameView
         switch (wmInfo.subsystem)
         {
             case SDL_SYSWM_TYPE.SDL_SYSWM_WINDOWS:
-                Source = SwapChainSource.CreateWin32(
+                Surface = GraphicsSurface.CreateWin32(
                     wmInfo.info.win.hinstance,
                     wmInfo.info.win.window
                     );
+                break;
+
+            case SDL_SYSWM_TYPE.SDL_SYSWM_WINRT:
+                Surface = GraphicsSurface.CreateCoreWindow(wmInfo.info.winrt.window);
                 break;
 
             case SDL_SYSWM_TYPE.SDL_SYSWM_X11:
@@ -67,7 +71,7 @@ internal class SDL2GameView : GameView
     public override SizeI ClientSize { get; }
 
     /// <inheritdoc />
-    public override SwapChainSource Source { get; }
+    public override GraphicsSurface Surface { get; }
 
     private void OnControlClientSizeChanged(object? sender, EventArgs e)
     {

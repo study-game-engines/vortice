@@ -8,15 +8,14 @@ using static SDL2.SDL.SDL_EventType;
 
 namespace Vortice;
 
-public sealed class SDL2GameContext : GameContextWithGraphics
+public sealed class SDL2GameContext : GameContext
 {
     private const int _eventsPerPeep = 64;
     private readonly SDL_Event[] _events = new SDL_Event[_eventsPerPeep];
 
     private bool _exiting = false;
 
-    public SDL2GameContext(GraphicsDevice graphicsDevice)
-        : base(graphicsDevice)
+    public SDL2GameContext()
     {
         // Init SDL2
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)

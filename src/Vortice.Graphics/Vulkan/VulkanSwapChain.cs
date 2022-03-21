@@ -11,15 +11,15 @@ internal unsafe class VulkanSwapChain : SwapChain
 {
     private readonly VkSurfaceKHR _surface = VkSurfaceKHR.Null;
 
-    public VulkanSwapChain(VulkanGraphicsDevice device, in SwapChainSource source, in SwapChainDescriptor descriptor)
-        : base(device, descriptor)
+    public VulkanSwapChain(VulkanGraphicsDevice device, in GraphicsSurface surface, in SwapChainDescriptor descriptor)
+        : base(device, surface, descriptor)
     {
-        _surface = CreateVkSurface(source);
+        _surface = CreateVkSurface(surface);
         Resize(descriptor.Size.Width, descriptor.Size.Height);
 
-        VkSurfaceKHR CreateVkSurface(in SwapChainSource source)
+        VkSurfaceKHR CreateVkSurface(in GraphicsSurface source)
         {
-            VkSurfaceKHR surface;
+            VkSurfaceKHR surface = default;
 
             switch (source.Type)
             {
@@ -28,7 +28,7 @@ internal unsafe class VulkanSwapChain : SwapChain
                     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR
                     {
                         sType = VkStructureType.Win32SurfaceCreateInfoKHR,
-                        hinstance = GetModuleHandleW(lpModuleName: null),
+                        hinstance = win32Source.HInstance,
                         hwnd = win32Source.Hwnd
                     };
 
@@ -43,8 +43,6 @@ internal unsafe class VulkanSwapChain : SwapChain
             return surface;
         }
     }
-
-    public VkSurfaceKHR Surface { get; }
 
     public VkSwapchainKHR Handle { get; private set; } = VkSwapchainKHR.Null;
 
@@ -64,7 +62,7 @@ internal unsafe class VulkanSwapChain : SwapChain
         var createInfo = new VkSwapchainCreateInfoKHR
         {
             sType = VkStructureType.SwapchainCreateInfoKHR,
-            surface = Surface,
+            surface = _surface,
             //minImageCount = imageCount,
             //imageFormat = surfaceFormat.format,
             //imageColorSpace = surfaceFormat.colorSpace,
@@ -90,13 +88,11 @@ internal unsafe class VulkanSwapChain : SwapChain
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    protected override void OnDispose()
     {
-        if (disposing)
+        if (!_surface.IsNull)
         {
+            vkDestroySurfaceKHR(((VulkanGraphicsDevice)Device).Instance, _surface, null);
         }
     }
-
-    [DllImport("kernel32", ExactSpelling = true, SetLastError = true)]
-    private static extern unsafe IntPtr GetModuleHandleW(ushort* lpModuleName);
 }

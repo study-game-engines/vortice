@@ -8,7 +8,7 @@ using Vortice.Graphics;
 
 namespace Vortice;
 
-internal class WinFormsGameView : GameView
+internal unsafe class WinFormsGameView : GameView
 {
     private readonly Control _control;
 
@@ -16,10 +16,7 @@ internal class WinFormsGameView : GameView
     {
         _control = control;
 
-        Source = SwapChainSource.CreateWin32(
-            Marshal.GetHINSTANCE(Assembly.GetEntryAssembly()!.Modules.First()),
-            _control.Handle
-            );
+        Surface = GraphicsSurface.CreateWin32(GetModuleHandleW(lpModuleName: null), _control.Handle);
 
         _control.ClientSizeChanged += OnControlClientSizeChanged;
     }
@@ -28,10 +25,13 @@ internal class WinFormsGameView : GameView
     public override SizeI ClientSize => new SizeI(_control.ClientSize.Width, _control.ClientSize.Height);
 
     /// <inheritdoc />
-    public override SwapChainSource Source { get; }
+    public override GraphicsSurface Surface { get; }
 
     private void OnControlClientSizeChanged(object? sender, EventArgs e)
     {
         OnSizeChanged();
     }
+
+    [DllImport("kernel32", ExactSpelling = true, SetLastError = true)]
+    private static extern unsafe IntPtr GetModuleHandleW(ushort* lpModuleName);
 }

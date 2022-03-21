@@ -1,6 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Diagnostics;
 using Microsoft.Toolkit.Diagnostics;
 
 #if !EXCLUDE_D3D12_BACKEND
@@ -15,6 +16,11 @@ namespace Vortice.Graphics;
 
 public abstract class GraphicsDevice : IDisposable
 {
+    /// <summary>
+    /// The configuration property name for <see cref="IsDebugOutputEnabled"/>.
+    /// </summary>
+    private const string EnableDebugOutput = "VORTICE_ENABLE_DEBUG_OUTPUT";
+
     private volatile int _isDisposed;
 
     protected GraphicsDevice()
@@ -30,6 +36,15 @@ public abstract class GraphicsDevice : IDisposable
         {
             OnDispose();
         }
+    }
+
+    /// <summary>
+    /// Indicates whether or not the debug output is enabled.
+    /// </summary>
+    public static bool IsDebugOutputEnabled
+    {
+        get => GetConfigurationValue(EnableDebugOutput);
+        set => AppContext.SetSwitch(EnableDebugOutput, value);
     }
 
     /// <summary>
@@ -85,7 +100,12 @@ public abstract class GraphicsDevice : IDisposable
         }
     }
 
-    public static GraphicsDevice CreateDefault(ValidationMode validationMode = ValidationMode.Disabled, GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
+    public static GraphicsDevice Create(ValidationMode validationMode = ValidationMode.Disabled, GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
+    {
+        return Create(new GraphicsDeviceDescriptor(null, validationMode, powerPreference));
+    }
+
+    public static GraphicsDevice Create(in GraphicsDeviceDescriptor descriptor)
     {
 #if !EXCLUDE_D3D12_BACKEND
         if (D3D12GraphicsDevice.IsSupported)
@@ -95,9 +115,9 @@ public abstract class GraphicsDevice : IDisposable
 #endif
 
 #if !EXCLUDE_VULKAN_BACKEND
-        if (VulkanGraphicsDevice.IsSupported)
+        if (VulkanUtils.IsSupported())
         {
-            return new VulkanGraphicsDevice(validationMode, powerPreference);
+            return new VulkanGraphicsDevice(descriptor);
         }
 #endif
 
@@ -139,15 +159,37 @@ public abstract class GraphicsDevice : IDisposable
         return CreateTextureCore(descriptor);
     }
 
-    public SwapChain CreateSwapChain(in SwapChainSource source, in SwapChainDescriptor descriptor)
+    public SwapChain CreateSwapChain(in GraphicsSurface surface, in SwapChainDescriptor descriptor)
     {
-        Guard.IsNotNull(source, nameof(source));
+        Guard.IsNotNull(surface, nameof(surface));
 
-        return CreateSwapChainCore(source, descriptor);
+        return CreateSwapChainCore(surface, descriptor);
     }
 
-    protected abstract SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor);
+    protected abstract SwapChain CreateSwapChainCore(in GraphicsSurface surface, in SwapChainDescriptor descriptor);
 
     protected abstract Texture CreateTextureCore(in TextureDescriptor descriptor);
     protected abstract GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData);
+
+    /// <summary>
+    /// Gets a configuration value for a specified property.
+    /// </summary>
+    /// <param name="propertyName">The property name to retrieve the value for.</param>
+    /// <returns>The value of the specified configuration setting.</returns>
+    private static bool GetConfigurationValue(string propertyName)
+    {
+#if DEBUG
+        if (Debugger.IsAttached)
+        {
+            return true;
+        }
+#endif
+
+        if (AppContext.TryGetSwitch(propertyName, out bool isEnabled))
+        {
+            return isEnabled;
+        }
+
+        return false;
+    }
 }
