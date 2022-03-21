@@ -22,13 +22,13 @@ public abstract class GameView
         {
             Size = ClientSize,
         };
-
+        
         SwapChain = device.CreateSwapChain(Source, descriptor);
     }
 
     public void Present()
     {
-        SwapChain?.Present();
+        //SwapChain?.Present();
     }
 
     protected virtual void OnSizeChanged()

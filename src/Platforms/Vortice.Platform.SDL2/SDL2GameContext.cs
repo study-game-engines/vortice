@@ -19,7 +19,7 @@ public sealed class SDL2GameContext : GameContextWithGraphics
         : base(graphicsDevice)
     {
         // Init SDL2
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0)
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
         {
             SDL_Log($"Unable to initialize SDL: {SDL_GetError()}");
             throw new Exception("");

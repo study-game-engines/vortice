@@ -189,6 +189,8 @@ public abstract class Game : IGame, IDisposable
         {
             system.Draw(gameTime);
         }
+
+        //GraphicsDevice.Frame();
     }
 
     public virtual void EndDraw()

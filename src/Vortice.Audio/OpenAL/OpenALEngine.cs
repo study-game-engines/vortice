@@ -1,6 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+#if NET6_0_OR_GREATER
 using static Vortice.Audio.OpenAL.OpenALNative;
 
 namespace Vortice.Audio.OpenAL;
@@ -22,3 +23,4 @@ internal unsafe class OpenALEngine : AudioDevice
     // <inheritdoc />
     public override AudioBackend BackendType => AudioBackend.OpenAL;
 }
+#endif

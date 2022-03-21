@@ -1,72 +1,62 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using TerraFX.Interop.DirectX;
-using static TerraFX.Interop.Windows.Windows;
-using static TerraFX.Interop.DirectX.DirectX;
-using static TerraFX.Interop.DirectX.X3DAUDIO;
 using System.Diagnostics;
-using TerraFX.Interop.Windows;
+using Vortice.Multimedia;
+using Vortice.XAudio2;
+using static Vortice.XAudio2.XAudio2;
 
 namespace Vortice.Audio.XAudio2;
 
-internal unsafe class XAudio2Engine : AudioDevice
+internal class XAudio2Engine : AudioDevice
 {
-    private readonly AUDIO_STREAM_CATEGORY _category = AUDIO_STREAM_CATEGORY.AudioCategory_GameEffects;
+    private readonly AudioStreamCategory _category = AudioStreamCategory.GameEffects;
 
-    private readonly ComPtr<IXAudio2> _xaudio2;
-    private IXAudio2MasteringVoice* _masterVoice;
-    private readonly uint _masterChannelMask;
-    private readonly byte[] _x3DAudio = new byte[X3DAUDIO_HANDLE_BYTESIZE];
+    private readonly IXAudio2 _xaudio2;
+    private IXAudio2MasteringVoice _masterVoice;
+    private readonly Speakers _masterChannelMask;
+    private readonly int _masterChannels;
+    private readonly int _masterRate;
+    private readonly X3DAudio _x3DAudio;
 
     public XAudio2Engine()
     {
-        ThrowIfFailed(XAudio2Create(_xaudio2.GetAddressOf()));
+        _xaudio2 = XAudio2Create(ProcessorSpecifier.DefaultProcessor, true);
 
 #if DEBUG
         //if (mEngineFlags & AudioEngine_Debug)
         {
-            XAUDIO2_DEBUG_CONFIGURATION debug = new XAUDIO2_DEBUG_CONFIGURATION();
-            debug.TraceMask = XAUDIO2_LOG_ERRORS | XAUDIO2_LOG_WARNINGS;
-            debug.BreakMask = XAUDIO2_LOG_ERRORS;
-            _xaudio2.Get()->SetDebugConfiguration(&debug, null);
+            DebugConfiguration debug = new DebugConfiguration();
+            debug.TraceMask = LogType.Errors | LogType.Warnings;
+            debug.BreakMask = LogType.Errors;
+            _xaudio2.SetDebugConfiguration(debug);
             Debug.WriteLine("INFO: XAudio 2.9 debugging enabled");
 
         }
 #endif
 
-        //ThrowIfFailed(_xaudio2->RegisterForCallbacks(&mEngineCallback));
+        _masterVoice = _xaudio2.CreateMasteringVoice(
+            DefaultChannels,
+            DefaultSampleRate,
+            _category);
 
-        IXAudio2MasteringVoice* newMasterVoice;
-        HRESULT hr = _xaudio2.Get()->CreateMasteringVoice(&newMasterVoice,
-            /*(wfx) ? wfx->nChannels : */XAUDIO2_DEFAULT_CHANNELS,
-            /*(wfx) ? wfx->nSamplesPerSec :*/ XAUDIO2_DEFAULT_SAMPLERATE,
-            0u, null, null, _category);
-        ThrowIfFailed(hr);
-        _masterVoice = newMasterVoice;
+        _masterChannelMask = (Speakers)_masterVoice.ChannelMask;
+        VoiceDetails details = _masterVoice.VoiceDetails;
 
-        uint channelMask;
-        ThrowIfFailed(_masterVoice->GetChannelMask(&channelMask));
+        _masterChannels = details.InputChannels;
+        _masterRate = details.InputSampleRate;
 
-        XAUDIO2_VOICE_DETAILS details;
-        _masterVoice->GetVoiceDetails(&details);
-
-        _masterChannelMask = channelMask;
+        Debug.WriteLine($"Mastering voice has {_masterChannels} channels, {_masterRate} sample rate, {_masterChannelMask} channels");
 
         //_masterVoice.Get()->SetVolume(1.0f);
 
-        float speedOfSound = X3DAUDIO_SPEED_OF_SOUND;
-        fixed (byte* _x3DAudioPtr = _x3DAudio)
-        {
-            X3DAudioInitialize(_masterChannelMask, speedOfSound, _x3DAudioPtr);
-        }
+        _x3DAudio = new X3DAudio(_masterChannelMask);
     }
 
     /// <inheritdoc />
     protected override void OnDispose()
     {
-        _masterVoice->DestroyVoice();
-        _masterVoice = default;
+        _masterVoice.DestroyVoice();
         _xaudio2.Dispose();
     }
 
