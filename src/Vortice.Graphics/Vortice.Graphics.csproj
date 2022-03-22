@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <ExcludeD3D12>True</ExcludeD3D12>
+    <DefineConstants Condition="'$(ExcludeD3D11)' == 'true'">$(DefineConstants);EXCLUDE_D3D11_BACKEND</DefineConstants>
     <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>
     <DefineConstants Condition="'$(ExcludeVulkan)' == 'true'">$(DefineConstants);EXCLUDE_VULKAN_BACKEND</DefineConstants>
   </PropertyGroup>
@@ -12,13 +13,16 @@
     <Using Include="System.Runtime.CompilerServices" />
 
     <Compile Remove="TerraFX/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />
+    <Compile Remove="D3D11/**/*" Condition="'$(ExcludeD3D11)' == 'true'" />
     <Compile Remove="D3D12/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />
     <Compile Remove="Vulkan/**/*" Condition="'$(ExcludeVulkan)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Vortice.Mathematics" Version="$(VorticeMathematicsVersion)" />
+    <PackageReference Include="Vortice.Direct3D11" Version="$(VorticeWindowsVersion)" Condition="'$(ExcludeD3D11)' != 'true'" />
+    <PackageReference Include="Vortice.Direct3D12" Version="$(VorticeWindowsVersion)" Condition="'$(ExcludeD3D12)' != 'true'" />
     <PackageReference Include="Vortice.Vulkan" Version="$(VorticeVulkanVersion)" Condition="'$(ExcludeVulkan)' != 'true'" />
   </ItemGroup>
-  
+
 </Project>

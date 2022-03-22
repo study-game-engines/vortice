@@ -131,17 +131,12 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
                 {
                     debugUtilsCreateInfo.messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Verbose | VkDebugUtilsMessageSeverityFlagsEXT.Info;
                 }
-
-#if NET6_0_OR_GREATER
                 debugUtilsCreateInfo.pfnUserCallback = &DebugMessengerCallback;
-#else
-            debugUtilsCreateInfo.pfnUserCallback = Marshal.GetFunctionPointerForDelegate(DebugMessagerCallbackDelegate);
-#endif
                 createInfo.pNext = &debugUtilsCreateInfo;
             }
 
             vkCreateInstance(&createInfo, null, out _instance).CheckResult();
-            vkLoadInstance(_instance);
+            vkLoadInstanceOnly(_instance);
 
             if (instanceLayers.Count > 0)
             {
@@ -348,6 +343,8 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
             {
                 throw new GraphicsException("Vulkan: Cannot create device");
             }
+
+            vkLoadDevice(_handle);
         }
 
         // Init caps
