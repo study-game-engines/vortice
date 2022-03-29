@@ -3,7 +3,6 @@
 
 namespace Vortice.Audio.OpenAL;
 
-#if NET6_0_OR_GREATER
 internal unsafe static class OpenALNative
 {
     private static readonly IntPtr s_nativeLibrary;
@@ -13,8 +12,7 @@ internal unsafe static class OpenALNative
 
     static OpenALNative()
     {
-        s_nativeLibrary = NativeLibrary.Load("OpenAL32.dll");
-        alcOpenDevice_ptr = (delegate* unmanaged[Cdecl]<sbyte*, IntPtr>)NativeLibrary.GetExport(s_nativeLibrary, nameof(alcOpenDevice));
+        //s_nativeLibrary = NativeLibrary.Load("OpenAL32.dll");
+        //alcOpenDevice_ptr = (delegate* unmanaged[Cdecl]<sbyte*, IntPtr>)NativeLibrary.GetExport(s_nativeLibrary, nameof(alcOpenDevice));
     }
 }
-#endif

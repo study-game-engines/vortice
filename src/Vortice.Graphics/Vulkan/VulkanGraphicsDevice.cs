@@ -10,6 +10,10 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
     private static readonly VkString s_engineName = new("Vortice");
 
+#if !NET6_0_OR_GREATER
+    private readonly PFN_vkDebugUtilsMessengerCallbackEXT DebugMessagerCallbackDelegate = DebugMessengerCallback;
+#endif
+
     private readonly bool _debugUtils;
     private readonly VkInstance _instance;
     private readonly VkDebugUtilsMessengerEXT _debugMessenger = VkDebugUtilsMessengerEXT.Null;
@@ -57,19 +61,19 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 
             instanceExtensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
 
-            if (OperatingSystem.IsWindows())
+            if (PlatformInfo.IsWindows)
             {
                 instanceExtensions.Add(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
             }
-            else if (OperatingSystem.IsAndroid())
+            else if (PlatformInfo.IsAndroid)
             {
                 instanceExtensions.Add(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
             }
-            else if (OperatingSystem.IsIOS() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            else if (PlatformInfo.IsMacOS)
             {
                 instanceExtensions.Add(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
             }
-            else if (OperatingSystem.IsLinux())
+            else if (PlatformInfo.IsLinux)
             {
                 if (availableInstanceExtensions.Contains(VK_KHR_XCB_SURFACE_EXTENSION_NAME))
                 {
@@ -131,7 +135,11 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
                 {
                     debugUtilsCreateInfo.messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Verbose | VkDebugUtilsMessageSeverityFlagsEXT.Info;
                 }
+#if NET6_0_OR_GREATER
                 debugUtilsCreateInfo.pfnUserCallback = &DebugMessengerCallback;
+#else
+                debugUtilsCreateInfo.pfnUserCallback = Marshal.GetFunctionPointerForDelegate(DebugMessagerCallbackDelegate);
+#endif
                 createInfo.pNext = &debugUtilsCreateInfo;
             }
 
@@ -474,7 +482,9 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
         }
     }
 
+#if NET6_0_OR_GREATER
     [UnmanagedCallersOnly]
+#endif
     private static uint DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagsEXT messageSeverity,
         VkDebugUtilsMessageTypeFlagsEXT messageTypes,
         VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
