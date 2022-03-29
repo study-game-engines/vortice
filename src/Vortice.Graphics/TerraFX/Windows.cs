@@ -2,7 +2,9 @@
 
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+#if NET6_0_OR_GREATER
 using System.Reflection;
+#endif
 
 namespace TerraFX.Interop.Windows;
 
@@ -14,7 +16,7 @@ internal static unsafe partial class Windows
     [NativeTypeName("#define S_FALSE ((HRESULT)1L)")]
     public const int S_FALSE = 0;
 
-
+#if NET6_0_OR_GREATER
     /// <summary>Raised whenever a native library is loaded by TerraFX.Interop.Windows. Handlers can be added to this event to customize how libraries are loaded, and they will be used first whenever a new native library is being resolved.</summary>
     public static event DllImportResolver? ResolveLibrary;
 
@@ -63,11 +65,12 @@ internal static unsafe partial class Windows
         nativeLibrary = IntPtr.Zero;
         return false;
     }
+#endif
 
     [DoesNotReturn]
     internal static void ThrowExternalException(string methodName, int errorCode)
     {
-        var message = string.Format("'{0}' failed with an error code of '{1}'", methodName, errorCode);
+        string message = string.Format("'{0}' failed with an error code of '{1}'", methodName, errorCode);
         throw new ExternalException(message, errorCode);
     }
 

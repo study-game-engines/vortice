@@ -20,7 +20,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [VtblIndex(0)]
     public HRESULT QueryInterface([NativeTypeName("const IID &")] Guid* riid, void** ppvObject)
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, Guid*, void**, int>)(lpVtbl[0]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), riid, ppvObject);
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, Guid*, void**, int>)(lpVtbl[0]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), riid, ppvObject);
     }
 
     /// <inheritdoc cref="IUnknown.AddRef" />
@@ -29,7 +29,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [return: NativeTypeName("ULONG")]
     public uint AddRef()
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, uint>)(lpVtbl[1]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this));
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, uint>)(lpVtbl[1]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this));
     }
 
     /// <inheritdoc cref="IUnknown.Release" />
@@ -38,7 +38,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [return: NativeTypeName("ULONG")]
     public uint Release()
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, uint>)(lpVtbl[2]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this));
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, uint>)(lpVtbl[2]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this));
     }
 
     /// <inheritdoc cref="ID3D12Object.GetPrivateData" />
@@ -46,7 +46,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [VtblIndex(3)]
     public HRESULT GetPrivateData([NativeTypeName("const GUID &")] Guid* guid, uint* pDataSize, void* pData)
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, Guid*, uint*, void*, int>)(lpVtbl[3]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), guid, pDataSize, pData);
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, Guid*, uint*, void*, int>)(lpVtbl[3]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), guid, pDataSize, pData);
     }
 
     /// <inheritdoc cref="ID3D12Object.SetPrivateData" />
@@ -54,7 +54,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [VtblIndex(4)]
     public HRESULT SetPrivateData([NativeTypeName("const GUID &")] Guid* guid, uint DataSize, [NativeTypeName("const void *")] void* pData)
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, Guid*, uint, void*, int>)(lpVtbl[4]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), guid, DataSize, pData);
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, Guid*, uint, void*, int>)(lpVtbl[4]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), guid, DataSize, pData);
     }
 
     /// <inheritdoc cref="ID3D12Object.SetPrivateDataInterface" />
@@ -62,7 +62,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [VtblIndex(5)]
     public HRESULT SetPrivateDataInterface([NativeTypeName("const GUID &")] Guid* guid, [NativeTypeName("const IUnknown *")] IUnknown* pData)
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, Guid*, IUnknown*, int>)(lpVtbl[5]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), guid, pData);
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, Guid*, IUnknown*, int>)(lpVtbl[5]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), guid, pData);
     }
 
     /// <inheritdoc cref="ID3D12Object.SetName" />
@@ -70,7 +70,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [VtblIndex(6)]
     public HRESULT SetName([NativeTypeName("LPCWSTR")] ushort* Name)
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, ushort*, int>)(lpVtbl[6]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), Name);
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, ushort*, int>)(lpVtbl[6]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), Name);
     }
 
     /// <inheritdoc cref="ID3D12DeviceChild.GetDevice" />
@@ -78,7 +78,7 @@ internal unsafe partial struct ID3D12CommandAllocator
     [VtblIndex(7)]
     public HRESULT GetDevice([NativeTypeName("const IID &")] Guid* riid, void** ppvDevice)
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, Guid*, void**, int>)(lpVtbl[7]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), riid, ppvDevice);
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, Guid*, void**, int>)(lpVtbl[7]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this), riid, ppvDevice);
     }
 
     /// <include file='ID3D12CommandAllocator.xml' path='doc/member[@name="ID3D12CommandAllocator.Reset"]/*' />
@@ -86,6 +86,6 @@ internal unsafe partial struct ID3D12CommandAllocator
     [VtblIndex(8)]
     public HRESULT Reset()
     {
-        return ((delegate* unmanaged<ID3D12CommandAllocator*, int>)(lpVtbl[8]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this));
+        return ((delegate* unmanaged[Stdcall]<ID3D12CommandAllocator*, int>)(lpVtbl[8]))((ID3D12CommandAllocator*)Unsafe.AsPointer(ref this));
     }
 }
