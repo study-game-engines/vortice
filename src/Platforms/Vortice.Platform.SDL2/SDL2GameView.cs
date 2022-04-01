@@ -5,10 +5,11 @@ using Vortice.Mathematics;
 using Vortice.Graphics;
 using static SDL2.SDL;
 using static SDL2.SDL.SDL_WindowFlags;
+using System.Runtime.InteropServices;
 
 namespace Vortice;
 
-internal class SDL2GameView : GameView
+internal unsafe class SDL2GameView : GameView
 {
     private readonly IntPtr _window;
 
@@ -31,7 +32,7 @@ internal class SDL2GameView : GameView
         {
             case SDL_SYSWM_TYPE.SDL_SYSWM_WINDOWS:
                 Surface = GraphicsSurface.CreateWin32(
-                    wmInfo.info.win.hinstance,
+                    GetModuleHandleW(lpModuleName: null),
                     wmInfo.info.win.window
                     );
                 break;
@@ -77,4 +78,7 @@ internal class SDL2GameView : GameView
     {
         OnSizeChanged();
     }
+
+    [DllImport("kernel32", ExactSpelling = true, SetLastError = true)]
+    private static extern unsafe IntPtr GetModuleHandleW(ushort* lpModuleName);
 }

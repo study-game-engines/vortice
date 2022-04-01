@@ -490,7 +490,7 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
         VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
         void* userData)
     {
-        string? message = Interop.GetString(pCallbackData->pMessage);
+        string message = Interop.GetString(pCallbackData->pMessage);
         if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
         {
             if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)

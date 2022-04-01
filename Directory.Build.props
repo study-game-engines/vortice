@@ -36,8 +36,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VorticeMathematicsVersion>1.4.7</VorticeMathematicsVersion>
-    <VorticeWindowsVersion>2.1.4-beta</VorticeWindowsVersion>
+    <VorticeMathematicsVersion>1.4.10</VorticeMathematicsVersion>
+    <VorticeWindowsVersion>2.1.5-beta</VorticeWindowsVersion>
   </PropertyGroup>
 
   <ItemGroup>

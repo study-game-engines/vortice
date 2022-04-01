@@ -5,75 +5,16 @@ using Vortice.Mathematics;
 
 namespace Vortice.Graphics;
 
-public readonly struct SwapChainDescriptor : IEquatable<SwapChainDescriptor>
+public readonly record struct SwapChainDescriptor : IEquatable<SwapChainDescriptor>
 {
-    public SizeI Size { get; init; }
-    public TextureFormat ColorFormat { get; init; }
-    public PresentMode PresentMode { get; init; }
-    public bool IsFullscreen { get; init; }
+    public SizeI Size { get; init; } = default;
+    public TextureFormat ColorFormat { get; init; } = TextureFormat.BGRA8UNormSrgb;
+    public PresentMode PresentMode { get; init; } = PresentMode.Fifo;
+    public bool IsFullscreen { get; init; } = false;
 
-    public string? Label { get; init; }
+    public string? Label { get; init; } = default;
 
-    public SwapChainDescriptor(SizeI size,
-        TextureFormat colorFormat = TextureFormat.BGRA8UNormSrgb,
-        PresentMode presentMode = PresentMode.Fifo,
-        bool isFullscreen = false,
-        string? label = default)
+    public SwapChainDescriptor()
     {
-        Size = size;
-        ColorFormat = colorFormat;
-        PresentMode = presentMode;
-        IsFullscreen = isFullscreen;
-        Label = label;
-    }
-
-    /// <summary>
-    /// Compares two <see cref="SwapChainDescriptor"/> objects for equality.
-    /// </summary>
-    /// <param name="left">The <see cref="SwapChainDescriptor"/> on the left hand of the operand.</param>
-    /// <param name="right">The <see cref="SwapChainDescriptor"/> on the right hand of the operand.</param>
-    /// <returns>
-    /// True if the current left is equal to the <paramref name="right"/> parameter; otherwise, false.
-    /// </returns>
-    public static bool operator ==(SwapChainDescriptor left, SwapChainDescriptor right) => left.Equals(right);
-
-    /// <summary>
-    /// Compares two <see cref="SwapChainDescriptor"/> objects for inequality.
-    /// </summary>
-    /// <param name="left">The <see cref="SwapChainDescriptor"/> on the left hand of the operand.</param>
-    /// <param name="right">The <see cref="SwapChainDescriptor"/> on the right hand of the operand.</param>
-    /// <returns>
-    /// True if the current left is unequal to the <paramref name="right"/> parameter; otherwise, false.
-    /// </returns>
-    public static bool operator !=(SwapChainDescriptor left, SwapChainDescriptor right) => !left.Equals(right);
-
-    /// <inheritdoc/>
-    public override bool Equals(object? obj) => obj is SwapChainDescriptor other && Equals(other);
-
-    /// <inheritdoc/>
-    public bool Equals(SwapChainDescriptor other)
-    {
-        return
-            Size == other.Size &&
-            ColorFormat == other.ColorFormat &&
-            PresentMode == other.PresentMode &&
-            IsFullscreen == other.IsFullscreen;
-    }
-
-    /// <summary>
-    /// Returns the hash code for this instance.
-    /// </summary>
-    /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override int GetHashCode()
-    {
-        var hashCode = new HashCode();
-        {
-            hashCode.Add(Size);
-            hashCode.Add(ColorFormat);
-            hashCode.Add(PresentMode);
-            hashCode.Add(IsFullscreen);
-        }
-
-        return hashCode.ToHashCode();
     }
 }

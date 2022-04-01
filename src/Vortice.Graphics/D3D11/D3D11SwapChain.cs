@@ -24,7 +24,8 @@ internal class D3D11SwapChain : SwapChain
     // <inheritdoc />
     public override int BackBufferCount => 1;
 
-    public void Resize(int width, int height)
+    // <inheritdoc />
+    public override void Resize(int newWidth, int newHeight)
     {
         
     }

@@ -279,7 +279,7 @@ internal static unsafe class VulkanUtils
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static VkFormat ToVulkanFormat(this TextureFormat format)
+    public static VkFormat ToVulkanFormat(TextureFormat format)
     {
         return format switch
         {
@@ -354,14 +354,9 @@ internal static unsafe class VulkanUtils
             _ => ThrowHelper.ThrowArgumentException<VkFormat>("Invalid texture format"),
         };
     }
-
-    public static VkMemoryHeap GetMemoryHeap(this VkPhysicalDeviceMemoryProperties memoryProperties, uint index)
-    {
-        return (&memoryProperties.memoryHeaps_0)[index];
-    }
 }
 
-public struct VkPhysicalDeviceExtensions
+internal struct VkPhysicalDeviceExtensions
 {
     public bool swapchain;
     public bool depth_clip_enable;
