@@ -1,18 +1,17 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-#if NET6_0_OR_GREATER
-using static Vortice.Audio.OpenAL.OpenALNative;
+//using static Vortice.Audio.OpenAL.OpenALNative;
 
 namespace Vortice.Audio.OpenAL;
 
 internal unsafe class OpenALEngine : AudioDevice
 {
-    private readonly IntPtr _device;
+    //private readonly nint _device;
 
     public OpenALEngine()
     {
-        _device = alcOpenDevice(null);
+        //_device = alcOpenDevice(null);
     }
 
     /// <inheritdoc />
@@ -23,4 +22,3 @@ internal unsafe class OpenALEngine : AudioDevice
     // <inheritdoc />
     public override AudioBackend BackendType => AudioBackend.OpenAL;
 }
-#endif

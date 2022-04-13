@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-    <DefineConstants Condition="'$(ExcludeXAudio2)' == 'true'">$(DefineConstants);EXCLUDE_XAUDIO2_BACKEND</DefineConstants>
-    <DefineConstants Condition="'$(ExcludeOpenAL)' == 'true'">$(DefineConstants);EXCLUDE_OPENAL_BACKEND</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Toolkit.Diagnostics" Version="7.1.2" />
     <PackageReference Include="Vortice.XAudio2" Version="$(VorticeWindowsVersion)" Condition="'$(ExcludeVulkan)' != 'true'" />
   </ItemGroup>
 

@@ -1,19 +1,22 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-#if !EXCLUDE_XAUDIO2_BACKEND
-using Vortice.Audio.XAudio2;
-#endif
-
-#if !EXCLUDE_OPENAL_BACKEND
-using Vortice.Audio.OpenAL;
-#endif
+using Microsoft.Toolkit.Diagnostics;
 
 namespace Vortice.Audio;
 
 public abstract class AudioDevice : IDisposable
 {
     private volatile int _isDisposed;
+    private static readonly List<AudioDeviceFactory> _factories = new();
+
+    public static void RegisterFactory(AudioDeviceFactory factory)
+    {
+        Guard.IsNotNull(factory, nameof(factory));
+
+        _factories.Add(factory);
+        _factories.Sort((x, y) => x.Priority.CompareTo(y.Priority));
+    }
 
     protected AudioDevice()
     {
@@ -73,13 +76,19 @@ public abstract class AudioDevice : IDisposable
         }
     }
 
-    public static AudioDevice CreateDefault()
+    public static AudioDevice CreateDefault(AudioBackend preferredBackend = AudioBackend.Count)
     {
-#if !EXCLUDE_XAUDIO2_BACKEND
-        return new XAudio2Engine();
-#elif !EXCLUDE_OPENAL_BACKEND
-        return new OpenALEngine();
-#endif
+        foreach (AudioDeviceFactory factory in _factories)
+        {
+            if (preferredBackend == AudioBackend.Count)
+            {
+                return factory.CreateDevice();
+            }
+            else if (factory.BackendType == preferredBackend)
+            {
+                return factory.CreateDevice();
+            }
+        }
 
         throw new PlatformNotSupportedException("Cannot find capable audio device");
     }

@@ -8,7 +8,7 @@ using static Vortice.XAudio2.XAudio2;
 
 namespace Vortice.Audio.XAudio2;
 
-internal class XAudio2Engine : AudioDevice
+internal sealed class XAudio2Device : AudioDevice
 {
     private readonly AudioStreamCategory _category = AudioStreamCategory.GameEffects;
 
@@ -19,7 +19,7 @@ internal class XAudio2Engine : AudioDevice
     private readonly int _masterRate;
     private readonly X3DAudio _x3DAudio;
 
-    public XAudio2Engine()
+    public XAudio2Device()
     {
         _xaudio2 = XAudio2Create(ProcessorSpecifier.DefaultProcessor, true);
 

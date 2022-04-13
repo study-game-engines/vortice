@@ -5,7 +5,9 @@ namespace Vortice.Audio;
 
 public enum AudioBackend : byte
 {
-    Default = 0,
+    Null = 0,
     XAudio2,
     OpenAL,
+
+    Count
 }
