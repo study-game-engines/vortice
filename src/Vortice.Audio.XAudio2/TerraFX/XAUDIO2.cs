@@ -3,7 +3,6 @@
 // Ported from um/xaudio2.h in the Windows SDK for Windows 10.0.22000.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
-using System;
 using TerraFX.Interop.Windows;
 //using static TerraFX.Interop.DirectX.XAUDIO2_FILTER_TYPE;
 

@@ -6,28 +6,15 @@ using Microsoft.Toolkit.Diagnostics;
 
 namespace Vortice.Graphics;
 
-public abstract class GraphicsDevice : IDisposable
+public abstract class GraphicsDevice : DisposableObject
 {
     /// <summary>
     /// The configuration property name for <see cref="IsDebugOutputEnabled"/>.
     /// </summary>
     private const string EnableDebugOutput = "VORTICE_ENABLE_DEBUG_OUTPUT";
 
-    private volatile int _isDisposed;
-
     protected GraphicsDevice()
     {
-    }
-
-    /// <summary>
-    /// Releases unmanaged resources and performs other cleanup operations.
-    /// </summary>
-    ~GraphicsDevice()
-    {
-        if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 0)
-        {
-            OnDispose();
-        }
     }
 
     /// <summary>
@@ -55,65 +42,35 @@ public abstract class GraphicsDevice : IDisposable
     public abstract GraphicsDeviceCaps Capabilities { get; }
 
     /// <summary>
-    /// Gets whether or not the current instance has already been disposed.
+    /// Get the graphics <see cref="CommandQueue"/>.
     /// </summary>
-    public bool IsDisposed
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get
-        {
-            return _isDisposed != 0;
-        }
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Dispose()
-    {
-        OnDispose();
-        GC.SuppressFinalize(this);
-    }
-
-    protected abstract void OnDispose();
+    public abstract CommandQueue GraphicsQueue { get; }
 
     /// <summary>
-    /// Throws an <see cref="ObjectDisposedException" /> if the current instance has been disposed.
+    /// Get the compute <see cref="CommandQueue"/>.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void ThrowIfDisposed()
-    {
-        if (IsDisposed)
-        {
-            Throw();
-        }
-        void Throw()
-        {
-            throw new ObjectDisposedException(ToString());
-        }
-    }
+    public abstract CommandQueue ComputeQueue { get; }
 
     /// <summary>
     /// Wait for device to finish pending GPU operations.
     /// </summary>
     public abstract void WaitIdle();
 
-    public abstract CommandBuffer BeginCommandBuffer(CommandQueueType queueType = CommandQueueType.Graphics);
-
-    public GraphicsBuffer CreateBuffer(in BufferDescriptor descriptor)
+    public GraphicsBuffer CreateBuffer(in BufferDescription description)
     {
-        Guard.IsGreaterThanOrEqualTo(descriptor.Size, 1, nameof(BufferDescriptor.Size));
+        Guard.IsGreaterThanOrEqualTo(description.Size, 1, nameof(BufferDescription.Size));
 
-        return CreateBufferCore(descriptor, IntPtr.Zero);
+        return CreateBufferCore(description, IntPtr.Zero);
     }
 
     public GraphicsBuffer CreateBuffer<T>(Span<T> data, BufferUsage usage = BufferUsage.ShaderReadWrite) where T : unmanaged
     {
         unsafe
         {
-            BufferDescriptor descriptor = new BufferDescriptor(usage, (ulong)(data.Length * sizeof(T)));
+            BufferDescription description = new BufferDescription(usage, (ulong)(data.Length * sizeof(T)));
             fixed (T* dataPtr = data)
             {
-                return CreateBufferCore(descriptor, (IntPtr)dataPtr);
+                return CreateBufferCore(description, (IntPtr)dataPtr);
             }
         }
     }
@@ -137,7 +94,7 @@ public abstract class GraphicsDevice : IDisposable
     protected abstract SwapChain CreateSwapChainCore(in GraphicsSurface surface, in SwapChainDescriptor descriptor);
 
     protected abstract Texture CreateTextureCore(in TextureDescriptor descriptor);
-    protected abstract GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData);
+    protected abstract GraphicsBuffer CreateBufferCore(in BufferDescription description, IntPtr initialData);
 
     /// <summary>
     /// Gets a configuration value for a specified property.

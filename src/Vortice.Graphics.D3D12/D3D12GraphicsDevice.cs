@@ -307,6 +307,9 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
         _copyQueue = new(this, CommandQueueType.Copy);
     }
 
+    /// <summary>Finalizes an instance of the <see cref="D3D12GraphicsDevice" /> class.</summary>
+    ~D3D12GraphicsDevice() => Dispose(isDisposing: false);
+
     /// <inheritdoc />
     public override void WaitIdle()
     {
@@ -334,6 +337,12 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     public override GraphicsDeviceCaps Capabilities => _caps;
 
+    /// <inheritdoc />
+    public override CommandQueue GraphicsQueue => _graphicsQueue;
+    /// <inheritdoc />
+    public override CommandQueue ComputeQueue => _computeQueue;
+
+
     internal bool TearingSupported { get; }
 
     internal bool SupportsRenderPass { get; }
@@ -346,12 +355,10 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
     internal IDXGIFactory4* Factory => _factory.Get();
 
     internal ID3D12Device5* NativeDevice => _d3dDevice.Get();
-    internal D3D12CommandQueue GraphicsQueue => _graphicsQueue;
-    internal D3D12CommandQueue ComputeQueue => _computeQueue;
     internal D3D12CommandQueue CopyQueue => _copyQueue;
 
     /// <inheritdoc />
-    protected override void OnDispose()
+    protected override void Dispose(bool isDisposing)
     {
         WaitIdle();
 
@@ -427,26 +434,12 @@ public unsafe class D3D12GraphicsDevice : GraphicsDevice
         }
     }
 
-    private D3D12CommandQueue GetQueue(CommandQueueType queueType)
+    /// <inheritdoc />
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescription description, IntPtr initialData)
     {
-        switch (queueType)
-        {
-            case CommandQueueType.Compute:
-                return _computeQueue;
-
-            case CommandQueueType.Copy:
-                return _copyQueue;
-
-            default:
-                return _graphicsQueue;
-        }
+        return new D3D12Buffer(this, description, initialData);
     }
 
-    /// <inheritdoc />
-    public override CommandBuffer BeginCommandBuffer(CommandQueueType queueType = CommandQueueType.Graphics) => new D3D12CommandBuffer(this, GetQueue(queueType));
-
-    /// <inheritdoc />
-    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => new D3D12Buffer(this, descriptor, initialData);
     /// <inheritdoc />
     protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D12Texture(this, descriptor);
     /// <inheritdoc />

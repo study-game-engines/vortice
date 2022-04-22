@@ -45,6 +45,11 @@ internal unsafe class VulkanSwapChain : SwapChain
         }
     }
 
+    // <summary>
+    /// Finalizes an instance of the <see cref="VulkanSwapChain" /> class.
+    /// </summary>
+    ~VulkanSwapChain() => Dispose(isDisposing: false);
+
     public VkSwapchainKHR Handle { get; private set; } = VkSwapchainKHR.Null;
 
     // <inheritdoc />

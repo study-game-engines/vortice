@@ -9,7 +9,7 @@ using static Vortice.Graphics.D3D12.D3D12Utils;
 
 namespace Vortice.Graphics.D3D12;
 
-internal unsafe class D3D12CommandQueue : IDisposable
+internal unsafe class D3D12CommandQueue : CommandQueue
 {
     private readonly ComPtr<ID3D12CommandQueue> _handle;
     private readonly ComPtr<ID3D12Fence> _fence;
@@ -17,8 +17,8 @@ internal unsafe class D3D12CommandQueue : IDisposable
     private readonly D3D12CommandAllocatorPool _allocatorPool;
 
     public D3D12CommandQueue(D3D12GraphicsDevice device, CommandQueueType queueType)
+        : base(device)
     {
-        Device = device;
         QueueType = queueType;
 
         D3D12_COMMAND_LIST_TYPE listType = ToD3D12(queueType);
@@ -48,17 +48,31 @@ internal unsafe class D3D12CommandQueue : IDisposable
         _allocatorPool = new D3D12CommandAllocatorPool(listType);
     }
 
-    public D3D12GraphicsDevice Device { get; }
-    public CommandQueueType QueueType { get; }
+    // <summary>
+    /// Finalizes an instance of the <see cref="D3D12CommandQueue" /> class.
+    /// </summary>
+    ~D3D12CommandQueue() => Dispose(isDisposing: false);
+
+    /// <inheritdoc />
+    public override CommandQueueType QueueType { get; }
 
     public ID3D12CommandQueue* Handle => _handle.Get();
 
-    public void Dispose()
+    /// <inheritdoc />
+    protected override void Dispose(bool isDisposing)
     {
-        _allocatorPool.Dispose();
-        _handle.Dispose();
-        _fence.Dispose();
-        GC.SuppressFinalize(this);
+        if (isDisposing)
+        {
+            _allocatorPool.Dispose();
+            _handle.Dispose();
+            _fence.Dispose();
+        }
+    }
+
+    /// <inheritdoc />
+    public override CommandBuffer BeginCommandBuffer()
+    {
+        return new D3D12CommandBuffer(this);
     }
 
     public ulong Signal()
@@ -89,7 +103,8 @@ internal unsafe class D3D12CommandQueue : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void GetCommandListAndAllocator(out ID3D12GraphicsCommandList4* commandList, out ID3D12CommandAllocator* commandAllocator)
     {
-        _allocatorPool.Rent(Device.NativeDevice, null, out commandList, out commandAllocator);
+        var d3d12GraphicsDevice = (D3D12GraphicsDevice)Device;
+        _allocatorPool.Rent(d3d12GraphicsDevice.NativeDevice, null, out commandList, out commandAllocator);
     }
 
     /// <summary>
@@ -110,6 +125,6 @@ internal unsafe class D3D12CommandQueue : IDisposable
         }
 
         // Return the rented command list and command allocator so that they can be reused
-       _allocatorPool.Return(commandBuffer.DetachD3D12CommandList(), commandBuffer.DetachD3D12CommandAllocator());
+        _allocatorPool.Return(commandBuffer.DetachD3D12CommandList(), commandBuffer.DetachD3D12CommandAllocator());
     }
 }

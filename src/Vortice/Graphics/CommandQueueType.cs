@@ -3,6 +3,9 @@
 
 namespace Vortice.Graphics;
 
+/// <summary>
+/// Defines the type of <see cref="CommandQueue"/>.
+/// </summary>
 public enum CommandQueueType
 {
     Graphics = 0,

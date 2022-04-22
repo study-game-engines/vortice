@@ -3,8 +3,8 @@
 // Ported from um/xaudio2.h in the Windows SDK for Windows 10.0.22000.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
-using TerraFX.Interop;
 using TerraFX.Interop.Windows;
+using static TerraFX.Interop.Windows.AUDIO_STREAM_CATEGORY;
 
 namespace TerraFX.Interop.DirectX;
 
@@ -70,12 +70,19 @@ internal unsafe partial struct IXAudio2 : IXAudio2.Interface
     //    return ((delegate* unmanaged<IXAudio2*, IXAudio2SubmixVoice**, uint, uint, uint, uint, XAUDIO2_VOICE_SENDS*, XAUDIO2_EFFECT_CHAIN*, int>)(lpVtbl[6]))((IXAudio2*)Unsafe.AsPointer(ref this), ppSubmixVoice, InputChannels, InputSampleRate, Flags, ProcessingStage, pSendList, pEffectChain);
     //}
 
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    //[VtblIndex(7)]
-    //public HRESULT CreateMasteringVoice(IXAudio2MasteringVoice** ppMasteringVoice, [NativeTypeName("UINT32")] uint InputChannels = 0, [NativeTypeName("UINT32")] uint InputSampleRate = 0, [NativeTypeName("UINT32")] uint Flags = 0, [NativeTypeName("LPCWSTR")] ushort* szDeviceId = null, [NativeTypeName("const XAUDIO2_EFFECT_CHAIN *")] XAUDIO2_EFFECT_CHAIN* pEffectChain = null, AUDIO_STREAM_CATEGORY StreamCategory = AudioCategory_GameEffects)
-    //{
-    //    return ((delegate* unmanaged<IXAudio2*, IXAudio2MasteringVoice**, uint, uint, uint, ushort*, XAUDIO2_EFFECT_CHAIN*, AUDIO_STREAM_CATEGORY, int>)(lpVtbl[7]))((IXAudio2*)Unsafe.AsPointer(ref this), ppMasteringVoice, InputChannels, InputSampleRate, Flags, szDeviceId, pEffectChain, StreamCategory);
-    //}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [VtblIndex(7)]
+    public HRESULT CreateMasteringVoice(
+        IXAudio2MasteringVoice** ppMasteringVoice,
+        [NativeTypeName("UINT32")] uint InputChannels = 0,
+        [NativeTypeName("UINT32")] uint InputSampleRate = 0,
+        [NativeTypeName("UINT32")] uint Flags = 0,
+        [NativeTypeName("LPCWSTR")] ushort* szDeviceId = null,
+        [NativeTypeName("const XAUDIO2_EFFECT_CHAIN *")] XAUDIO2_EFFECT_CHAIN* pEffectChain = null,
+        AUDIO_STREAM_CATEGORY StreamCategory = AudioCategory_GameEffects)
+    {
+        return ((delegate* unmanaged<IXAudio2*, IXAudio2MasteringVoice**, uint, uint, uint, ushort*, XAUDIO2_EFFECT_CHAIN*, AUDIO_STREAM_CATEGORY, int>)(lpVtbl[7]))((IXAudio2*)Unsafe.AsPointer(ref this), ppMasteringVoice, InputChannels, InputSampleRate, Flags, szDeviceId, pEffectChain, StreamCategory);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(8)]

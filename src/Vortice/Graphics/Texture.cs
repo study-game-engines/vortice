@@ -6,7 +6,7 @@ namespace Vortice.Graphics;
 public abstract class Texture : GraphicsResource
 {
     protected Texture(GraphicsDevice device, in TextureDescriptor descriptor)
-        : base(device)
+        : base(device, descriptor.Label)
     {
         Dimension = descriptor.Dimension;
         Format = descriptor.Format;

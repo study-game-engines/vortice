@@ -8,17 +8,14 @@ namespace Vortice.Graphics;
 /// </summary>
 public abstract class GraphicsBuffer : GraphicsResource
 {
-    protected GraphicsBuffer(GraphicsDevice device, in BufferDescriptor descriptor)
-        : base(device)
+    protected GraphicsBuffer(GraphicsDevice device, in BufferDescription description)
+        : base(device, description.Label)
     {
-        Usage = descriptor.Usage;
-        Size = descriptor.Size;
-        Label = descriptor.Label;
+        Usage = description.Usage;
+        Size = description.Size;
     }
 
     public BufferUsage Usage { get; }
 
     public ulong Size { get; }
-
-    public virtual string? Label { get; set; }
 }

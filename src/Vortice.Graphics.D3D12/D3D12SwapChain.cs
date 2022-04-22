@@ -43,6 +43,8 @@ internal unsafe class D3D12SwapChain : SwapChain
 
         using ComPtr<IDXGISwapChain1> dxgiSwapChain1 = default;
 
+        var d3d12CommandQueue = (D3D12CommandQueue)device.GraphicsQueue;
+
         switch (surface.Type)
         {
             case SwapChainSourceType.Win32:
@@ -53,7 +55,7 @@ internal unsafe class D3D12SwapChain : SwapChain
                 };
 
                 HRESULT hr = device.Factory->CreateSwapChainForHwnd(
-                    (IUnknown*)device.GraphicsQueue.Handle,
+                    (IUnknown*)d3d12CommandQueue.Handle,
                     win32Source.Hwnd,
                     &swapChainDesc,
                     &fsSwapChainDesc,
@@ -70,7 +72,7 @@ internal unsafe class D3D12SwapChain : SwapChain
                 CoreWindowChainSource coreSource = (CoreWindowChainSource)surface;
 
                 ThrowIfFailed(device.Factory->CreateSwapChainForCoreWindow(
-                    (IUnknown*)device.GraphicsQueue.Handle,
+                    (IUnknown*)d3d12CommandQueue.Handle,
                     (IUnknown*)coreSource.CoreWindow,
                     &swapChainDesc,
                     null,
@@ -95,6 +97,11 @@ internal unsafe class D3D12SwapChain : SwapChain
 
         AfterReset();
     }
+
+    // <summary>
+    /// Finalizes an instance of the <see cref="D3D12SwapChain" /> class.
+    /// </summary>
+    ~D3D12SwapChain() => Dispose(isDisposing: false);
 
     // <inheritdoc />
     public override Texture? CurrentBackBuffer => null;

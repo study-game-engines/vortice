@@ -53,7 +53,7 @@ public sealed class DrawTriangleGame : Game
             new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
         };
 
-        //using GraphicsBuffer vertexBuffer = GraphicsDevice.CreateBuffer(triangleVertices, BufferUsage.Vertex);
+        using GraphicsBuffer vertexBuffer = GraphicsDevice.CreateBuffer(triangleVertices, BufferUsage.Vertex);
         //
         //using (Texture texture = GraphicsDevice.CreateTexture(TextureDescriptor.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
         //{
@@ -64,8 +64,8 @@ public sealed class DrawTriangleGame : Game
     {
         base.Draw(gameTime);
 
-        //using CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer();
-        //commandBuffer.ExecuteAndWaitForCompletion();
+        using CommandBuffer commandBuffer = GraphicsDevice.GraphicsQueue.BeginCommandBuffer();
+        commandBuffer.ExecuteAndWaitForCompletion();
     }
 
     public readonly record struct VertexPositionColor(Vector3 Position, Color4 Color);

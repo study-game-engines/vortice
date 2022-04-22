@@ -4,7 +4,7 @@
 namespace Vortice.Graphics;
 
 /// <summary>
-/// <see cref="Buffer"/> access.
+/// Describes the <see cref="Buffer"/> access.
 /// </summary>
 public enum CpuAccess
 {

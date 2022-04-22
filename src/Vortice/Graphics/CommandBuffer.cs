@@ -6,7 +6,7 @@ namespace Vortice.Graphics;
 public abstract class CommandBuffer : GraphicsResource
 {
     protected CommandBuffer(GraphicsDevice device)
-        : base(device)
+        : base(device, default)
     {
     }
 

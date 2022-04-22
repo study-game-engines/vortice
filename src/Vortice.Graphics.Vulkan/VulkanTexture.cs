@@ -20,6 +20,11 @@ internal unsafe class VulkanTexture : Texture
         vkCreateImage(device.NativeDevice, &createInfo, null, out _handle);
     }
 
+    // <summary>
+    /// Finalizes an instance of the <see cref="VulkanTexture" /> class.
+    /// </summary>
+    ~VulkanTexture() => Dispose(isDisposing: false);
+
     public VkImage Handle => _handle;
 
     /// <inheritdoc />

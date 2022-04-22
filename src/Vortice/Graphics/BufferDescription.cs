@@ -4,11 +4,11 @@
 namespace Vortice.Graphics;
 
 /// <summary>
-/// Structure that describes the <see cref="Texture"/>.
+/// Structure that describes the <see cref="GraphicsBuffer"/>.
 /// </summary>
-public record struct BufferDescriptor : IEquatable<BufferDescriptor>
+public record struct BufferDescription : IEquatable<BufferDescription>
 {
-    public BufferDescriptor(BufferUsage usage, ulong size, CpuAccess access = CpuAccess.None, string? label = default)
+    public BufferDescription(BufferUsage usage, ulong size, CpuAccess access = CpuAccess.None, string? label = default)
     {
         Usage = usage;
         Size = size;
@@ -17,7 +17,7 @@ public record struct BufferDescriptor : IEquatable<BufferDescriptor>
     }
 
     /// <summary>
-    /// <see cref="BufferUsage"/> of <see cref="Buffer"/>.
+    /// Gets or Sets the <see cref="BufferUsage"/> of <see cref="Buffer"/>.
     /// </summary>
     public BufferUsage Usage { get; init; }
 
@@ -31,5 +31,8 @@ public record struct BufferDescriptor : IEquatable<BufferDescriptor>
     /// </summary>
     public CpuAccess Access { get; init; }
 
+    // <summary>
+    /// Gets or sets the label of <see cref="Buffer"/>.
+    /// </summary>
     public string? Label { get; init; }
 }

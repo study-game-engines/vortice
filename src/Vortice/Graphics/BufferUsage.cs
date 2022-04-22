@@ -10,12 +10,40 @@ namespace Vortice.Graphics;
 public enum BufferUsage
 {
     None = 0,
+    /// <summary>
+    /// Supports input assembly access as VertexBuffer.
+    /// </summary>
     Vertex = 1 << 0,
+    /// <summary>
+    /// Supports input assembly access as IndexBuffer.
+    /// </summary>
     Index = 1 << 1,
-    Uniform = 1 << 2,
+    /// <summary>
+    /// Supports constant buffer access.
+    /// </summary>
+    Constant = 1 << 2,
+    /// <summary>
+    /// Supports shader read access.
+    /// </summary>
     ShaderRead = 1 << 3,
+    /// <summary>
+    /// Supports write read access.
+    /// </summary>
     ShaderWrite = 1 << 4,
+    /// <summary>
+    /// Supports shader read and write access.
+    /// </summary>
     ShaderReadWrite = ShaderRead | ShaderWrite,
+    /// <summary>
+    /// Supports indirect buffer access for indirect draw/dispatch.
+    /// </summary>
     Indirect = 1 << 5,
-    RayTracing = 1 << 6,
+    /// <summary>
+    /// Supports predication access for conditional rendering.
+    /// </summary>
+    Predication = 1 << 6,
+    /// <summary>
+    /// Supports ray tracing acceleration structure usage.
+    /// </summary>
+    RayTracing = 1 << 7,
 }

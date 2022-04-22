@@ -7,6 +7,8 @@ using TerraFX.Interop.DirectX;
 using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.Windows;
 using static TerraFX.Interop.DirectX.XAUDIO2;
+using static TerraFX.Interop.DirectX.X3DAUDIO;
+using static TerraFX.Interop.Windows.AUDIO_STREAM_CATEGORY;
 
 namespace Vortice.Audio;
 
@@ -14,13 +16,14 @@ public sealed unsafe class XAudio2Device : AudioDevice
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
-    //private readonly AudioStreamCategory _category = AudioStreamCategory.GameEffects;
+    private readonly AUDIO_STREAM_CATEGORY _category = AudioCategory_GameEffects;
 
     private readonly ComPtr<IXAudio2> _xaudio2;
-    //private IXAudio2MasteringVoice _masterVoice;
-    //private readonly Speakers _masterChannelMask;
-    //private readonly int _masterChannels;
-    //private readonly int _masterRate;
+    private IXAudio2MasteringVoice* _masterVoice;
+    private readonly uint _masterChannelMask;
+    private readonly uint _masterChannels;
+    private readonly uint _masterRate;
+    private X3DAUDIO_HANDLE _x3DAudio;
     //private readonly X3DAudio _x3DAudio;
 
     public static bool IsSupported() => s_isSupported.Value;
@@ -43,28 +46,68 @@ public sealed unsafe class XAudio2Device : AudioDevice
         }
 #endif
 
-        //_masterVoice = _xaudio2.CreateMasteringVoice(
-        //    DefaultChannels,
-        //    DefaultSampleRate,
-        //    _category);
-        //
-        //_masterChannelMask = (Speakers)_masterVoice.ChannelMask;
-        //VoiceDetails details = _masterVoice.VoiceDetails;
-        //
-        //_masterChannels = details.InputChannels;
-        //_masterRate = details.InputSampleRate;
-        //
-        //Debug.WriteLine($"Mastering voice has {_masterChannels} channels, {_masterRate} sample rate, {_masterChannelMask} channels");
+        _masterVoice = CreateMasteringVoice();
 
-        //_masterVoice.Get()->SetVolume(1.0f);
+        uint dwChannelMask;
+        HRESULT hr = _masterVoice->GetChannelMask(&dwChannelMask);
+        if (hr.FAILED)
+        {
+            _masterVoice->DestroyVoice();
+            _masterVoice = null;
+            _xaudio2.Dispose();
+            return;
+        }
 
-        //_x3DAudio = new X3DAudio(_masterChannelMask);
+        XAUDIO2_VOICE_DETAILS details;
+        _masterVoice->GetVoiceDetails(&details);
+
+        _masterChannelMask = dwChannelMask;
+        _masterChannels = details.InputChannels;
+        _masterRate = details.InputSampleRate;
+        Debug.WriteLine($"Mastering voice has {_masterChannels} channels, {_masterRate} sample rate, {_masterChannelMask} channels");
+
+        ThrowIfFailed(_masterVoice->SetVolume(1.0f));
+
+        // Setup 3D audio
+        float SPEEDOFSOUND = X3DAUDIO_SPEED_OF_SOUND;
+
+        hr = X3DAudioInitialize(_masterChannelMask, SPEEDOFSOUND, out _x3DAudio);
+        if (hr.FAILED)
+        {
+            //SAFE_DESTROY_VOICE(mReverbVoice);
+            _masterVoice->DestroyVoice();
+            _masterVoice = null;
+            //mReverbEffect.Reset();
+            //mVolumeLimiter.Reset();
+            _xaudio2.Dispose();
+            return;
+        }
+
+        IXAudio2MasteringVoice* CreateMasteringVoice()
+        {
+            IXAudio2MasteringVoice* voice = default;
+
+            HRESULT hr = _xaudio2.Get()->CreateMasteringVoice(
+                &voice,
+                XAUDIO2_DEFAULT_CHANNELS,
+                XAUDIO2_DEFAULT_SAMPLERATE,
+                0u,
+                null,
+                null,
+                _category);
+
+            ThrowIfFailed(hr);
+
+            return voice;
+        }
     }
 
     /// <inheritdoc />
     protected override void OnDispose()
     {
-        //_masterVoice.DestroyVoice();
+        _x3DAudio = default;
+        _masterVoice->DestroyVoice();
+        _masterVoice = default;
         _xaudio2.Dispose();
     }
 

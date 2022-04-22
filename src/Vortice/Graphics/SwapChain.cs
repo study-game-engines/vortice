@@ -8,7 +8,7 @@ namespace Vortice.Graphics;
 public abstract class SwapChain : GraphicsResource
 {
     protected SwapChain(GraphicsDevice device, GraphicsSurface surface, in SwapChainDescriptor descriptor)
-        : base(device)
+        : base(device, descriptor.Label)
     {
         Surface = surface;
         Size = descriptor.Size;

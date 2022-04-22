@@ -26,6 +26,8 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     private readonly ulong _minAllocationAlignment;
 
     private readonly VkDevice _handle;
+    private readonly VulkanCommandQueue _graphicsQueue;
+    private readonly VulkanCommandQueue _computeQueue;
     private readonly GraphicsDeviceCaps _caps;
 
     public static bool IsSupported() => VulkanUtils.IsSupported();
@@ -338,7 +340,7 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 
             using var deviceExtensionNames = new VkStringArray(enabledDeviceExtensions);
 
-            VkDeviceCreateInfo createInfo = new VkDeviceCreateInfo
+            VkDeviceCreateInfo createInfo = new()
             {
                 sType = VkStructureType.DeviceCreateInfo,
                 pNext = &features2,
@@ -356,6 +358,9 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
             }
 
             vkLoadDevice(_handle);
+
+            _graphicsQueue = new VulkanCommandQueue(this, CommandQueueType.Graphics, 0u, 0u);
+            _computeQueue = new VulkanCommandQueue(this, CommandQueueType.Compute, 0u, 0u);
         }
 
         // Init caps
@@ -438,6 +443,11 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
         }
     }
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="VulkanGraphicsDevice" /> class.
+    /// </summary>
+    ~VulkanGraphicsDevice() => Dispose(isDisposing: false);
+
     public VkInstance Instance => _instance;
 
     public bool DebugUtils => _debugUtils;
@@ -463,11 +473,19 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     public override GraphicsDeviceCaps Capabilities => _caps;
 
+    /// <inheritdoc />
+    public override CommandQueue GraphicsQueue => _graphicsQueue;
+    /// <inheritdoc />
+    public override CommandQueue ComputeQueue => _computeQueue;
 
     /// <inheritdoc />
-    protected override void OnDispose()
+    protected override void Dispose(bool isDisposing)
     {
         WaitIdle();
+
+        if (isDisposing)
+        {
+        }
 
         if (!_handle.IsNull)
         {
@@ -532,10 +550,7 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    public override CommandBuffer BeginCommandBuffer(CommandQueueType queueType = CommandQueueType.Graphics) => default;
-
-    /// <inheritdoc />
-    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, IntPtr initialData) => throw new NotImplementedException();
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescription description, IntPtr initialData) => throw new NotImplementedException();
     /// <inheritdoc />
     protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new VulkanTexture(this, descriptor);
     /// <inheritdoc />

@@ -107,13 +107,10 @@ internal unsafe class D3D12Texture : Texture
         device.NativeDevice->GetCopyableFootprint(&resourceDesc, out _footprint, out _, out _, out _allocatedSize);
     }
 
-    /// <summary>
-    /// Releases unmanaged resources and performs other cleanup operations.
+    // <summary>
+    /// Finalizes an instance of the <see cref="D3D12Texture" /> class.
     /// </summary>
-    ~D3D12Texture()
-    {
-        Dispose(false);
-    }
+    ~D3D12Texture() => Dispose(isDisposing: false);
 
     public ID3D12Resource* Handle => _handle;
 

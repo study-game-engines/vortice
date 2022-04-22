@@ -9,11 +9,12 @@ public abstract class GraphicsResource : DisposableObject
 {
     protected string? _label;
 
-    protected GraphicsResource(GraphicsDevice device)
+    protected GraphicsResource(GraphicsDevice device, string? label)
     {
         Guard.IsNotNull(device, nameof(device));
 
         Device = device;
+        _label = label;
     }
 
     /// <summary>

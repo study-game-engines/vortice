@@ -11,8 +11,8 @@ internal unsafe class D3D12CommandBuffer : CommandBuffer
     private ComPtr<ID3D12GraphicsCommandList4> _commandList;
     private ComPtr<ID3D12CommandAllocator> _commandAllocator;
 
-    public D3D12CommandBuffer(D3D12GraphicsDevice device, D3D12CommandQueue queue)
-        : base(device)
+    public D3D12CommandBuffer(D3D12CommandQueue queue)
+        : base(queue.Device)
     {
         Queue = queue;
 
