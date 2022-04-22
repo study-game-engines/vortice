@@ -45,7 +45,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics.Vulkan", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics.D3D12", "src\Vortice.Graphics.D3D12\Vortice.Graphics.D3D12.csproj", "{79A106D9-F914-4EA0-91B3-F77FBF4839E1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TerraFX", "TerraFX", "{0EEDF545-25B4-4437-8401-6D54D11802D4}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TerraFX.Interop.Windows", "src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.shproj", "{514FF00E-BBF0-4D55-A47C-EEEB6208ADCE}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{42742ddc-04da-4dcc-84c5-2c296a6ea749}*SharedItemsImports = 5
+		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{514ff00e-bbf0-4d55-a47c-eeeb6208adce}*SharedItemsImports = 13
+		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{79a106d9-f914-4ea0-91b3-f77fbf4839e1}*SharedItemsImports = 5
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM64 = Debug|ARM64
@@ -201,6 +210,7 @@ Global
 		{42742DDC-04DA-4DCC-84C5-2C296A6EA749} = {5DB4AFA1-2FC2-4755-A548-0CF84DF8F106}
 		{274787A9-151E-4375-BB7A-9B9051048676} = {21F422AF-C8CE-4E6F-ACF6-67F8379363F3}
 		{79A106D9-F914-4EA0-91B3-F77FBF4839E1} = {21F422AF-C8CE-4E6F-ACF6-67F8379363F3}
+		{514FF00E-BBF0-4D55-A47C-EEEB6208ADCE} = {0EEDF545-25B4-4437-8401-6D54D11802D4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85020CE7-9EF6-4502-94F6-98643E762B78}

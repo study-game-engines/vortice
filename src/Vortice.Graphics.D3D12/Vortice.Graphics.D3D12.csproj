@@ -15,4 +15,6 @@
     <PackageReference Include="Vortice.XAudio2" Version="$(VorticeWindowsVersion)" />
   </ItemGroup>
 
+  <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />
+
 </Project>
