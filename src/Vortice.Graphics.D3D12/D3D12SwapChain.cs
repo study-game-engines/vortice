@@ -8,7 +8,7 @@ using static TerraFX.Interop.DirectX.DXGI_SCALING;
 using static TerraFX.Interop.DirectX.DXGI_SWAP_EFFECT;
 using static TerraFX.Interop.DirectX.DXGI_ALPHA_MODE;
 using static TerraFX.Interop.DirectX.DXGI_SWAP_CHAIN_FLAG;
-using static Vortice.Graphics.D3DUtilities;
+using static Vortice.Graphics.D3D12.D3D12Utils;
 using TerraFX.Interop.Windows;
 
 namespace Vortice.Graphics.D3D12;

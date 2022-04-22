@@ -16,7 +16,6 @@ using static TerraFX.Interop.DirectX.D3D12_RAYTRACING_TIER;
 using static TerraFX.Interop.DirectX.D3D12_MESSAGE_SEVERITY;
 using static TerraFX.Interop.DirectX.D3D12_MESSAGE_ID;
 using static TerraFX.Interop.DirectX.D3D12_RLDO_FLAGS;
-using static Vortice.Graphics.D3DUtilities;
 using static Vortice.Graphics.D3D12.D3D12Utils;
 using System.Diagnostics;
 using System.Reflection;

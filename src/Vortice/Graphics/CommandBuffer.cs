@@ -3,15 +3,11 @@
 
 namespace Vortice.Graphics;
 
-public abstract class CommandBuffer : GraphicsResource
+public abstract class CommandBuffer 
 {
-    protected CommandBuffer(GraphicsDevice device)
-        : base(device, default)
+    protected CommandBuffer()
     {
     }
 
-    /// <summary>
-    /// Executes the commands in the current commands list, and waits for completion.
-    /// </summary>
-    public abstract void ExecuteAndWaitForCompletion();
+    public abstract void Commit();
 }

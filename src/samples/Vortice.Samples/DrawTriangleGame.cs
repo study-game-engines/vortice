@@ -64,8 +64,8 @@ public sealed class DrawTriangleGame : Game
     {
         base.Draw(gameTime);
 
-        using CommandBuffer commandBuffer = GraphicsDevice.GraphicsQueue.BeginCommandBuffer();
-        commandBuffer.ExecuteAndWaitForCompletion();
+        CommandBuffer commandBuffer = GraphicsDevice.GraphicsQueue.BeginCommandBuffer();
+        commandBuffer.Commit();
     }
 
     public readonly record struct VertexPositionColor(Vector3 Position, Color4 Color);

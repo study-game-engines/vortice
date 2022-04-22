@@ -16,6 +16,12 @@ internal unsafe class D3D12CommandQueue : CommandQueue
     private ulong _fenceValue;
     private readonly D3D12CommandAllocatorPool _allocatorPool;
 
+    /* Command contexts */
+    private SRWLOCK _cmdBuffersLocker;
+    private readonly Queue<D3D12CommandBuffer> _commandBuffers = new();
+    private ulong _frameCount;
+    private uint _frameIndex;
+
     public D3D12CommandQueue(D3D12GraphicsDevice device, CommandQueueType queueType)
         : base(device)
     {
@@ -46,6 +52,11 @@ internal unsafe class D3D12CommandQueue : CommandQueue
         _handle.Get()->SetName($"{queueType} Command Queue");
 
         _allocatorPool = new D3D12CommandAllocatorPool(listType);
+
+        fixed (SRWLOCK* pCmdBuffersLocker = &_cmdBuffersLocker)
+        {
+            InitializeSRWLock(pCmdBuffersLocker);
+        }
     }
 
     // <summary>
@@ -66,13 +77,34 @@ internal unsafe class D3D12CommandQueue : CommandQueue
             _allocatorPool.Dispose();
             _handle.Dispose();
             _fence.Dispose();
+
+            fixed (SRWLOCK* pCmdBuffersLocker = &_cmdBuffersLocker)
+            {
+                ReleaseSRWLockExclusive(pCmdBuffersLocker);
+            }
         }
     }
 
     /// <inheritdoc />
     public override CommandBuffer BeginCommandBuffer()
     {
-        return new D3D12CommandBuffer(this);
+        /* Make sure multiple threads can't acquire the same command buffer. */
+        //AcquireSRWLockExclusive(&_cmdBuffersLocker);
+
+        D3D12CommandBuffer commandBuffer;
+
+        if (_commandBuffers.Count == 0)
+        {
+            commandBuffer = new D3D12CommandBuffer(this);
+        }
+        else
+        {
+            commandBuffer = _commandBuffers.Dequeue();
+        }
+
+        commandBuffer.Reset(_frameIndex);
+
+        return commandBuffer;
     }
 
     public ulong Signal()
@@ -124,7 +156,9 @@ internal unsafe class D3D12CommandQueue : CommandQueue
             ThrowIfFailed(_fence.Get()->SetEventOnCompletion(nextFenceValue, default));
         }
 
-        // Return the rented command list and command allocator so that they can be reused
-        _allocatorPool.Return(commandBuffer.DetachD3D12CommandList(), commandBuffer.DetachD3D12CommandAllocator());
+        _commandBuffers.Enqueue(commandBuffer);
+
+        _frameCount++;
+        _frameIndex = (uint)(_frameCount % Constants.MaxFramesInFlight);
     }
 }

@@ -8,7 +8,6 @@ using static TerraFX.Interop.DirectX.D3D12_HEAP_TYPE;
 using static TerraFX.Interop.DirectX.D3D12_TEXTURE_LAYOUT;
 using static TerraFX.Interop.DirectX.D3D12_RESOURCE_FLAGS;
 using static TerraFX.Interop.DirectX.D3D12_RESOURCE_STATES;
-using static Vortice.Graphics.D3DUtilities;
 using static TerraFX.Interop.Windows.Windows;
 using static Vortice.Graphics.D3D12.D3D12Utils;
 

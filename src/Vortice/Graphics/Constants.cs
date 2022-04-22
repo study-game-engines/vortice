@@ -3,8 +3,12 @@
 
 namespace Vortice.Graphics;
 
-public static class Constants
+/// <summary>
+/// Describes the <see cref="Buffer"/> access.
+/// </summary>
+public enum CpuAccess
 {
-    public static readonly uint MaxFramesInFlight = 2;
-    public static readonly uint MaxColorAttachments = 8;
+    None = 0,
+    Write,
+    Read,
 }
