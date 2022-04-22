@@ -1,12 +1,13 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using Vortice.Graphics.Vulkan;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Vortice.Graphics.Vulkan;
+namespace Vortice.Graphics;
 
-internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
+public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
     private static readonly VkString s_engineName = new("Vortice");
 
@@ -26,6 +27,8 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 
     private readonly VkDevice _handle;
     private readonly GraphicsDeviceCaps _caps;
+
+    public static bool IsSupported() => VulkanUtils.IsSupported();
 
     public VulkanGraphicsDevice(in GraphicsDeviceDescriptor descriptor)
     {
@@ -61,19 +64,19 @@ internal sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 
             instanceExtensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
 
-            if (PlatformInfo.IsWindows)
+            if (OperatingSystem.IsWindows())
             {
                 instanceExtensions.Add(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
             }
-            else if (PlatformInfo.IsAndroid)
+            else if (OperatingSystem.IsAndroid())
             {
                 instanceExtensions.Add(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
             }
-            else if (PlatformInfo.IsMacOS)
+            else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS())
             {
                 instanceExtensions.Add(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
             }
-            else if (PlatformInfo.IsLinux)
+            else if (OperatingSystem.IsLinux())
             {
                 if (availableInstanceExtensions.Contains(VK_KHR_XCB_SURFACE_EXTENSION_NAME))
                 {

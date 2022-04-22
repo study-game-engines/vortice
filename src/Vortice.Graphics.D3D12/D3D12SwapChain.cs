@@ -106,7 +106,7 @@ internal unsafe class D3D12SwapChain : SwapChain
     public override int BackBufferCount { get; }
 
     /// <inheritdoc />
-    protected override void OnDispose()
+    protected override void Dispose(bool isDisposing)
     {
         for (uint i = 0; i < BackBufferCount; i++)
         {

@@ -28,7 +28,7 @@ public abstract class GameView
 
     public void Present()
     {
-        //SwapChain?.Present();
+        SwapChain?.Present();
     }
 
     protected virtual void OnSizeChanged()

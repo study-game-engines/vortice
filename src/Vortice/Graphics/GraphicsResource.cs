@@ -5,9 +5,9 @@ using Microsoft.Toolkit.Diagnostics;
 
 namespace Vortice.Graphics;
 
-public abstract class GraphicsResource : IDisposable
+public abstract class GraphicsResource : DisposableObject
 {
-    private volatile int _isDisposed;
+    protected string? _label;
 
     protected GraphicsResource(GraphicsDevice device)
     {
@@ -22,23 +22,19 @@ public abstract class GraphicsResource : IDisposable
     public GraphicsDevice Device { get; }
 
     /// <summary>
-    /// Releases unmanaged resources and performs other cleanup operations.
+    /// Gets or set the label that identifies the resource.
     /// </summary>
-    ~GraphicsResource()
+    public string? Label
     {
-        if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 0)
+        get => _label;
+        set
         {
-            OnDispose();
+            _label = value;
+            OnLabelChanged();
         }
     }
 
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Dispose()
+    protected virtual void OnLabelChanged()
     {
-        OnDispose();
-        GC.SuppressFinalize(this);
     }
-
-    protected abstract void OnDispose();
 }

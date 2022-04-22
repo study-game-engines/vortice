@@ -20,10 +20,11 @@ using static Vortice.Graphics.D3DUtilities;
 using static Vortice.Graphics.D3D12.D3D12Utils;
 using System.Diagnostics;
 using System.Reflection;
+using Vortice.Graphics.D3D12;
 
-namespace Vortice.Graphics.D3D12;
+namespace Vortice.Graphics;
 
-internal unsafe class D3D12GraphicsDevice : GraphicsDevice
+public unsafe class D3D12GraphicsDevice : GraphicsDevice
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
     private readonly GraphicsDeviceCaps _caps;
@@ -33,7 +34,7 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
     private readonly D3D12CommandQueue _computeQueue;
     private readonly D3D12CommandQueue _copyQueue;
 
-    public static bool IsSupported => s_isSupported.Value;
+    public static bool IsSupported() => s_isSupported.Value;
 
     public D3D12GraphicsDevice(in GraphicsDeviceDescriptor descriptor)
     {

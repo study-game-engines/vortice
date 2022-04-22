@@ -4,14 +4,6 @@
 using System.Diagnostics;
 using Microsoft.Toolkit.Diagnostics;
 
-#if !EXCLUDE_D3D12_BACKEND
-using Vortice.Graphics.D3D12;
-#endif
-
-#if !EXCLUDE_VULKAN_BACKEND
-using Vortice.Graphics.Vulkan;
-#endif
-
 namespace Vortice.Graphics;
 
 public abstract class GraphicsDevice : IDisposable
@@ -98,30 +90,6 @@ public abstract class GraphicsDevice : IDisposable
         {
             throw new ObjectDisposedException(ToString());
         }
-    }
-
-    public static GraphicsDevice Create(ValidationMode validationMode = ValidationMode.Disabled, GpuPowerPreference powerPreference = GpuPowerPreference.HighPerformance)
-    {
-        return Create(new GraphicsDeviceDescriptor(null, validationMode, powerPreference));
-    }
-
-    public static GraphicsDevice Create(in GraphicsDeviceDescriptor descriptor)
-    {
-#if !EXCLUDE_D3D12_BACKEND
-        if (D3D12GraphicsDevice.IsSupported)
-        {
-            return new D3D12GraphicsDevice(descriptor);
-        }
-#endif
-
-#if !EXCLUDE_VULKAN_BACKEND
-        if (VulkanUtils.IsSupported())
-        {
-            return new VulkanGraphicsDevice(descriptor);
-        }
-#endif
-
-        throw new GraphicsException("Cannot find capable graphics device");
     }
 
     /// <summary>

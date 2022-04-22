@@ -9,7 +9,7 @@ using Vortice.Input;
 
 namespace Vortice;
 
-public abstract class Game : IGame, IDisposable
+public abstract class Game : DisposableObject, IGame
 {
     private readonly GameContext _context;
     private readonly ServiceProvider _serviceProvider;
@@ -29,38 +29,10 @@ public abstract class Game : IGame, IDisposable
 
         // Get required services.
         Input = _serviceProvider.GetRequiredService<InputManager>();
+        GraphicsDevice = _serviceProvider.GetRequiredService<GraphicsDevice>();
 
         // Get optional services.
-        GraphicsDevice? graphicsDevice = _serviceProvider.GetService<GraphicsDevice>();
-        if (graphicsDevice == null)
-        {
-            ValidationMode validationMode = ValidationMode.Disabled;
-            if (GraphicsDevice.IsDebugOutputEnabled)
-            {
-                validationMode = ValidationMode.Enabled;
-            }
-
-            GraphicsDevice = GraphicsDevice.Create(validationMode);
-        }
-        else
-        {
-            GraphicsDevice = graphicsDevice!;
-        }
-
-        AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();
-        if (audioDevice == null)
-        {
-            AudioDevice = AudioDevice.CreateDefault();
-        }
-        else
-        {
-            AudioDevice = audioDevice!;
-        }
-    }
-
-    ~Game()
-    {
-        Dispose(dispose: false);
+        AudioDevice = _serviceProvider.GetService<AudioDevice>();
     }
 
     public event EventHandler<EventArgs>? Activated;
@@ -74,8 +46,6 @@ public abstract class Game : IGame, IDisposable
 
     public bool IsRunning { get; private set; }
 
-    public bool IsDisposed { get; private set; }
-
     public GameTime Time { get; } = new GameTime();
 
     public GameView View => _context.View;
@@ -84,28 +54,22 @@ public abstract class Game : IGame, IDisposable
 
     public GraphicsDevice GraphicsDevice { get; }
 
-    public AudioDevice AudioDevice { get; }
+    public AudioDevice? AudioDevice { get; }
 
     public IList<IGameSystem> GameSystems { get; } = new List<IGameSystem>();
 
-    public void Dispose()
+    /// <inheritdoc />
+    protected override void Dispose(bool isDisposing)
     {
-        Dispose(dispose: true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool dispose)
-    {
-        if (dispose && !IsDisposed)
+        if (isDisposing)
         {
             GraphicsDevice.WaitIdle();
             View.SwapChain?.Dispose();
             GraphicsDevice.Dispose();
 
-            AudioDevice.Dispose();
+            AudioDevice?.Dispose();
 
             Disposed?.Invoke(this, EventArgs.Empty);
-            IsDisposed = true;
         }
     }
 

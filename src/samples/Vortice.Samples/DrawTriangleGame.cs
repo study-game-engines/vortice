@@ -16,6 +16,24 @@ public sealed class DrawTriangleGame : Game
     {
     }
 
+    /// <inheritdoc />
+    protected override void ConfigureServices(IServiceCollection services)
+    {
+        GraphicsDeviceDescriptor descriptor = new GraphicsDeviceDescriptor();
+
+        if (D3D12GraphicsDevice.IsSupported())
+        {
+            services.AddSingleton<GraphicsDevice>(new D3D12GraphicsDevice(descriptor));
+        }
+        else if (VulkanGraphicsDevice.IsSupported())
+        {
+            services.AddSingleton<GraphicsDevice>(new VulkanGraphicsDevice(descriptor));
+        }
+
+        base.ConfigureServices(services);
+    }
+
+    /// <inheritdoc />
     protected override void Initialize()
     {
         base.Initialize();

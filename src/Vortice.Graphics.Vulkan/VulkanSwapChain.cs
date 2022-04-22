@@ -150,7 +150,7 @@ internal unsafe class VulkanSwapChain : SwapChain
     }
 
     /// <inheritdoc />
-    protected override void OnDispose()
+    protected override void Dispose(bool isDisposing)
     {
         if (!Handle.IsNull)
         {

@@ -72,7 +72,7 @@ internal unsafe class D3D12Buffer : GraphicsBuffer
     public ID3D12Resource* Handle => _handle;
 
     /// <inheritdoc />
-    protected override void OnDispose()
+    protected override void Dispose(bool isDisposing)
     {
         _handle.Dispose();
     }

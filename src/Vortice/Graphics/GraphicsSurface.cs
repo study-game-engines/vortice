@@ -33,7 +33,7 @@ public abstract class GraphicsSurface
     public static GraphicsSurface CreateCoreWindow(IntPtr coreWindow) => new CoreWindowChainSource(coreWindow);
 }
 
-internal sealed class Win32SwapChainSource : GraphicsSurface
+public sealed class Win32SwapChainSource : GraphicsSurface
 {
     internal Win32SwapChainSource(IntPtr hInstance, IntPtr hwnd)
     {
@@ -48,7 +48,7 @@ internal sealed class Win32SwapChainSource : GraphicsSurface
     public override SwapChainSourceType Type => SwapChainSourceType.Win32;
 }
 
-internal sealed class CoreWindowChainSource : GraphicsSurface
+public sealed class CoreWindowChainSource : GraphicsSurface
 {
     internal CoreWindowChainSource(IntPtr coreWindow)
     {
