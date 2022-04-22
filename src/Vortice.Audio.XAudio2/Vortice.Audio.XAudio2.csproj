@@ -11,8 +11,6 @@
   <ItemGroup>
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.Runtime.CompilerServices" />
-
-    <PackageReference Include="Vortice.XAudio2" Version="$(VorticeWindowsVersion)" />
   </ItemGroup>
 
   <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />

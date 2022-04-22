@@ -7,9 +7,10 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\Vortice.Audio.OpenAL\Vortice.Audio.OpenAL.csproj" />
+    <ProjectReference Include="..\..\Vortice.Audio.XAudio2\Vortice.Audio.XAudio2.csproj" />
     <ProjectReference Include="..\..\Vortice.Graphics.D3D12\Vortice.Graphics.D3D12.csproj" />
     <ProjectReference Include="..\..\Vortice.Graphics.Vulkan\Vortice.Graphics.Vulkan.csproj" />
-    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
   </ItemGroup>
 
 </Project>

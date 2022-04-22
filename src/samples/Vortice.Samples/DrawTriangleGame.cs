@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
+using Vortice.Audio;
 using Vortice.Engine;
 using Vortice.Graphics;
 using Vortice.Mathematics;
@@ -21,6 +22,7 @@ public sealed class DrawTriangleGame : Game
     {
         GraphicsDeviceDescriptor descriptor = new GraphicsDeviceDescriptor();
 
+        // Graphics
         if (D3D12GraphicsDevice.IsSupported())
         {
             services.AddSingleton<GraphicsDevice>(new D3D12GraphicsDevice(descriptor));
@@ -28,6 +30,12 @@ public sealed class DrawTriangleGame : Game
         else if (VulkanGraphicsDevice.IsSupported())
         {
             services.AddSingleton<GraphicsDevice>(new VulkanGraphicsDevice(descriptor));
+        }
+
+        // Audio
+        if (XAudio2Device.IsSupported())
+        {
+            services.AddSingleton<AudioDevice>(new XAudio2Device());
         }
 
         base.ConfigureServices(services);
