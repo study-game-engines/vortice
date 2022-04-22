@@ -21,8 +21,8 @@ internal unsafe class D3D12SwapChain : SwapChain
 
     private readonly D3D12Texture[] _backbufferTextures = new D3D12Texture[3];
 
-    public D3D12SwapChain(D3D12GraphicsDevice device, in SwapChainSource source, in SwapChainDescriptor descriptor)
-       : base(device, descriptor)
+    public D3D12SwapChain(D3D12GraphicsDevice device, in GraphicsSurface surface, in SwapChainDescriptor descriptor)
+       : base(device, surface, descriptor)
     {
         BackBufferCount = (int)PresentModeToBufferCount(descriptor.PresentMode);
 
@@ -43,10 +43,10 @@ internal unsafe class D3D12SwapChain : SwapChain
 
         using ComPtr<IDXGISwapChain1> dxgiSwapChain1 = default;
 
-        switch (source.Type)
+        switch (surface.Type)
         {
             case SwapChainSourceType.Win32:
-                Win32SwapChainSource win32Source = (Win32SwapChainSource)source;
+                Win32SwapChainSource win32Source = (Win32SwapChainSource)surface;
                 DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsSwapChainDesc = new()
                 {
                     Windowed = descriptor.IsFullscreen ? false : true
@@ -67,7 +67,7 @@ internal unsafe class D3D12SwapChain : SwapChain
 
             case SwapChainSourceType.CoreWindow:
                 swapChainDesc.Scaling = DXGI_SCALING_ASPECT_RATIO_STRETCH;
-                CoreWindowChainSource coreSource = (CoreWindowChainSource)source;
+                CoreWindowChainSource coreSource = (CoreWindowChainSource)surface;
 
                 ThrowIfFailed(device.Factory->CreateSwapChainForCoreWindow(
                     (IUnknown*)device.GraphicsQueue.Handle,
@@ -106,17 +106,19 @@ internal unsafe class D3D12SwapChain : SwapChain
     public override int BackBufferCount { get; }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    protected override void OnDispose()
     {
-        if (disposing)
+        for (uint i = 0; i < BackBufferCount; i++)
         {
-            for (uint i = 0; i < BackBufferCount; i++)
-            {
-                _backbufferTextures[i].Dispose();
-            }
-
-            _handle.Dispose();
+            _backbufferTextures[i].Dispose();
         }
+
+        _handle.Dispose();
+    }
+
+    // <inheritdoc />
+    public override void Resize(int newWidth, int newHeight)
+    {
     }
 
     /// <inheritdoc />

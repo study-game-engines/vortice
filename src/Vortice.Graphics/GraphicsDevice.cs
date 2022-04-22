@@ -4,10 +4,6 @@
 using System.Diagnostics;
 using Microsoft.Toolkit.Diagnostics;
 
-#if !EXCLUDE_D3D11_BACKEND
-using Vortice.Graphics.D3D11;
-#endif
-
 #if !EXCLUDE_D3D12_BACKEND
 using Vortice.Graphics.D3D12;
 #endif
@@ -114,15 +110,8 @@ public abstract class GraphicsDevice : IDisposable
 #if !EXCLUDE_D3D12_BACKEND
         if (D3D12GraphicsDevice.IsSupported)
         {
-            return new D3D12GraphicsDevice(validationMode, powerPreference);
+            return new D3D12GraphicsDevice(descriptor);
         }
-#endif
-
-#if !EXCLUDE_D3D11_BACKEND
-        //if (D3D11GraphicsDevice.IsSupported())
-        //{
-        //    return new D3D11GraphicsDevice(descriptor);
-        //}
 #endif
 
 #if !EXCLUDE_VULKAN_BACKEND

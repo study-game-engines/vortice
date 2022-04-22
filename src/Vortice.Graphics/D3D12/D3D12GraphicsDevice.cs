@@ -35,7 +35,7 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
 
     public static bool IsSupported => s_isSupported.Value;
 
-    public D3D12GraphicsDevice(ValidationMode validationMode, GpuPowerPreference powerPreference)
+    public D3D12GraphicsDevice(in GraphicsDeviceDescriptor descriptor)
     {
         if (!s_isSupported.Value)
         {
@@ -44,7 +44,7 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
 
         uint dxgiFactoryFlags = 0;
 
-        if (validationMode != ValidationMode.Disabled)
+        if (descriptor.ValidationMode != ValidationMode.Disabled)
         {
             dxgiFactoryFlags = 0x1; // DXGI_CREATE_FACTORY_DEBUG
 
@@ -54,7 +54,7 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
             {
                 d3D12Debug.Get()->EnableDebugLayer();
 
-                if (validationMode == ValidationMode.GPU)
+                if (descriptor.ValidationMode == ValidationMode.GPU)
                 {
                     using ComPtr<ID3D12Debug1> d3D12Debug1 = default;
                     if (d3D12Debug.CopyTo(d3D12Debug1.GetAddressOf()).SUCCEEDED)
@@ -120,7 +120,7 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
                 queryByPreference = true;
             }
 
-            DXGI_GPU_PREFERENCE gpuPreference = ToDXGI(powerPreference);
+            DXGI_GPU_PREFERENCE gpuPreference = ToDXGI(descriptor.PowerPreference);
 
             HRESULT NextAdapter(uint index, IDXGIAdapter1** ppAdapter)
             {
@@ -157,7 +157,7 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
 
             ThrowIfFailed(_d3dDevice.Get()->SetName("AlimerDevice"));
 
-            if (validationMode != ValidationMode.Disabled)
+            if (descriptor.ValidationMode != ValidationMode.Disabled)
             {
                 // Configure debug device (if active).
                 using ComPtr<ID3D12InfoQueue> infoQueue = default;
@@ -168,7 +168,7 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
 
                     // These severities should be seen all the time
                     uint severitiesCount = 4;
-                    if (validationMode == ValidationMode.Verbose)
+                    if (descriptor.ValidationMode == ValidationMode.Verbose)
                     {
                         // Verbose only filters
                         severitiesCount = 5;
@@ -449,5 +449,5 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new D3D12Texture(this, descriptor);
     /// <inheritdoc />
-    protected override SwapChain CreateSwapChainCore(in SwapChainSource source, in SwapChainDescriptor descriptor) => new D3D12SwapChain(this, source, descriptor);
+    protected override SwapChain CreateSwapChainCore(in GraphicsSurface surface, in SwapChainDescriptor descriptor) => new D3D12SwapChain(this, surface, descriptor);
 }

@@ -28,13 +28,10 @@ internal unsafe class D3D12CommandBuffer : CommandBuffer
     public D3D12CommandQueue Queue { get; }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    protected override void OnDispose()
     {
-        if (disposing)
-        {
-            _commandAllocator.Dispose();
-            _commandList.Dispose();
-        }
+        _commandAllocator.Dispose();
+        _commandList.Dispose();
     }
 
     /// <inheritdoc />

@@ -110,11 +110,8 @@ internal unsafe class D3D12Texture : Texture
     public ID3D12Resource* Handle => _handle;
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    protected override void OnDispose()
     {
-        if (disposing)
-        {
-            _handle.Dispose();
-        }
+        _handle.Dispose();
     }
 }

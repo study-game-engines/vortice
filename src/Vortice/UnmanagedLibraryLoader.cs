@@ -7,7 +7,6 @@
 using System.Runtime.InteropServices;
 #endif
 
-using System.Runtime.InteropServices;
 using Microsoft.Toolkit.Diagnostics;
 
 namespace Vortice;
