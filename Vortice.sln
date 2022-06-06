@@ -8,11 +8,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4205B2
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
 		LICENSE = LICENSE
 		NuGet.config = NuGet.config
 		README.md = README.md
-		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice", "src\Vortice\Vortice.csproj", "{EA44EF00-245A-440C-A5E0-A820E6666626}"
@@ -50,11 +50,6 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TerraFX.Interop.Windows", "src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.shproj", "{514FF00E-BBF0-4D55-A47C-EEEB6208ADCE}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{42742ddc-04da-4dcc-84c5-2c296a6ea749}*SharedItemsImports = 5
-		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{514ff00e-bbf0-4d55-a47c-eeeb6208adce}*SharedItemsImports = 13
-		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{79a106d9-f914-4ea0-91b3-f77fbf4839e1}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM64 = Debug|ARM64
@@ -214,5 +209,10 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85020CE7-9EF6-4502-94F6-98643E762B78}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{42742ddc-04da-4dcc-84c5-2c296a6ea749}*SharedItemsImports = 5
+		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{514ff00e-bbf0-4d55-a47c-eeeb6208adce}*SharedItemsImports = 13
+		src\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems*{79a106d9-f914-4ea0-91b3-f77fbf4839e1}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

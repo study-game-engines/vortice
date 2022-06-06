@@ -44,9 +44,8 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <VorticeMathematicsVersion>1.4.13</VorticeMathematicsVersion>
-    <VorticeWindowsVersion>2.1.9-beta</VorticeWindowsVersion>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+  </ItemGroup>
   
 </Project>

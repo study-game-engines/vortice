@@ -12,7 +12,7 @@
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.Runtime.CompilerServices" />
 
-    <PackageReference Include="Vortice.Vulkan" Version="1.5.9"/>
+    <PackageReference Include="Vortice.Vulkan" />
   </ItemGroup>
 
 </Project>
