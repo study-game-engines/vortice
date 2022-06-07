@@ -13,8 +13,6 @@ public class ImageTests
     public void KTX1_Load()
     {
         string texturesFolder = Path.Combine(AppContext.BaseDirectory, "assets", "textures");
-        //using FileStream stream = File.OpenRead(Path.Combine(texturesFolder, "checkerboard_rgba.ktx"));
-        byte[] data = File.ReadAllBytes(Path.Combine(texturesFolder, "checkerboard_rgba.ktx"));
-        using Image image = Image.FromMemory(data);
+        using Image image = Image.FromFile(Path.Combine(texturesFolder, "checkerboard_rgba.ktx"))!;
     }
 }
