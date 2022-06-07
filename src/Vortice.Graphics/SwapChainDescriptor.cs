@@ -8,7 +8,7 @@ namespace Vortice.Graphics;
 public readonly record struct SwapChainDescriptor : IEquatable<SwapChainDescriptor>
 {
     public SizeI Size { get; init; } = default;
-    public TextureFormat ColorFormat { get; init; } = TextureFormat.BGRA8UNormSrgb;
+    public PixelFormat ColorFormat { get; init; } = PixelFormat.BGRA8UNormSrgb;
     public PresentMode PresentMode { get; init; } = PresentMode.Fifo;
     public bool IsFullscreen { get; init; } = false;
 

@@ -26,7 +26,7 @@ public abstract class Texture : GraphicsResource
 
     public TextureDimension Dimension { get; }
 
-    public TextureFormat Format { get; }
+    public PixelFormat Format { get; }
 
     public int Width { get; }
     public int Height { get; }

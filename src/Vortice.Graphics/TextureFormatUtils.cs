@@ -8,16 +8,16 @@ public static class TextureFormatUtils
     /// <summary>
     /// Check if the format has a depth component.
     /// </summary>
-    /// <param name="format">The <see cref="TextureFormat"/> to check.</param>
+    /// <param name="format">The <see cref="PixelFormat"/> to check.</param>
     /// <returns>True if format has depth component, false otherwise.</returns>
-    public static bool IsDepthFormat(this TextureFormat format)
+    public static bool IsDepthFormat(this PixelFormat format)
     {
         switch (format)
         {
-            case TextureFormat.Depth16UNorm:
-            case TextureFormat.Depth32Float:
-            case TextureFormat.Depth24UNormStencil8:
-            case TextureFormat.Depth32FloatStencil8:
+            case PixelFormat.Depth16UNorm:
+            case PixelFormat.Depth32Float:
+            case PixelFormat.Depth24UNormStencil8:
+            case PixelFormat.Depth32FloatStencil8:
                 return true;
 
             default:
@@ -30,12 +30,12 @@ public static class TextureFormatUtils
     /// </summary>
     /// <param name="format">The <see cref="TextureFormat"/> to check.</param>
     /// <returns>True if format has stencil component, false otherwise.</returns>
-    public static bool IsStencilFormat(this TextureFormat format)
+    public static bool IsStencilFormat(this PixelFormat format)
     {
         switch (format)
         {
-            case TextureFormat.Depth24UNormStencil8:
-            case TextureFormat.Depth32FloatStencil8:
+            case PixelFormat.Depth24UNormStencil8:
+            case PixelFormat.Depth32FloatStencil8:
                 return true;
 
             default:
@@ -48,7 +48,7 @@ public static class TextureFormatUtils
     /// </summary>
     /// <param name="format">The <see cref="TextureFormat"/> to check.</param>
     /// <returns>True if format has depth or stencil component, false otherwise.</returns>
-    public static bool IsDepthStencilFormat(this TextureFormat format)
+    public static bool IsDepthStencilFormat(this PixelFormat format)
     {
         return IsDepthFormat(format) || IsStencilFormat(format);
     }
@@ -58,24 +58,24 @@ public static class TextureFormatUtils
     /// </summary>
     /// <param name="format"></param>
     /// <returns></returns>
-    public static bool IsBlockCompressedFormat(this TextureFormat format)
+    public static bool IsBlockCompressedFormat(this PixelFormat format)
     {
         switch (format)
         {
-            case TextureFormat.BC1RGBAUNorm:
-            case TextureFormat.BC1RGBAUNormSrgb:
-            case TextureFormat.BC2RGBAUNorm:
-            case TextureFormat.BC2RGBAUNormSrgb:
-            case TextureFormat.BC3RGBAUNorm:
-            case TextureFormat.BC3RGBAUNormSrgb:
-            case TextureFormat.BC4RUNorm:
-            case TextureFormat.BC4RSNorm:
-            case TextureFormat.BC5RGUNorm:
-            case TextureFormat.BC5RGSNorm:
-            case TextureFormat.BC6HRGBUFloat:
-            case TextureFormat.BC6HRGBFloat:
-            case TextureFormat.BC7RGBAUNorm:
-            case TextureFormat.BC7RGBAUNormSrgb:
+            case PixelFormat.BC1RGBAUNorm:
+            case PixelFormat.BC1RGBAUNormSrgb:
+            case PixelFormat.BC2RGBAUNorm:
+            case PixelFormat.BC2RGBAUNormSrgb:
+            case PixelFormat.BC3RGBAUNorm:
+            case PixelFormat.BC3RGBAUNormSrgb:
+            case PixelFormat.BC4RUNorm:
+            case PixelFormat.BC4RSNorm:
+            case PixelFormat.BC5RGUNorm:
+            case PixelFormat.BC5RGSNorm:
+            case PixelFormat.BC6HRGBUFloat:
+            case PixelFormat.BC6HRGBFloat:
+            case PixelFormat.BC7RGBAUNorm:
+            case PixelFormat.BC7RGBAUNormSrgb:
                 return true;
 
             default:

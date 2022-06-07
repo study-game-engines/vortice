@@ -10,7 +10,7 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
 {
     public TextureDescriptor(
         TextureDimension dimension,
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int height,
         int depthOrArraySize,
@@ -30,7 +30,7 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
     }
 
     public static TextureDescriptor Texture1D(
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int mipLevels = 1,
         int arrayLayers = 1,
@@ -48,7 +48,7 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
     }
 
     public static TextureDescriptor Texture2D(
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int height,
         int mipLevels = 1,
@@ -69,7 +69,7 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
     }
 
     public static TextureDescriptor Texture3D(
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int height,
         int depth = 1,
@@ -92,7 +92,7 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
     /// </summary>
     public TextureDimension Dimension { get; init; }
 
-    public TextureFormat Format { get; init; }
+    public PixelFormat Format { get; init; }
 
     public int Width { get; init; }
     public int Height { get; init; }

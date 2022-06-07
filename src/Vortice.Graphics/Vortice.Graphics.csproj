@@ -1,7 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="MSBuild.Sdk.Extras">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net6.0-windows;</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);uap10.0.19041;</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -9,6 +11,11 @@
     <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>
     <DefineConstants Condition="'$(ExcludeVulkan)' == 'true'">$(DefineConstants);EXCLUDE_VULKAN_BACKEND</DefineConstants>
   </PropertyGroup>
+
+  <!-- SkiaSharp -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' OR $(TargetFramework.StartsWith('netstandard2'))">
+    <PackageReference Include="SkiaSharp" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="D3DCommon\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true' AND '$(ExcludeD3D12)' == 'true'" />

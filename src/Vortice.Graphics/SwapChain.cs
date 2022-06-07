@@ -12,7 +12,7 @@ public abstract class SwapChain : GraphicsResource
     {
         Surface = surface;
         Size = descriptor.Size;
-        ColorFormat = descriptor.ColorFormat == TextureFormat.Invalid ? TextureFormat.BGRA8UNorm : descriptor.ColorFormat;
+        ColorFormat = descriptor.ColorFormat == PixelFormat.Invalid ? PixelFormat.BGRA8UNorm : descriptor.ColorFormat;
         PresentMode = descriptor.PresentMode;
         IsFullscreen = descriptor.IsFullscreen;
     }
@@ -21,7 +21,7 @@ public abstract class SwapChain : GraphicsResource
 
     public SizeI Size { get; protected set; }
 
-    public TextureFormat ColorFormat { get; protected set; }
+    public PixelFormat ColorFormat { get; protected set; }
     public PresentMode PresentMode { get; }
     public bool IsFullscreen { get; }
 
