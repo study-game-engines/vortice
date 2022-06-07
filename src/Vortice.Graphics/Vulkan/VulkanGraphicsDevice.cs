@@ -1,6 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.InteropServices;
 using Vortice.Graphics.Vulkan;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
@@ -66,19 +67,19 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 
             instanceExtensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
 
-            if (OperatingSystem.IsWindows())
+            if (PlatformInfo.IsWindows)
             {
                 instanceExtensions.Add(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
             }
-            else if (OperatingSystem.IsAndroid())
+            else if (PlatformInfo.IsAndroid)
             {
                 instanceExtensions.Add(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
             }
-            else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst() || OperatingSystem.IsIOS() || OperatingSystem.IsTvOS())
+            else if (PlatformInfo.IsMacOS)
             {
                 instanceExtensions.Add(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
             }
-            else if (OperatingSystem.IsLinux())
+            else if (PlatformInfo.IsLinux)
             {
                 if (availableInstanceExtensions.Contains(VK_KHR_XCB_SURFACE_EXTENSION_NAME))
                 {

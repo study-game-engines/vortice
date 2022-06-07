@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants Condition="'$(ExcludeD3D11)' == 'true'">$(DefineConstants);EXCLUDE_D3D11_BACKEND</DefineConstants>
+    <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>
+    <DefineConstants Condition="'$(ExcludeVulkan)' == 'true'">$(DefineConstants);EXCLUDE_VULKAN_BACKEND</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="D3DCommon\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true' AND '$(ExcludeD3D12)' == 'true'" />
+    <Compile Remove="D3D11\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true'" />
+    <Compile Remove="D3D12\**\*.cs" Condition="'$(ExcludeD3D12)' == 'true'" />
+    <Compile Remove="Vulkan\**\*.cs" Condition="'$(ExcludeVulkan)' == 'true'" />
+    <PackageReference Include="Vortice.Direct3D11" Condition="'$(ExcludeD3D11)' != 'true'" />
+    <PackageReference Include="Vortice.Direct3D12" Condition="'$(ExcludeD3D12)' != 'true'" />
+    <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Toolkit.Diagnostics" />
+    <PackageReference Include="Vortice.Mathematics" />
+  </ItemGroup>
+
+</Project>

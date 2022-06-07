@@ -1,7 +1,9 @@
-﻿// Copyright © Amer Koleci and Contributors.
+// Copyright � Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-namespace Vortice;
+using System.Runtime.CompilerServices;
+
+namespace Vortice.Graphics;
 
 /// <summary>
 /// An object that implements <see cref="IDisposable"/> pattern.
