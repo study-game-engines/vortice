@@ -6,7 +6,7 @@ namespace Vortice.Graphics;
 /// <summary>
 /// Structure that describes the <see cref="GraphicsBuffer"/>.
 /// </summary>
-public record struct BufferDescription : IEquatable<BufferDescription>
+public record struct BufferDescription 
 {
     public BufferDescription(BufferUsage usage, ulong size, CpuAccess access = CpuAccess.None, string? label = default)
     {

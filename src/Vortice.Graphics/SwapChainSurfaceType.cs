@@ -4,11 +4,12 @@
 namespace Vortice.Graphics;
 
 /// <summary>
-/// Defines a <see cref="SwapChainSource"/> type.
+/// Defines a <see cref="SwapChainSurface"/> type.
 /// </summary>
-public enum SwapChainSourceType
+public enum SwapChainSurfaceType
 {
     Unknown,
     Win32,
-    CoreWindow
+    CoreWindow,
+    SwapChainPanel
 }

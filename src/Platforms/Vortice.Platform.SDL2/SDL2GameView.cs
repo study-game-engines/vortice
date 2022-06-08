@@ -31,14 +31,11 @@ internal unsafe class SDL2GameView : GameView
         switch (wmInfo.subsystem)
         {
             case SDL_SYSWM_TYPE.SDL_SYSWM_WINDOWS:
-                Surface = GraphicsSurface.CreateWin32(
-                    GetModuleHandleW(lpModuleName: null),
-                    wmInfo.info.win.window
-                    );
+                Surface = SwapChainSurface.CreateWin32(wmInfo.info.win.window);
                 break;
 
             case SDL_SYSWM_TYPE.SDL_SYSWM_WINRT:
-                Surface = GraphicsSurface.CreateCoreWindow(wmInfo.info.winrt.window);
+                //Surface = GraphicsSurface.CreateCoreWindow(wmInfo.info.winrt.window);
                 break;
 
             case SDL_SYSWM_TYPE.SDL_SYSWM_X11:
@@ -72,13 +69,10 @@ internal unsafe class SDL2GameView : GameView
     public override SizeI ClientSize { get; }
 
     /// <inheritdoc />
-    public override GraphicsSurface Surface { get; }
+    public override SwapChainSurface Surface { get; }
 
     private void OnControlClientSizeChanged(object? sender, EventArgs e)
     {
         OnSizeChanged();
     }
-
-    [DllImport("kernel32", ExactSpelling = true, SetLastError = true)]
-    private static extern unsafe IntPtr GetModuleHandleW(ushort* lpModuleName);
 }

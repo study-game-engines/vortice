@@ -20,18 +20,6 @@ public sealed class DrawTriangleGame : Game
     /// <inheritdoc />
     protected override void ConfigureServices(IServiceCollection services)
     {
-        GraphicsDeviceDescriptor descriptor = new GraphicsDeviceDescriptor();
-
-        // Graphics
-        if (D3D12GraphicsDevice.IsSupported())
-        {
-            services.AddSingleton<GraphicsDevice>(new D3D12GraphicsDevice(descriptor));
-        }
-        else if (VulkanGraphicsDevice.IsSupported())
-        {
-            services.AddSingleton<GraphicsDevice>(new VulkanGraphicsDevice(descriptor));
-        }
-
         // Audio
         if (XAudio2Device.IsSupported())
         {
@@ -64,8 +52,8 @@ public sealed class DrawTriangleGame : Game
     {
         base.Draw(gameTime);
 
-        CommandBuffer commandBuffer = GraphicsDevice.GraphicsQueue.BeginCommandBuffer();
-        commandBuffer.Commit();
+        //CommandBuffer commandBuffer = GraphicsDevice.GraphicsQueue.BeginCommandBuffer();
+        //commandBuffer.Commit();
     }
 
     public readonly record struct VertexPositionColor(Vector3 Position, Color4 Color);

@@ -2,13 +2,12 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.InteropServices;
-using Vortice.Graphics.Vulkan;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Vortice.Graphics;
+namespace Vortice.Graphics.Vulkan;
 
-public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
+internal unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
     private static readonly VkString s_engineName = new("Vortice");
 
@@ -33,7 +32,8 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
 
     public static bool IsSupported() => VulkanUtils.IsSupported();
 
-    public VulkanGraphicsDevice(in GraphicsDeviceDescriptor descriptor)
+    public VulkanGraphicsDevice(in GraphicsDeviceDescription description)
+        : base(GraphicsBackend.Vulkan)
     {
         if (!VulkanUtils.IsSupported())
         {
@@ -95,14 +95,14 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
                 }
             }
 
-            if (descriptor.ValidationMode != ValidationMode.Disabled)
+            if (description.ValidationMode != ValidationMode.Disabled)
             {
                 // Determine the optimal validation layers to enable that are necessary for useful debugging
                 string[] optimalValidationLyers = VulkanUtils.GetOptimalValidationLayers(availableInstanceLayers);
                 instanceLayers.AddRange(optimalValidationLyers);
             }
 
-            using VkString appName = new(string.IsNullOrEmpty(descriptor.Name) ? "Vortice" : descriptor.Name);
+            using VkString appName = new(string.IsNullOrEmpty(description.Label) ? "Vortice" : description.Label);
 
             VkApplicationInfo appInfo = new()
             {
@@ -132,12 +132,12 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
                 sType = VkStructureType.DebugUtilsMessengerCreateInfoEXT
             };
 
-            if (descriptor.ValidationMode != ValidationMode.Disabled && _debugUtils)
+            if (description.ValidationMode != ValidationMode.Disabled && _debugUtils)
             {
                 debugUtilsCreateInfo.messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.Warning | VkDebugUtilsMessageSeverityFlagsEXT.Error;
                 debugUtilsCreateInfo.messageType = VkDebugUtilsMessageTypeFlagsEXT.Validation | VkDebugUtilsMessageTypeFlagsEXT.Performance;
 
-                if (descriptor.ValidationMode == ValidationMode.Verbose)
+                if (description.ValidationMode == ValidationMode.Verbose)
                 {
                     debugUtilsCreateInfo.messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Verbose | VkDebugUtilsMessageSeverityFlagsEXT.Info;
                 }
@@ -457,9 +457,6 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     public VkDevice NativeDevice => _handle;
 
     // <inheritdoc />
-    public override GpuBackend BackendType => GpuBackend.Vulkan;
-
-    // <inheritdoc />
     public override GpuVendorId VendorId { get; }
 
     /// <inheritdoc />
@@ -551,9 +548,20 @@ public sealed unsafe class VulkanGraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    protected override GraphicsBuffer CreateBufferCore(in BufferDescription description, IntPtr initialData) => throw new NotImplementedException();
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescription description, IntPtr initialData)
+    {
+        return new VulkanBuffer(this, description, initialData);
+    }
+
     /// <inheritdoc />
-    protected override Texture CreateTextureCore(in TextureDescriptor descriptor) => new VulkanTexture(this, descriptor);
+    protected override Texture CreateTextureCore(in TextureDescriptor descriptor)
+    {
+        return new VulkanTexture(this, descriptor);
+    }
+
     /// <inheritdoc />
-    protected override SwapChain CreateSwapChainCore(in GraphicsSurface surface, in SwapChainDescriptor descriptor) => new VulkanSwapChain(this, surface, descriptor);
+    protected override SwapChain CreateSwapChainCore(in SwapChainSurface surface, in SwapChainDescription description)
+    {
+        return new VulkanSwapChain(this, surface, description);
+    }
 }

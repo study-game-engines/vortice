@@ -13,8 +13,64 @@ public abstract class GraphicsDevice : DisposableObject
     /// </summary>
     private const string EnableDebugOutput = "VORTICE_ENABLE_DEBUG_OUTPUT";
 
-    protected GraphicsDevice()
+    protected GraphicsDevice(GraphicsBackend backend)
     {
+        Backend = backend;
+    }
+
+    /// <summary>
+    /// Checks whether the given <see cref="GraphicsBackend"/> is supported on this system.
+    /// </summary>
+    /// <param name="backend">The GraphicsBackend to check.</param>
+    /// <returns>True if the GraphicsBackend is supported; false otherwise.</returns>
+    public static bool IsBackendSupported(GraphicsBackend backend)
+    {
+        switch (backend)
+        {
+            case GraphicsBackend.Vulkan:
+#if !EXCLUDE_VULKAN_BACKEND
+                return Vulkan.VulkanGraphicsDevice.IsSupported();
+#else
+                return false;
+#endif
+
+            case GraphicsBackend.Direct3D12:
+#if !EXCLUDE_D3D12_BACKEND
+                return D3D12.D3D12GraphicsDevice.IsSupported();
+#else
+                return false;
+#endif
+
+            case GraphicsBackend.Direct3D11:
+#if !EXCLUDE_D3D11_BACKEND
+                return D3D11.D3D11GraphicsDevice.IsSupported();
+#else
+                return false;
+#endif
+
+            default:
+                return ThrowHelper.ThrowArgumentException<bool>("Invalid GraphicsBackend value");
+        }
+    }
+
+    public static GraphicsDevice CreateDefault(in GraphicsDeviceDescription description)
+    {
+        if (PlatformInfo.IsWindows)
+        {
+#if !EXCLUDE_D3D11_BACKEND
+        return new D3D11.D3D11GraphicsDevice(validationMode);
+#endif
+
+#if !EXCLUDE_D3D12_BACKEND
+        return new D3D12.D3D12GraphicsDevice(validationMode);
+#endif
+        }
+
+#if !EXCLUDE_VULKAN_BACKEND
+        return new Vulkan.VulkanGraphicsDevice(description);
+#endif
+
+        throw new GraphicsException("No backend is supported");
     }
 
     /// <summary>
@@ -29,7 +85,7 @@ public abstract class GraphicsDevice : DisposableObject
     /// <summary>
     /// Get the device backend type.
     /// </summary>
-    public abstract GpuBackend BackendType { get; }
+    public GraphicsBackend Backend { get; }
 
     public abstract GpuVendorId VendorId { get; }
     public abstract uint AdapterId { get; }
@@ -84,17 +140,17 @@ public abstract class GraphicsDevice : DisposableObject
         return CreateTextureCore(descriptor);
     }
 
-    public SwapChain CreateSwapChain(in GraphicsSurface surface, in SwapChainDescriptor descriptor)
+    public SwapChain CreateSwapChain(in SwapChainSurface surface, in SwapChainDescription description)
     {
         Guard.IsNotNull(surface, nameof(surface));
 
-        return CreateSwapChainCore(surface, descriptor);
+        return CreateSwapChainCore(surface, description);
     }
 
-    protected abstract SwapChain CreateSwapChainCore(in GraphicsSurface surface, in SwapChainDescriptor descriptor);
 
-    protected abstract Texture CreateTextureCore(in TextureDescriptor descriptor);
     protected abstract GraphicsBuffer CreateBufferCore(in BufferDescription description, IntPtr initialData);
+    protected abstract Texture CreateTextureCore(in TextureDescriptor descriptor);
+    protected abstract SwapChain CreateSwapChainCore(in SwapChainSurface surface, in SwapChainDescription description);
 
     /// <summary>
     /// Gets a configuration value for a specified property.

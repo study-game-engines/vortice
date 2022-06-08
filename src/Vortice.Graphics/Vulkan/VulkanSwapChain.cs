@@ -5,6 +5,7 @@ using Vortice.Vulkan;
 using static Vortice.Mathematics.MathHelper;
 using static Vortice.Vulkan.Vulkan;
 using static Vortice.Graphics.Vulkan.VulkanUtils;
+using System.Runtime.InteropServices;
 
 namespace Vortice.Graphics.Vulkan;
 
@@ -12,24 +13,24 @@ internal unsafe class VulkanSwapChain : SwapChain
 {
     private VkSurfaceKHR _surface = VkSurfaceKHR.Null;
 
-    public VulkanSwapChain(VulkanGraphicsDevice device, in GraphicsSurface surface, in SwapChainDescriptor descriptor)
-        : base(device, surface, descriptor)
+    public VulkanSwapChain(VulkanGraphicsDevice device, in SwapChainSurface surface, in SwapChainDescription description)
+        : base(device, surface, description)
     {
         _surface = CreateVkSurface(surface);
-        Resize(descriptor.Size.Width, descriptor.Size.Height);
+        Resize(description.Width, description.Height);
 
-        VkSurfaceKHR CreateVkSurface(in GraphicsSurface source)
+        VkSurfaceKHR CreateVkSurface(in SwapChainSurface source)
         {
             VkSurfaceKHR surface = default;
 
             switch (source.Type)
             {
-                case SwapChainSourceType.Win32:
-                    Win32SwapChainSource win32Source = (Win32SwapChainSource)source;
-                    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR
+                case SwapChainSurfaceType.Win32:
+                    Win32SwapChainSurface win32Source = (Win32SwapChainSurface)source;
+                    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = new()
                     {
                         sType = VkStructureType.Win32SurfaceCreateInfoKHR,
-                        hinstance = win32Source.Hwnd,
+                        hinstance = GetModuleHandleW(lpModuleName: null),
                         hwnd = win32Source.Hwnd
                     };
 
@@ -169,4 +170,7 @@ internal unsafe class VulkanSwapChain : SwapChain
             _surface = VkSurfaceKHR.Null;
         }
     }
+
+    [DllImport("kernel32", ExactSpelling = true, SetLastError = true)]
+    private static extern unsafe IntPtr GetModuleHandleW(ushort* lpModuleName);
 }

@@ -3,14 +3,11 @@
 
 namespace Vortice.Graphics;
 
-public enum GpuBackend : byte
+public enum GraphicsBackend : byte
 {
-    Null = 0,
-    Vulkan = 1,
-    Metal = 2,
-    Direct3D12 = 3,
-    Direct3D11 = 4,
-    OpenGL = 5,
-    WebGpu = 6,
+    Vulkan,
+    Direct3D12,
+    Direct3D11,
+    Metal,
     Count,
 }

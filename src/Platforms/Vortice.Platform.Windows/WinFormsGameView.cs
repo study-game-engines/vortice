@@ -1,8 +1,6 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Vortice.Mathematics;
 using Vortice.Graphics;
 
@@ -16,7 +14,7 @@ internal unsafe class WinFormsGameView : GameView
     {
         _control = control;
 
-        Surface = GraphicsSurface.CreateWin32(GetModuleHandleW(lpModuleName: null), _control.Handle);
+        Surface = SwapChainSurface.CreateWin32(_control.Handle);
 
         _control.ClientSizeChanged += OnControlClientSizeChanged;
     }
@@ -25,13 +23,10 @@ internal unsafe class WinFormsGameView : GameView
     public override SizeI ClientSize => new SizeI(_control.ClientSize.Width, _control.ClientSize.Height);
 
     /// <inheritdoc />
-    public override GraphicsSurface Surface { get; }
+    public override SwapChainSurface Surface { get; }
 
     private void OnControlClientSizeChanged(object? sender, EventArgs e)
     {
         OnSizeChanged();
     }
-
-    [DllImport("kernel32", ExactSpelling = true, SetLastError = true)]
-    private static extern unsafe IntPtr GetModuleHandleW(ushort* lpModuleName);
 }
