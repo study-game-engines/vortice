@@ -6,11 +6,11 @@ namespace Vortice.Graphics;
 /// <summary>
 /// Structure that describes the <see cref="Texture"/>.
 /// </summary>
-public record struct TextureDescriptor : IEquatable<TextureDescriptor>
+public record struct TextureDescription
 {
-    public TextureDescriptor(
-        TextureDimension dimension,
-        PixelFormat format,
+    public TextureDescription(
+        TextureType type,
+        TextureFormat format,
         int width,
         int height,
         int depthOrArraySize,
@@ -18,26 +18,26 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
         TextureUsage usage = TextureUsage.ShaderRead,
         TextureSampleCount sampleCount = TextureSampleCount.Count1)
     {
-        Dimension = dimension;
+        TextureType = type;
         Format = format;
         Width = width;
         Height = height;
         DepthOrArraySize = depthOrArraySize;
-        MipLevels = mipLevels == 1 ? CountMipLevels(width, height, dimension == TextureDimension.Texture3D ? depthOrArraySize : 1) : mipLevels;
+        MipLevels = mipLevels == 1 ? CountMipLevels(width, height, type == TextureType.Type3D ? depthOrArraySize : 1) : mipLevels;
         SampleCount = sampleCount;
         Usage = usage;
         Label = default;
     }
 
-    public static TextureDescriptor Texture1D(
-        PixelFormat format,
+    public static TextureDescription Texture1D(
+        TextureFormat format,
         int width,
         int mipLevels = 1,
         int arrayLayers = 1,
         TextureUsage usage = TextureUsage.ShaderRead)
     {
-        return new TextureDescriptor(
-            TextureDimension.Texture1D,
+        return new TextureDescription(
+            TextureType.Type1D,
             format,
             width,
             1,
@@ -47,8 +47,8 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
             TextureSampleCount.Count1);
     }
 
-    public static TextureDescriptor Texture2D(
-        PixelFormat format,
+    public static TextureDescription Texture2D(
+        TextureFormat format,
         int width,
         int height,
         int mipLevels = 1,
@@ -57,8 +57,8 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
         TextureSampleCount sampleCount = TextureSampleCount.Count1
         )
     {
-        return new TextureDescriptor(
-            TextureDimension.Texture2D,
+        return new TextureDescription(
+            TextureType.Type2D,
             format,
             width,
             height,
@@ -68,16 +68,16 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
             sampleCount);
     }
 
-    public static TextureDescriptor Texture3D(
-        PixelFormat format,
+    public static TextureDescription Texture3D(
+        TextureFormat format,
         int width,
         int height,
         int depth = 1,
         int mipLevels = 1,
         TextureUsage usage = TextureUsage.ShaderRead)
     {
-        return new TextureDescriptor(
-            TextureDimension.Texture3D,
+        return new TextureDescription(
+            TextureType.Type3D,
             format,
             width,
             height,
@@ -88,11 +88,11 @@ public record struct TextureDescriptor : IEquatable<TextureDescriptor>
     }
 
     /// <summary>
-    /// Dimension of texture.
+    /// Type of texture.
     /// </summary>
-    public TextureDimension Dimension { get; init; }
+    public TextureType TextureType { get; init; }
 
-    public PixelFormat Format { get; init; }
+    public TextureFormat Format { get; init; }
 
     public int Width { get; init; }
     public int Height { get; init; }

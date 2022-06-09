@@ -1,6 +1,8 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using static Vortice.Graphics.VGPU;
+
 namespace Vortice.Graphics;
 
 /// <summary>
@@ -8,18 +10,17 @@ namespace Vortice.Graphics;
 /// </summary>
 public record struct BufferDescription 
 {
-    public BufferDescription(BufferUsage usage, ulong size, CpuAccess access = CpuAccess.None, string? label = default)
+    public BufferDescription(
+        ulong size,
+        BufferUsage usage = BufferUsage.ShaderReadWrite,
+        CpuAccessMode access = CpuAccessMode.None,
+        string? label = default)
     {
         Usage = usage;
         Size = size;
-        Access = access;
+        CpuAccess = access;
         Label = label;
     }
-
-    /// <summary>
-    /// Gets or Sets the <see cref="BufferUsage"/> of <see cref="Buffer"/>.
-    /// </summary>
-    public BufferUsage Usage { get; init; }
 
     /// <summary>
     /// Size in bytes of <see cref="Buffer"/>
@@ -27,12 +28,27 @@ public record struct BufferDescription
     public ulong Size { get; init; }
 
     /// <summary>
+    /// Gets or Sets the <see cref="BufferUsage"/> of <see cref="Buffer"/>.
+    /// </summary>
+    public BufferUsage Usage { get; init; }
+
+    /// <summary>
     /// CPU access of <see cref="Buffer"/>
     /// </summary>
-    public CpuAccess Access { get; init; }
+    public CpuAccessMode CpuAccess { get; init; }
 
     // <summary>
     /// Gets or sets the label of <see cref="Buffer"/>.
     /// </summary>
     public string? Label { get; init; }
+
+    internal BufferDesc ToVGPU()
+    {
+        return new BufferDesc
+        {
+            size = Size,
+            usage = Usage,
+            cpuAccess = CpuAccess,
+        };
+    }
 }

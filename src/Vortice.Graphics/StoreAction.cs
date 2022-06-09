@@ -3,10 +3,8 @@
 
 namespace Vortice.Graphics;
 
-public enum TextureDimension
+public enum StoreAction
 {
-    Texture1D,
-    Texture2D,
-    Texture3D,
-    TextureCube
+    Store,
+    Discard,
 }

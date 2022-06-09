@@ -3,12 +3,12 @@
 
 namespace Vortice.Graphics;
 
-public enum GpuAdapterType
+/// <summary>
+/// Describes the CPU access for <see cref="Buffer"/> and <see cref="Texture"/>.
+/// </summary>
+public enum CpuAccessMode
 {
-    Other,
-    IntegratedGPU,
-    DiscreteGPU,
-    VirtualGpu,
-    Cpu,
-    Unknown
+    None = 0,
+    Write,
+    Read,
 }

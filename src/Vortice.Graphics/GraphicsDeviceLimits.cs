@@ -5,31 +5,30 @@ namespace Vortice.Graphics;
 
 public readonly struct GraphicsDeviceLimits
 {
-    public uint MaxVertexAttributes { get; init; }
-    public uint MaxVertexBindings { get; init; }
-    public uint MaxVertexAttributeOffset { get; init; }
-    public uint MaxVertexBindingStride { get; init; }
-    public uint MaxTextureDimension1D { get; init; }
-    public uint MaxTextureDimension2D { get; init; }
-    public uint MaxTextureDimension3D { get; init; }
-    public uint MaxTextureDimensionCube { get; init; }
-    public uint MaxTextureArrayLayers { get; init; }
-    public uint MaxColorAttachments { get; init; }
-    public uint MaxUniformBufferRange { get; init; }
-    public uint MaxStorageBufferRange { get; init; }
-    public ulong MinUniformBufferOffsetAlignment { get; init; }
-    public ulong MinStorageBufferOffsetAlignment { get; init; }
-    public uint MaxSamplerAnisotropy { get; init; }
-    public uint MaxViewports { get; init; }
-    public uint MaxViewportWidth { get; init; }
-    public uint MaxViewportHeight { get; init; }
-    public uint MaxTessellationPatchSize { get; init; }
-    public uint MaxComputeSharedMemorySize { get; init; }
-    public uint MaxComputeWorkGroupCountX { get; init; }
-    public uint MaxComputeWorkGroupCountY { get; init; }
-    public uint MaxComputeWorkGroupCountZ { get; init; }
-    public uint MaxComputeWorkGroupInvocations { get; init; }
-    public uint MaxComputeWorkGroupSizeX { get; init; }
-    public uint MaxComputeWorkGroupSizeY { get; init; }
-    public uint MaxComputeWorkGroupSizeZ { get; init; }
+    public readonly uint maxTextureDimension1D;
+    public readonly uint maxTextureDimension2D;
+    public readonly uint maxTextureDimension3D;
+    public readonly uint maxTextureArrayLayers;
+    public readonly uint maxBindGroups;
+    public readonly uint maxDynamicUniformBuffersPerPipelineLayout;
+    public readonly uint maxDynamicStorageBuffersPerPipelineLayout;
+    public readonly uint maxSampledTexturesPerShaderStage;
+    public readonly uint maxSamplersPerShaderStage;
+    public readonly uint maxStorageBuffersPerShaderStage;
+    public readonly uint maxStorageTexturesPerShaderStage;
+    public readonly uint maxUniformBuffersPerShaderStage;
+    public readonly ulong maxUniformBufferBindingSize;
+    public readonly ulong maxStorageBufferBindingSize;
+    public readonly uint minUniformBufferOffsetAlignment;
+    public readonly uint minStorageBufferOffsetAlignment;
+    public readonly uint maxVertexBuffers;
+    public readonly uint maxVertexAttributes;
+    public readonly uint maxVertexBufferArrayStride;
+    public readonly uint maxInterStageShaderComponents;
+    public readonly uint maxComputeWorkgroupStorageSize;
+    public readonly uint maxComputeInvocationsPerWorkGroup;
+    public readonly uint maxComputeWorkGroupSizeX;
+    public readonly uint maxComputeWorkGroupSizeY;
+    public readonly uint maxComputeWorkGroupSizeZ;
+    public readonly uint maxComputeWorkGroupsPerDimension;
 }

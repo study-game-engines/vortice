@@ -179,7 +179,7 @@ public abstract class Game : DisposableObject, IGame
             system.EndDraw();
         }
 
-        View.Present();
+        GraphicsDevice.CommitFrame();
     }
 
     /// <summary>

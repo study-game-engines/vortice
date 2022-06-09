@@ -4,9 +4,9 @@
 namespace Vortice.Graphics;
 
 /// <summary>
-/// Define a pixel format enum.
+/// Define a <see cref="Texture"/> format.
 /// </summary>
-public enum PixelFormat
+public enum TextureFormat
 {
     Invalid = 0,
     // 8-bit pixel formats

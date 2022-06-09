@@ -3,12 +3,9 @@
 
 namespace Vortice.Graphics;
 
-/// <summary>
-/// Describes the <see cref="Buffer"/> access.
-/// </summary>
-public enum CpuAccess
+public enum TextureType
 {
-    None = 0,
-    Write,
-    Read,
+    Type1D = 1,
+    Type2D,
+    Type3D
 }

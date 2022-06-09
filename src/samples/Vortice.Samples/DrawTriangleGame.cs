@@ -34,14 +34,14 @@ public sealed class DrawTriangleGame : Game
     {
         base.Initialize();
 
-        Span<VertexPositionColor> triangleVertices = new VertexPositionColor[]
+        ReadOnlySpan<VertexPositionColor> triangleVertices = stackalloc VertexPositionColor[]
         {
             new VertexPositionColor(new Vector3(0f, 0.5f, 0.5f), Colors.Red),
             new VertexPositionColor(new Vector3(0.5f, -0.5f, 0.5f), Colors.LightBlue),
             new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
         };
 
-        //using GraphicsBuffer vertexBuffer = GraphicsDevice.CreateBuffer(triangleVertices, BufferUsage.Vertex);
+        using GraphicsBuffer vertexBuffer = GraphicsBuffer.Create(GraphicsDevice, triangleVertices, BufferUsage.Vertex);
         //
         //using (Texture texture = GraphicsDevice.CreateTexture(TextureDescriptor.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
         //{
@@ -52,8 +52,15 @@ public sealed class DrawTriangleGame : Game
     {
         base.Draw(gameTime);
 
-        //CommandBuffer commandBuffer = GraphicsDevice.GraphicsQueue.BeginCommandBuffer();
-        //commandBuffer.Commit();
+        CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer("Frame");
+        Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(View.SwapChain, out SizeI swapChainSize);
+        if (swapChainTexture != null)
+        {
+            commandBuffer.BeginRenderPass(swapChainTexture!, Colors.CornflowerBlue);
+            commandBuffer.EndRenderPass();
+        }
+
+        GraphicsDevice.Submit(commandBuffer);
     }
 
     public readonly record struct VertexPositionColor(Vector3 Position, Color4 Color);

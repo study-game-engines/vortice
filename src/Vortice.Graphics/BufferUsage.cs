@@ -19,9 +19,9 @@ public enum BufferUsage
     /// </summary>
     Index = 1 << 1,
     /// <summary>
-    /// Supports constant buffer access.
+    /// Supports uniform buffer access.
     /// </summary>
-    Constant = 1 << 2,
+    Uniform = 1 << 2,
     /// <summary>
     /// Supports shader read access.
     /// </summary>
@@ -39,11 +39,11 @@ public enum BufferUsage
     /// </summary>
     Indirect = 1 << 5,
     /// <summary>
-    /// Supports predication access for conditional rendering.
-    /// </summary>
-    Predication = 1 << 6,
-    /// <summary>
     /// Supports ray tracing acceleration structure usage.
     /// </summary>
-    RayTracing = 1 << 7,
+    RayTracing = 1 << 6,
+    /// <summary>
+    /// Supports predication access for conditional rendering.
+    /// </summary>
+    Predication = 1 << 7,
 }

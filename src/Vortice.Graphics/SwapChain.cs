@@ -1,36 +1,46 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Vortice.Mathematics;
+using System.Runtime.InteropServices;
+using static Vortice.Graphics.VGPU;
 
 namespace Vortice.Graphics;
 
-public abstract class SwapChain : GraphicsResource
+public unsafe sealed class SwapChain : GraphicsResource
 {
-    protected SwapChain(GraphicsDevice device, SwapChainSurface surface, in SwapChainDescription description)
-        : base(device, description.Label)
+    public SwapChain(GraphicsDevice device, SwapChainSurface surface, in SwapChainDescription description)
+        : base(device, IntPtr.Zero, description.Label)
     {
-        Surface = surface;
-        Size = new(description.Width, description.Height);
-        ColorFormat = description.ColorFormat == PixelFormat.Invalid ? PixelFormat.BGRA8UNorm : description.ColorFormat;
+        SwapChainDesc nativeDesc = description.ToVGPU();
+#if WINDOWS_UWP
+        IntPtr handle = Marshal.GetIUnknownForObject(((CoreWindowSwapChainSurface)surface).CoreWindow);
+        Handle = vgpuCreateSwapChain(device.Handle, handle, &nativeDesc);
+#else
+        Handle = vgpuCreateSwapChain(device.Handle, ((Win32SwapChainSurface)surface).Hwnd, &nativeDesc);
+#endif
+
         PresentMode = description.PresentMode;
-        IsFullscreen = description.IsFullscreen;
     }
 
-    public SwapChainSurface Surface { get; }
+    /// <summary>
+    /// Finalizes an instance of the <see cref="SwapChain" /> class.
+    /// </summary>
+    ~SwapChain() => Dispose(disposing: false);
 
-    public SizeI Size { get; protected set; }
+    /// <inheritdoc />
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            if (Handle != IntPtr.Zero)
+            {
+                vgpuDestroySwapChain(Device.Handle, Handle);
+            }
+        }
+    }
 
-    public PixelFormat ColorFormat { get; protected set; }
+    public TextureFormat ColorFormat => vgpuSwapChainGetFormat(Device.Handle, Handle);
     public PresentMode PresentMode { get; }
-    public bool IsFullscreen { get; }
 
-    public abstract Texture? CurrentBackBuffer { get; }
-
-    public abstract int CurrentBackBufferIndex { get; }
-    public abstract int BackBufferCount { get; }
-
-    public abstract void Resize(int newWidth, int newHeight);
-
-    public abstract void Present();
+    //public void Resize(int newWidth, int newHeight);
 }

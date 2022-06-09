@@ -3,8 +3,9 @@
 
 namespace Vortice.Graphics;
 
-public static class Constants
+public enum LoadAction
 {
-    public static readonly uint MaxFramesInFlight = 2;
-    public static readonly uint MaxColorAttachments = 8;
+    Load,
+    Clear,
+    Discard,
 }

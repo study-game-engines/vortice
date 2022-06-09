@@ -3,6 +3,7 @@
 
 using System.Runtime.InteropServices;
 using System.Text;
+using Vortice.Mathematics;
 
 namespace Vortice.Graphics;
 
@@ -15,6 +16,86 @@ internal static unsafe class VGPU
         Info = 0,
         Warn,
         Error,
+    }
+
+    public struct DeviceDesc
+    {
+        public IntPtr label;
+        public GraphicsBackend preferredBackend;
+        public ValidationMode validationMode;
+    }
+
+    public readonly struct AdapterProperties
+    {
+        public readonly uint vendorID;
+        public readonly uint deviceID;
+        private readonly IntPtr _name;
+        private readonly IntPtr _driverDescription;
+        public readonly GpuAdapterType adapterType;
+
+        public readonly string name => FromUTF8(_name);
+        public readonly string driverDescription => FromUTF8(_driverDescription);
+    }
+
+    public readonly struct SwapChainDesc
+    {
+        public readonly uint width { get; init; }
+        public readonly uint height { get; init; }
+        public readonly TextureFormat format { get; init; }
+        public readonly PresentMode presentMode { get; init; }
+        public readonly Bool32 isFullscreen { get; init; }
+    }
+
+    public readonly struct BufferDesc
+    {
+        public readonly IntPtr label { get; init; }
+        public readonly ulong size { get; init; }
+        public readonly BufferUsage usage { get; init; }
+        public readonly CpuAccessMode cpuAccess { get; init; }
+    }
+
+    public readonly struct TextureDesc
+    {
+        public readonly IntPtr label { get; init; }
+        public readonly TextureType type { get; init; }
+        public readonly TextureFormat format { get; init; }
+        public readonly TextureUsage usage { get; init; }
+        public readonly uint width { get; init; }
+        public readonly uint height { get; init; }
+        public readonly uint depthOrArraySize { get; init; }
+        public readonly uint mipLevelCount { get; init; }
+        public readonly uint sampleCount { get; init; }
+    }
+
+    public readonly struct RenderPassColorAttachment
+    {
+        public readonly IntPtr texture { get; init; }
+        public readonly uint level{ get; init; }
+        public readonly uint slice { get; init; }
+        public readonly LoadAction loadOp { get; init; }
+        public readonly StoreAction storeOp { get; init; }
+        public readonly Color4 clearColor { get; init; }
+    }
+    public struct RenderPassDepthStencilAttachment
+    {
+        public IntPtr texture;
+        public uint level;
+        public uint slice;
+        public LoadAction depthLoadOp;
+        public StoreAction depthStoreOp;
+        public float clearDepth;
+        public LoadAction stencilLoadOp;
+        public StoreAction stencilStoreOp;
+        public byte clearStencil;
+    }
+
+    public struct RenderPassDesc
+    {
+        public uint width;
+        public uint height;
+        public uint colorAttachmentCount;
+        public RenderPassColorAttachment* colorAttachments;
+        public RenderPassDepthStencilAttachment* depthStencilAttachment;
     }
 
     private static VGPULogCallback? _logCallback;
@@ -110,7 +191,7 @@ internal static unsafe class VGPU
     public static void SetLogCallback(VGPULogCallback? callback)
     {
         _logCallback = callback;
-        VGPU_SetLogCallback(callback);
+        vgpuSetLogCallback(callback);
     }
 
     public static string FromUTF8(IntPtr str)
@@ -131,11 +212,85 @@ internal static unsafe class VGPU
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void VGPULogCallback(LogLevel level, IntPtr message);
+    public delegate void VGPULogCallback(LogLevel level, sbyte* message);
 
     [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void VGPU_SetLogCallback(VGPULogCallback? callback);
+    public static extern void vgpuSetLogCallback(VGPULogCallback? callback);
 
     [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern bool vgpuIsSupported(GraphicsBackend backend);
+    public static extern Bool32 vgpuIsSupported(GraphicsBackend backend);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr vgpuCreateDevice(DeviceDesc* callback);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuDestroyDevice(IntPtr device);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern ulong vgpuFrame(IntPtr device);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuWaitIdle(IntPtr device);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern GraphicsBackend vgpuGetBackendType(IntPtr device);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern Bool32 vgpuQueryFeature(IntPtr device, Feature feature, void* pInfo, uint infoSize);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuGetAdapterProperties(IntPtr device, out AdapterProperties properties);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuGetLimits(IntPtr device, out GraphicsDeviceLimits limits);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr vgpuBeginCommandBuffer(IntPtr device, string? label);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuPushDebugGroup(IntPtr commandBuffer, string groupLabel);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuPopDebugGroup(IntPtr commandBuffer);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuInsertDebugMarker(IntPtr commandBuffer, string debugLabel);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr vgpuAcquireSwapchainTexture(IntPtr commandBuffer, IntPtr swapChain, out int pWidth, out int pHeight);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuBeginRenderPass(IntPtr commandBuffer, RenderPassDesc* desc);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuEndRenderPass(IntPtr commandBuffer);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuSetViewports(IntPtr commandBuffer, int count, Viewport* viewports);
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuSetScissorRects(IntPtr commandBuffer, int count, RectI* scissorRects);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuSubmit(IntPtr device, IntPtr* commandBuffers, uint count);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr vgpuCreateSwapChain(IntPtr device, IntPtr windowHandle, SwapChainDesc* desc);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuDestroySwapChain(IntPtr device, IntPtr swapChain);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern TextureFormat vgpuSwapChainGetFormat(IntPtr device, IntPtr swapChain);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr vgpuCreateBuffer(IntPtr device, BufferDesc* desc, void* pInitialData);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuDestroyBuffer(IntPtr device, IntPtr buffer);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr vgpuCreateTexture(IntPtr device, TextureDesc* desc/*, void* pInitialData*/);
+
+    [DllImport(NativeLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void vgpuDestroyTexture(IntPtr device, IntPtr texture);
 }

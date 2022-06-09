@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Microsoft.Toolkit.Diagnostics;
+using static Vortice.Graphics.VGPU;
 
 namespace Vortice.Graphics;
 
@@ -10,7 +11,7 @@ public readonly record struct SwapChainDescription
     public SwapChainDescription(
         int width,
         int height,
-        PixelFormat colorFormat = PixelFormat.BGRA8UNormSrgb,
+        TextureFormat colorFormat = TextureFormat.BGRA8UNormSrgb,
         PresentMode presentMode = PresentMode.Fifo)
     {
         Guard.IsTrue(width >= 0, nameof(width));
@@ -18,15 +19,27 @@ public readonly record struct SwapChainDescription
 
         Width = width;
         Height = height;
-        ColorFormat = colorFormat;
+        Format = colorFormat;
         PresentMode = presentMode;
     }
 
     public int Width { get; init; }
     public int Height { get; init; }
-    public PixelFormat ColorFormat { get; init; } = PixelFormat.BGRA8UNormSrgb;
+    public TextureFormat Format { get; init; } = TextureFormat.BGRA8UNormSrgb;
     public PresentMode PresentMode { get; init; } = PresentMode.Fifo;
     public bool IsFullscreen { get; init; } = false;
 
     public string? Label { get; init; } = default;
+
+    internal SwapChainDesc ToVGPU()
+    {
+        return new SwapChainDesc
+        {
+            width = (uint)Width,
+            height = (uint)Height,
+            format = Format,
+            presentMode = PresentMode,
+            isFullscreen = IsFullscreen
+        };
+    }
 }

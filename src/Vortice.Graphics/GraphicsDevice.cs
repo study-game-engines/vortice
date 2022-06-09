@@ -2,32 +2,20 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Diagnostics;
-using Microsoft.Toolkit.Diagnostics;
 using static Vortice.Graphics.VGPU;
 
 namespace Vortice.Graphics;
 
-public sealed class GraphicsDevice : DisposableObject
+public unsafe sealed class GraphicsDevice : DisposableObject
 {
-    /// <summary>
-    /// The configuration property name for <see cref="IsDebugOutputEnabled"/>.
-    /// </summary>
-    private const string EnableDebugOutput = "VORTICE_ENABLE_DEBUG_OUTPUT";
+    private readonly GraphicsDeviceLimits _limits;
+    private readonly Dictionary<IntPtr, CommandBuffer> _commandBuffers = new();
+    private readonly Dictionary<IntPtr, Texture> _textures = new();
+    private ulong _frameCount;
 
     static GraphicsDevice()
     {
         SetLogCallback(OnLogInfoCallback);
-    }
-
-    public GraphicsDevice(in GraphicsDeviceDescription? description = default)
-    {
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-        if (isDisposing)
-        {
-        }
     }
 
     /// <summary>
@@ -40,14 +28,45 @@ public sealed class GraphicsDevice : DisposableObject
         return vgpuIsSupported(backend);
     }
 
-    /// <summary>
-    /// Indicates whether or not the debug output is enabled.
-    /// </summary>
-    public static bool IsDebugOutputEnabled
+    public GraphicsDevice(in GraphicsDeviceDescription? description = default)
     {
-        get => GetConfigurationValue(EnableDebugOutput);
-        set => AppContext.SetSwitch(EnableDebugOutput, value);
+        unsafe
+        {
+            GraphicsDeviceDescription usageDesc = description.HasValue ? description.Value : new GraphicsDeviceDescription();
+            DeviceDesc deviceDesc = new();
+            deviceDesc.validationMode = usageDesc.ValidationMode;
+            if (vgpuIsSupported(GraphicsBackend.Vulkan))
+            {
+                deviceDesc.preferredBackend = GraphicsBackend.Vulkan;
+            }
+
+            Handle = vgpuCreateDevice(&deviceDesc);
+            Backend = vgpuGetBackendType(Handle);
+            vgpuGetAdapterProperties(Handle, out AdapterProperties adapterProperties);
+            VendorId = (GpuVendorId)adapterProperties.vendorID;
+            DeviceId = adapterProperties.deviceID;
+            AdapterName = adapterProperties.name;
+            DriverDescription = adapterProperties.driverDescription;
+            AdapterType = adapterProperties.adapterType;
+            vgpuGetLimits(Handle, out _limits);
+        }
     }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        if (isDisposing)
+        {
+            if (Handle != IntPtr.Zero)
+            {
+                vgpuWaitIdle(Handle);
+                _textures.Clear();
+                _commandBuffers.Clear();
+                vgpuDestroyDevice(Handle);
+            }
+        }
+    }
+
+    public IntPtr Handle { get; }
 
     /// <summary>
     /// Get the device backend type.
@@ -55,14 +74,20 @@ public sealed class GraphicsDevice : DisposableObject
     public GraphicsBackend Backend { get; }
 
     public GpuVendorId VendorId { get; }
-    public uint AdapterId { get; }
-    public GpuAdapterType AdapterType { get; }
+    public uint DeviceId { get; }
     public string AdapterName { get; }
+    public string DriverDescription { get; }
+    public GpuAdapterType AdapterType { get; }
 
     /// <summary>
-    /// Get the device capabilities.
+    /// Get the device limits.
     /// </summary>
-    public GraphicsDeviceCaps Capabilities { get; }
+    public GraphicsDeviceLimits Limits { get; }
+
+    /// <summary>
+    /// Gets the number of frame being executed.
+    /// </summary>
+    public ulong FrameCount => _frameCount;
 
     /// <summary>
     /// Get the graphics <see cref="CommandQueue"/>.
@@ -74,32 +99,56 @@ public sealed class GraphicsDevice : DisposableObject
     /// </summary>
     //public abstract CommandQueue ComputeQueue { get; }
 
+    public bool QueryFeature(Feature feature)
+    {
+        return vgpuQueryFeature(Handle, feature, default, 0);
+    }
+
     /// <summary>
     /// Wait for device to finish pending GPU operations.
     /// </summary>
     public void WaitIdle()
     {
-
+        vgpuWaitIdle(Handle);
     }
 
-    //public GraphicsBuffer CreateBuffer(in BufferDescription description)
-    //{
-    //    Guard.IsGreaterThanOrEqualTo(description.Size, 1, nameof(BufferDescription.Size));
+    public ulong CommitFrame()
+    {
+        _frameCount = vgpuFrame(Handle);
+        return _frameCount;
+    }
 
-    //    return CreateBufferCore(description, IntPtr.Zero);
-    //}
+    public CommandBuffer BeginCommandBuffer(string? label = default)
+    {
+        IntPtr cmdBufferHandle = vgpuBeginCommandBuffer(Handle, label);
 
-    //public GraphicsBuffer CreateBuffer<T>(Span<T> data, BufferUsage usage = BufferUsage.ShaderReadWrite) where T : unmanaged
-    //{
-    //    unsafe
-    //    {
-    //        BufferDescription description = new BufferDescription(usage, (ulong)(data.Length * sizeof(T)));
-    //        fixed (T* dataPtr = data)
-    //        {
-    //            return CreateBufferCore(description, (IntPtr)dataPtr);
-    //        }
-    //    }
-    //}
+        if (_commandBuffers.TryGetValue(cmdBufferHandle, out CommandBuffer? commandBuffer))
+        {
+            return commandBuffer!;
+        }
+
+        commandBuffer = new CommandBuffer(this, cmdBufferHandle);
+        _commandBuffers.Add(cmdBufferHandle, commandBuffer);
+        return commandBuffer;
+    }
+
+    public unsafe void Submit(CommandBuffer commandBuffer)
+    {
+        IntPtr cmdBufferHandle = commandBuffer.Handle;
+        vgpuSubmit(Handle, &cmdBufferHandle, 1u);
+    }
+
+    public unsafe void Submit(CommandBuffer[] commandBuffers)
+    {
+        IntPtr* commandBufferPtrs = stackalloc IntPtr[commandBuffers.Length];
+
+        for (int i = 0; i < commandBuffers.Length; i += 1)
+        {
+            commandBufferPtrs[i] = commandBuffers[i].Handle;
+        }
+
+        vgpuSubmit(Handle, commandBufferPtrs, (uint)commandBuffers.Length);
+    }
 
     //public Texture CreateTexture(in TextureDescriptor descriptor)
     //{
@@ -110,39 +159,22 @@ public sealed class GraphicsDevice : DisposableObject
     //    return CreateTextureCore(descriptor);
     //}
 
-    //public SwapChain CreateSwapChain(in SwapChainSurface surface, in SwapChainDescription description)
-    //{
-    //    Guard.IsNotNull(surface, nameof(surface));
-
-    //    return CreateSwapChainCore(surface, description);
-    //}
-
     [MonoPInvokeCallback(typeof(VGPULogCallback))]
-    private static void OnLogInfoCallback(LogLevel level, IntPtr msgPtr)
+    private static void OnLogInfoCallback(LogLevel level, sbyte* msgPtr)
     {
-        string message = FromUTF8(msgPtr);
+        string message = new string(msgPtr);
         Console.WriteLine($"[{level}]: {message}");
     }
 
-    /// <summary>
-    /// Gets a configuration value for a specified property.
-    /// </summary>
-    /// <param name="propertyName">The property name to retrieve the value for.</param>
-    /// <returns>The value of the specified configuration setting.</returns>
-    private static bool GetConfigurationValue(string propertyName)
+    internal Texture GetTexture(IntPtr handle)
     {
-#if DEBUG
-        if (Debugger.IsAttached)
+        if (_textures.TryGetValue(handle, out Texture? texture))
         {
-            return true;
-        }
-#endif
-
-        if (AppContext.TryGetSwitch(propertyName, out bool isEnabled))
-        {
-            return isEnabled;
+            return texture!;
         }
 
-        return false;
+        texture = new Texture(this, handle);
+        _textures.Add(handle, texture);
+        return texture;
     }
 }
