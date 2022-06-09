@@ -41,7 +41,7 @@ public sealed class DrawTriangleGame : Game
             new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
         };
 
-        using GraphicsBuffer vertexBuffer = GraphicsDevice.CreateBuffer(triangleVertices, BufferUsage.Vertex);
+        //using GraphicsBuffer vertexBuffer = GraphicsDevice.CreateBuffer(triangleVertices, BufferUsage.Vertex);
         //
         //using (Texture texture = GraphicsDevice.CreateTexture(TextureDescriptor.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
         //{

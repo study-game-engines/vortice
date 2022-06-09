@@ -22,19 +22,23 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+
     - name: Setup .NET 6 SDK
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
 
-    - name: Pack
-      run: dotnet pack Vortice.sln --configuration Release 
+    - name: Build/Pack
+      run: msbuild Vortice.sln -t:restore,build,pack /p:Configuration=Release /p:SymbolPackageFormat=snupkg /p:Packing=true
 
-    - name: Upload Artifacts
+    - name: Upload Package Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: Packages
-        path: packages
+        path: artifacts\*.nupkg
+        if-no-files-found: error
 
     - name: Publish to NuGet
       if: github.event_name == 'push'

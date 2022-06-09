@@ -29,7 +29,7 @@ public abstract class Game : DisposableObject, IGame
 
         // Get required services.
         Input = _serviceProvider.GetRequiredService<InputManager>();
-        GraphicsDevice = GraphicsDevice.CreateDefault(new GraphicsDeviceDescription());
+        GraphicsDevice = new GraphicsDevice();
 
         // Get optional services.
         AudioDevice = _serviceProvider.GetService<AudioDevice>();

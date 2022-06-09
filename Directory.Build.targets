@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <!-- Settings that are only set for executables -->
-  <PropertyGroup Condition="'$(OutputType)' != 'Library' AND '$(UseWindowsForms)' != 'true'">
+  <PropertyGroup Condition="'$(OutputType)' != 'Library' AND '$(UseWindowsForms)' != 'true'  AND '$(UseWPF)' != 'true'">
     <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 

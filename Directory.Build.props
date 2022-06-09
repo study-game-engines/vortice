@@ -33,6 +33,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageTags>vortice dotnet net netcore netstandard csharp library directx vulkan gpu performance shader hlsl</PackageTags>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts/</PackageOutputPath>
   </PropertyGroup>
 
   <!-- https://github.com/dotnet/sourcelink -->
