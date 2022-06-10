@@ -9,6 +9,10 @@
     <_VorticeTargetPlatformIstvOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'tvos'">True</_VorticeTargetPlatformIstvOS>
     <_VorticeTargetPlatformIsWindows Condition="$(_VorticeTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_VorticeTargetPlatformIsWindows>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <RepositoryRootDirectory>$(MSBuildThisFileDirectory)</RepositoryRootDirectory>
+  </PropertyGroup>
   
   <PropertyGroup>
     <LangVersion>10.0</LangVersion>

@@ -1,0 +1,34 @@
+<Project>
+  <ItemGroup>
+    <Compile Remove="bin\**;obj\**" />
+    <None Remove="bin\**;obj\**" />
+    <Compile Remove="Platforms\**\*.cs" />
+    <None Include="Platforms\**\*.cs" />
+  </ItemGroup>
+
+  <!-- Windows Forms and WPF -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <!-- SDL2 -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' OR $(TargetFramework.StartsWith('netstandard2'))">
+    <Compile Include="Platforms\Standard\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+  <!-- UAP -->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+    <Compile Include="Platforms\WinUI\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+  <!-- Win32/WinForms/UWP -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
+    <Compile Include="Platforms\Windows\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+</Project>

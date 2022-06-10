@@ -9,12 +9,11 @@ public abstract class GraphicsResource : DisposableObject
 {
     protected string? _label;
 
-    protected GraphicsResource(GraphicsDevice device, IntPtr handle, string? label = default)
+    protected GraphicsResource(GraphicsDevice device, string? label = default)
     {
         Guard.IsNotNull(device, nameof(device));
 
         Device = device;
-        Handle = handle;
         _label = label;
     }
 
@@ -22,8 +21,6 @@ public abstract class GraphicsResource : DisposableObject
     /// Get the <see cref="GraphicsDevice"/> object that created the resource.
     /// </summary>
     public GraphicsDevice Device { get; }
-
-    public IntPtr Handle { get; protected set; }
 
     /// <summary>
     /// Gets or set the label that identifies the resource.
@@ -34,11 +31,11 @@ public abstract class GraphicsResource : DisposableObject
         set
         {
             _label = value;
-            OnLabelChanged();
+            OnLabelChanged(value ?? string.Empty);
         }
     }
 
-    protected virtual void OnLabelChanged()
+    protected virtual void OnLabelChanged(string newLabel)
     {
     }
 }

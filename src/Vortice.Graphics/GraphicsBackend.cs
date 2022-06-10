@@ -7,8 +7,8 @@ public enum GraphicsBackend
 {
     Default,
     Vulkan,
-    D3D12,
-    D3D11,
+    Direct3D12,
+    Direct3D11,
     WebGPU,
     Count,
 }

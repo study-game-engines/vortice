@@ -9,7 +9,7 @@ namespace Vortice.Graphics;
 public record struct TextureDescription
 {
     public TextureDescription(
-        TextureType type,
+        TextureDimension dimension,
         TextureFormat format,
         int width,
         int height,
@@ -18,12 +18,12 @@ public record struct TextureDescription
         TextureUsage usage = TextureUsage.ShaderRead,
         TextureSampleCount sampleCount = TextureSampleCount.Count1)
     {
-        TextureType = type;
+        Dimension = dimension;
         Format = format;
         Width = width;
         Height = height;
         DepthOrArraySize = depthOrArraySize;
-        MipLevels = mipLevels == 1 ? CountMipLevels(width, height, type == TextureType.Type3D ? depthOrArraySize : 1) : mipLevels;
+        MipLevels = mipLevels == 1 ? CountMipLevels(width, height, dimension == TextureDimension.Texture3D ? depthOrArraySize : 1) : mipLevels;
         SampleCount = sampleCount;
         Usage = usage;
         Label = default;
@@ -37,7 +37,7 @@ public record struct TextureDescription
         TextureUsage usage = TextureUsage.ShaderRead)
     {
         return new TextureDescription(
-            TextureType.Type1D,
+            TextureDimension.Texture1D,
             format,
             width,
             1,
@@ -58,7 +58,7 @@ public record struct TextureDescription
         )
     {
         return new TextureDescription(
-            TextureType.Type2D,
+            TextureDimension.Texture2D,
             format,
             width,
             height,
@@ -77,7 +77,7 @@ public record struct TextureDescription
         TextureUsage usage = TextureUsage.ShaderRead)
     {
         return new TextureDescription(
-            TextureType.Type3D,
+            TextureDimension.Texture3D,
             format,
             width,
             height,
@@ -88,9 +88,9 @@ public record struct TextureDescription
     }
 
     /// <summary>
-    /// Type of texture.
+    /// Dimension of <see cref="Texture"/>.
     /// </summary>
-    public TextureType TextureType { get; init; }
+    public TextureDimension Dimension { get; init; }
 
     public TextureFormat Format { get; init; }
 

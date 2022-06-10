@@ -1,46 +1,31 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Runtime.InteropServices;
-using static Vortice.Graphics.VGPU;
-
 namespace Vortice.Graphics;
 
-public unsafe sealed class SwapChain : GraphicsResource
+public abstract class SwapChain : GraphicsResource
 {
     public SwapChain(GraphicsDevice device, SwapChainSurface surface, in SwapChainDescription description)
-        : base(device, IntPtr.Zero, description.Label)
+        : base(device, description.Label)
     {
-        SwapChainDesc nativeDesc = description.ToVGPU();
-#if WINDOWS_UWP
-        IntPtr handle = Marshal.GetIUnknownForObject(((CoreWindowSwapChainSurface)surface).CoreWindow);
-        Handle = vgpuCreateSwapChain(device.Handle, handle, &nativeDesc);
-#else
-        Handle = vgpuCreateSwapChain(device.Handle, ((Win32SwapChainSurface)surface).Hwnd, &nativeDesc);
-#endif
-
-        PresentMode = description.PresentMode;
+        Surface = surface;
     }
 
-    /// <summary>
-    /// Finalizes an instance of the <see cref="SwapChain" /> class.
-    /// </summary>
-    ~SwapChain() => Dispose(disposing: false);
+    public SwapChainSurface Surface { get; }
 
-    /// <inheritdoc />
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            if (Handle != IntPtr.Zero)
-            {
-                vgpuDestroySwapChain(Device.Handle, Handle);
-            }
-        }
-    }
-
-    public TextureFormat ColorFormat => vgpuSwapChainGetFormat(Device.Handle, Handle);
+    public TextureFormat ColorFormat { get; }
     public PresentMode PresentMode { get; }
 
-    //public void Resize(int newWidth, int newHeight);
+    public bool AutoResizeDrawable { get; set; } = true;
+
+    //public void Resize(int width, int height)
+    //{
+    //    PresentationParameters.BackBufferWidth = width;
+    //    PresentationParameters.BackBufferHeight = height;
+
+    //    ResizeBackBuffer(width, height);
+    //    ResizeDepthStencilBuffer(width, height);
+    //}
+
+    protected abstract void ResizeBackBuffer(int width, int height);
 }

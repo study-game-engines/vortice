@@ -1,8 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="MSBuild.Sdk.Extras">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net6.0-windows;</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);uap10.0.19041;</TargetFrameworks>
   </PropertyGroup>
+
+  <Import Project="$(RepositoryRootDirectory)src/Vortice.MultiTargeting.targets" />
 
   <ItemGroup>
     <Content Include="build\**" PackagePath="build" Pack="true" />
@@ -11,18 +15,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Remove="System.Drawing" />
+    <Using Remove="System.Windows.Forms" />
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.Runtime.CompilerServices" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Vortice.Graphics\Vortice.Graphics.csproj" />
+    
     <PackageReference Include="Microsoft.Toolkit.Diagnostics" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Vortice.Mathematics" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Vortice.Graphics\Vortice.Graphics.csproj" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' OR $(TargetFramework.StartsWith('netstandard2'))">
+    <PackageReference Include="ppy.SDL2-CS" />
   </ItemGroup>
 
 </Project>

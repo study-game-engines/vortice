@@ -10,7 +10,7 @@ namespace Vortice.Graphics;
 public abstract class CommandQueue : GraphicsResource
 {
     protected CommandQueue(GraphicsDevice device)
-        : base(device, IntPtr.Zero, default)
+        : base(device, default)
     {
     }
 

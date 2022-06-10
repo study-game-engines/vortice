@@ -2,13 +2,17 @@
   
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net6.0-windows;</TargetFrameworks>
+    <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <RootNamespace>Vortice.Samples</RootNamespace>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\Vortice.Audio.OpenAL\Vortice.Audio.OpenAL.csproj" />
-    <ProjectReference Include="..\..\Vortice.Audio.XAudio2\Vortice.Audio.XAudio2.csproj" />
+    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
   </ItemGroup>
 
 </Project>

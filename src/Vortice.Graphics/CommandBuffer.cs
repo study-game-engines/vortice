@@ -29,12 +29,12 @@ public unsafe sealed class CommandBuffer
 
     public Texture? AcquireSwapchainTexture(SwapChain swapChain, out SizeI size)
     {
-        IntPtr texturePtr = vgpuAcquireSwapchainTexture(Handle, swapChain.Handle, out int width, out int height);
-        if (texturePtr != IntPtr.Zero)
-        {
-            size = new(width, height);
-            return Device.GetTexture(texturePtr);
-        }
+        //IntPtr texturePtr = vgpuAcquireSwapchainTexture(Handle, swapChain.Handle, out int width, out int height);
+        //if (texturePtr != IntPtr.Zero)
+        //{
+        //    size = new(width, height);
+        //    return Device.GetTexture(texturePtr);
+        //}
 
         size = SizeI.Empty;
         return default;
@@ -42,23 +42,23 @@ public unsafe sealed class CommandBuffer
 
     public void BeginRenderPass(in Texture texture, in Color4 clearColor)
     {
-        RenderPassColorAttachment colorAttachment = new()
-        {
-            texture = texture.Handle,
-            loadOp = LoadAction.Clear,
-            storeOp = StoreAction.Store,
-            clearColor = clearColor
-        };
+        //RenderPassColorAttachment colorAttachment = new()
+        //{
+        //    texture = texture.Handle,
+        //    loadOp = LoadAction.Clear,
+        //    storeOp = StoreAction.Store,
+        //    clearColor = clearColor
+        //};
 
-        RenderPassDesc renderPass = default;
-        renderPass.colorAttachmentCount = 1;
-        renderPass.colorAttachments = &colorAttachment;
-        vgpuBeginRenderPass(Handle, &renderPass);
+        //RenderPassDesc renderPass = default;
+        //renderPass.colorAttachmentCount = 1;
+        //renderPass.colorAttachments = &colorAttachment;
+        //vgpuBeginRenderPass(Handle, &renderPass);
     }
 
     public void EndRenderPass()
     {
-        vgpuEndRenderPass(Handle);
+        //vgpuEndRenderPass(Handle);
     }
 
     public void SetViewport(float x, float y, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f)

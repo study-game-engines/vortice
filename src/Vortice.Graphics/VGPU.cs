@@ -57,7 +57,7 @@ internal static unsafe class VGPU
     public readonly struct TextureDesc
     {
         public readonly IntPtr label { get; init; }
-        public readonly TextureType type { get; init; }
+        public readonly TextureDimension type { get; init; }
         public readonly TextureFormat format { get; init; }
         public readonly TextureUsage usage { get; init; }
         public readonly uint width { get; init; }

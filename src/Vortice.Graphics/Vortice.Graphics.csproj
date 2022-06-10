@@ -3,12 +3,26 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);uap10.0.19041;</TargetFrameworks>
+    <ExcludeVulkan>True</ExcludeVulkan>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+    <ExcludeVulkan>True</ExcludeVulkan>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>
+    <DefineConstants Condition="'$(ExcludeVulkan)' == 'true'">$(DefineConstants);EXCLUDE_VULKAN_BACKEND</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="build\**" PackagePath="build" Pack="true" />
-    <Content Include="runtimes\**" PackagePath="runtimes" Pack="true" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="lib\**" PackagePath="lib" Pack="true" />
+    <Compile Remove="D3DCommon\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true' AND '$(ExcludeD3D12)' == 'true'" />
+    <Compile Remove="D3D11\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true'" />
+    <Compile Remove="D3D12\**\*.cs" Condition="'$(ExcludeD3D12)' == 'true'" />
+    <!--<Compile Remove="Vulkan\**\*.cs" Condition="'$(ExcludeVulkan)' == 'true'" />-->
+    <PackageReference Include="Vortice.Direct3D11" Condition="'$(ExcludeD3D11)' != 'true'" />
+    <PackageReference Include="Vortice.Direct3D12" Condition="'$(ExcludeD3D12)' != 'true'" />
+    <!--<PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />-->
   </ItemGroup>
 
   <ItemGroup>

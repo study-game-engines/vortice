@@ -12,8 +12,8 @@ namespace Vortice.Samples;
 
 public sealed class DrawTriangleGame : Game
 {
-    public DrawTriangleGame(GameContext context)
-        : base(context)
+    public DrawTriangleGame(GamePlatform? platform = null)
+        : base(platform)
     {
     }
 
@@ -21,10 +21,10 @@ public sealed class DrawTriangleGame : Game
     protected override void ConfigureServices(IServiceCollection services)
     {
         // Audio
-        if (XAudio2Device.IsSupported())
-        {
-            services.AddSingleton<AudioDevice>(new XAudio2Device());
-        }
+        //if (XAudio2Device.IsSupported())
+        //{
+        //    services.AddSingleton<AudioDevice>(new XAudio2Device());
+        //}
 
         base.ConfigureServices(services);
     }
@@ -41,7 +41,7 @@ public sealed class DrawTriangleGame : Game
             new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
         };
 
-        using GraphicsBuffer vertexBuffer = GraphicsBuffer.Create(GraphicsDevice, triangleVertices, BufferUsage.Vertex);
+        //using GraphicsBuffer vertexBuffer = GraphicsBuffer.Create(GraphicsDevice, triangleVertices, BufferUsage.Vertex);
         //
         //using (Texture texture = GraphicsDevice.CreateTexture(TextureDescriptor.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
         //{
@@ -52,15 +52,15 @@ public sealed class DrawTriangleGame : Game
     {
         base.Draw(gameTime);
 
-        CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer("Frame");
-        Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(View.SwapChain, out SizeI swapChainSize);
-        if (swapChainTexture != null)
-        {
-            commandBuffer.BeginRenderPass(swapChainTexture!, Colors.CornflowerBlue);
-            commandBuffer.EndRenderPass();
-        }
+        //CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer("Frame");
+        //Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(View.SwapChain, out SizeI swapChainSize);
+        //if (swapChainTexture != null)
+        //{
+        //    commandBuffer.BeginRenderPass(swapChainTexture!, Colors.CornflowerBlue);
+        //    commandBuffer.EndRenderPass();
+        //}
 
-        GraphicsDevice.Submit(commandBuffer);
+        //GraphicsDevice.Submit(commandBuffer);
     }
 
     public readonly record struct VertexPositionColor(Vector3 Position, Color4 Color);

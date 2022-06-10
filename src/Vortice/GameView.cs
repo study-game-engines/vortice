@@ -19,7 +19,7 @@ public abstract class GameView
     public void CreateSwapChain(GraphicsDevice device)
     {
         SwapChainDescription descriptor = new(ClientSize.Width, ClientSize.Height);
-        SwapChain = new SwapChain(device, Surface, descriptor);
+        SwapChain = device.CreateSwapChain(Surface, descriptor);
     }
 
     protected virtual void OnSizeChanged()

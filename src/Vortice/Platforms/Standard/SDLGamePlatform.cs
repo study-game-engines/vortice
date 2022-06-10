@@ -1,21 +1,22 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Microsoft.Extensions.DependencyInjection;
-using Vortice.Graphics;
 using static SDL2.SDL;
 using static SDL2.SDL.SDL_EventType;
+using static SDL2.SDL.SDL_WindowEventID;
+//using Vortice.Content;
 
 namespace Vortice;
 
-public sealed class SDL2GameContext : GameContext
+internal class SDLGamePlatform : GamePlatform
 {
     private const int _eventsPerPeep = 64;
     private readonly SDL_Event[] _events = new SDL_Event[_eventsPerPeep];
 
-    private bool _exiting = false;
+    private readonly SDLGameWindow _window;
+    private bool _exitRequested;
 
-    public SDL2GameContext()
+    public SDLGamePlatform()
     {
         // Init SDL2
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
@@ -24,25 +25,22 @@ public sealed class SDL2GameContext : GameContext
             throw new Exception("");
         }
 
-        View = new SDL2GameView();
+        View = (_window = new SDLGameWindow(this));
     }
 
     // <inheritdoc />
     public override GameView View { get; }
 
-    public override void ConfigureServices(IServiceCollection services)
-    {
-        base.ConfigureServices(services);
-    }
-
-    public override void RunMainLoop(Action init, Action callback)
+    public override void RunMainLoop(Action init)
     {
         init();
 
-        while (!_exiting)
+        _window.Show();
+
+        while (!_exitRequested)
         {
             PollSDLEvents();
-            callback();
+            RunOneFrame();
         }
 
         SDL_Quit();
@@ -58,19 +56,39 @@ public sealed class SDL2GameContext : GameContext
             eventsRead = SDL_PeepEvents(_events, _eventsPerPeep, SDL_eventaction.SDL_GETEVENT, SDL_EventType.SDL_FIRSTEVENT, SDL_EventType.SDL_LASTEVENT);
             for (int i = 0; i < eventsRead; i++)
             {
-                handleSDLEvent(_events[i]);
+                HandleSDLEvent(_events[i]);
             }
         } while (eventsRead == _eventsPerPeep);
     }
 
-    private void handleSDLEvent(SDL_Event e)
+    private void HandleSDLEvent(SDL_Event evt)
     {
-        switch (e.type)
+        switch (evt.type)
         {
             case SDL_QUIT:
             case SDL_APP_TERMINATING:
-                _exiting = true;
+                _exitRequested = true;
+                break;
+
+            case SDL_WINDOWEVENT:
+                HandleWindowEvent(evt);
                 break;
         }
+    }
+
+    private void HandleWindowEvent(in SDL_Event evt)
+    {
+        switch (evt.window.windowEvent)
+        {
+            case SDL_WINDOWEVENT_SIZE_CHANGED:
+                //updateWindowSize();
+                break;
+
+        }
+    }
+
+    private void RunOneFrame()
+    {
+        Tick();
     }
 }

@@ -11,25 +11,29 @@ namespace Vortice;
 
 public abstract class Game : DisposableObject, IGame
 {
-    private readonly GameContext _context;
+    private readonly GamePlatform _platform;
     private readonly ServiceProvider _serviceProvider;
     private readonly object _tickLock = new();
     private readonly Stopwatch _stopwatch = new();
     private bool _isExiting;
 
-    protected Game(GameContext context)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Game" /> class.
+    /// </summary>
+    /// <param name="platform">The optional <see cref="GamePlatform"/> to handle platform logic..</param>
+    protected Game(GamePlatform? platform = null)
     {
-        _context = context;
+        _platform = platform ?? GamePlatform.CreateDefault();
 
         ServiceCollection services = new();
-        context.ConfigureServices(services);
+        _platform.ConfigureServices(services);
         ConfigureServices(services);
 
         _serviceProvider = services.BuildServiceProvider();
 
         // Get required services.
         Input = _serviceProvider.GetRequiredService<InputManager>();
-        GraphicsDevice = new GraphicsDevice();
+        GraphicsDevice = GraphicsDevice.CreateDefault();
 
         // Get optional services.
         AudioDevice = _serviceProvider.GetService<AudioDevice>();
@@ -48,7 +52,7 @@ public abstract class Game : DisposableObject, IGame
 
     public GameTime Time { get; } = new GameTime();
 
-    public GameView View => _context.View;
+    public GameView View => _platform.View;
 
     public InputManager Input { get; }
 
@@ -90,7 +94,8 @@ public abstract class Game : DisposableObject, IGame
 
         IsRunning = true;
 
-        _context.RunMainLoop(InitializeBeforeRun, Tick);
+        _platform.TickRequested += OnTickRequested;
+        _platform.RunMainLoop(InitializeBeforeRun);
     }
 
     protected virtual void Initialize()
@@ -107,6 +112,11 @@ public abstract class Game : DisposableObject, IGame
         Time.Update(_stopwatch.Elapsed, TimeSpan.Zero);
 
         BeginRun();
+    }
+
+    private void OnTickRequested(object? sender, EventArgs e)
+    {
+        Tick();
     }
 
     public void Tick()

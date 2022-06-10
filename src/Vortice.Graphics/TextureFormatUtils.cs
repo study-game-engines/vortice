@@ -62,20 +62,20 @@ public static class TextureFormatUtils
     {
         switch (format)
         {
-            case TextureFormat.BC1RGBAUNorm:
-            case TextureFormat.BC1RGBAUNormSrgb:
-            case TextureFormat.BC2RGBAUNorm:
-            case TextureFormat.BC2RGBAUNormSrgb:
-            case TextureFormat.BC3RGBAUNorm:
-            case TextureFormat.BC3RGBAUNormSrgb:
-            case TextureFormat.BC4RUNorm:
-            case TextureFormat.BC4RSNorm:
-            case TextureFormat.BC5RGUNorm:
-            case TextureFormat.BC5RGSNorm:
-            case TextureFormat.BC6HRGBUFloat:
-            case TextureFormat.BC6HRGBFloat:
-            case TextureFormat.BC7RGBAUNorm:
-            case TextureFormat.BC7RGBAUNormSrgb:
+            case TextureFormat.BC1UNorm:
+            case TextureFormat.BC1UNormSrgb:
+            case TextureFormat.BC2UNorm:
+            case TextureFormat.BC2UNormSrgb:
+            case TextureFormat.BC3UNorm:
+            case TextureFormat.BC3UNormSrgb:
+            case TextureFormat.BC4UNorm:
+            case TextureFormat.BC4SNorm:
+            case TextureFormat.BC5UNorm:
+            case TextureFormat.BC5SNorm:
+            case TextureFormat.BC6HUFloat:
+            case TextureFormat.BC6HSFloat:
+            case TextureFormat.BC7UNorm:
+            case TextureFormat.BC7UNormSrgb:
                 return true;
 
             default:

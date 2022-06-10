@@ -7,10 +7,13 @@ namespace Vortice.Samples;
 
 public static class Program
 {
-    public static void Main(string[] args)
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    public static void Main()
     {
-        using DrawTriangleGame game = new(new SDL2GameContext());
-        //using DrawTriangleGame game = new(new SDL2GameContext(new VulkanGraphicsDevice()));
+        using DrawTriangleGame game = new();
         game.Run();
     }
 }

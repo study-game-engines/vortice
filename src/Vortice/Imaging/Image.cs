@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Vortice.Graphics;
+using System.IO;
 using static Vortice.NativeApi;
 
 namespace Vortice.Imaging;

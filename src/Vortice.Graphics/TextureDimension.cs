@@ -3,9 +3,9 @@
 
 namespace Vortice.Graphics;
 
-public enum TextureType
+public enum TextureDimension
 {
-    Type1D = 1,
-    Type2D,
-    Type3D
+    Texture1D,
+    Texture2D,
+    Texture3D
 }
