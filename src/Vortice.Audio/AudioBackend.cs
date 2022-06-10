@@ -3,7 +3,7 @@
 
 namespace Vortice.Audio;
 
-public enum AudioBackend : byte
+public enum AudioBackend 
 {
     Null = 0,
     XAudio2,

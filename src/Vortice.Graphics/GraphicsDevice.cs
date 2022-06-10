@@ -91,7 +91,7 @@ public abstract class GraphicsDevice : DisposableObject
         //return new Vulkan.VulkanGraphicsDevice(validationMode);
 #endif
 
-        throw new GraphicsException("No backend supported");
+        throw new PlatformNotSupportedException("No graphics backend is supported on current OS");
     }
 
     public abstract bool QueryFeature(Feature feature);

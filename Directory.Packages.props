@@ -26,6 +26,7 @@
     <PackageVersion Include="Vortice.Mathematics" Version="1.4.16" />
     <PackageVersion Include="Vortice.Direct3D11" Version="2.1.19" />
     <PackageVersion Include="Vortice.Direct3D12" Version="2.1.19" />
+    <PackageVersion Include="Vortice.XAudio2" Version="2.1.19" />
     <PackageVersion Include="ppy.SDL2-CS" Version="1.0.565-alpha" />
     
     <!-- Asset Pipeline -->

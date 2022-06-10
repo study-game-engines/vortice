@@ -36,7 +36,8 @@ public abstract class Game : DisposableObject, IGame
         GraphicsDevice = GraphicsDevice.CreateDefault();
 
         // Get optional services.
-        AudioDevice = _serviceProvider.GetService<AudioDevice>();
+        AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();
+        AudioDevice = audioDevice ?? AudioDevice.CreateDefault();
     }
 
     public event EventHandler<EventArgs>? Activated;
@@ -58,7 +59,7 @@ public abstract class Game : DisposableObject, IGame
 
     public GraphicsDevice GraphicsDevice { get; }
 
-    public AudioDevice? AudioDevice { get; }
+    public AudioDevice AudioDevice { get; }
 
     public IList<IGameSystem> GameSystems { get; } = new List<IGameSystem>();
 

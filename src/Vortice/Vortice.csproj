@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Vortice.Audio\Vortice.Audio.csproj" />
     <ProjectReference Include="..\Vortice.Graphics\Vortice.Graphics.csproj" />
     
     <PackageReference Include="Microsoft.Toolkit.Diagnostics" />

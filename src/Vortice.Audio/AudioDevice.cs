@@ -1,6 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.CompilerServices;
 using Microsoft.Toolkit.Diagnostics;
 
 namespace Vortice.Audio;
@@ -8,18 +9,10 @@ namespace Vortice.Audio;
 public abstract class AudioDevice : IDisposable
 {
     private volatile int _isDisposed;
-    private static readonly List<AudioDeviceFactory> _factories = new();
 
-    public static void RegisterFactory(AudioDeviceFactory factory)
+    protected AudioDevice(AudioBackend backend)
     {
-        Guard.IsNotNull(factory, nameof(factory));
-
-        _factories.Add(factory);
-        _factories.Sort((x, y) => x.Priority.CompareTo(y.Priority));
-    }
-
-    protected AudioDevice()
-    {
+        Backend = backend;
     }
 
     /// <summary>
@@ -36,7 +29,7 @@ public abstract class AudioDevice : IDisposable
     /// <summary>
     /// Get the device backend type.
     /// </summary>
-    public abstract AudioBackend BackendType { get; }
+    public AudioBackend Backend { get; }
 
     /// <summary>
     /// Gets whether or not the current instance has already been disposed.
@@ -76,18 +69,52 @@ public abstract class AudioDevice : IDisposable
         }
     }
 
+    /// <summary>
+    /// Checks whether the given <see cref="AudioBackend"/> is supported on this system.
+    /// </summary>
+    /// <param name="backend">The AudioBackend to check.</param>
+    /// <returns>True if the AudioBackend is supported; false otherwise.</returns>
+    public static bool IsBackendSupported(AudioBackend backend)
+    {
+        switch (backend)
+        {
+            case AudioBackend.XAudio2:
+#if !EXCLUDE_XAUDIO2_BACKEND
+                return XAudio2.XAudio2Device.IsSupported();
+#else
+                return false;
+#endif
+
+            case AudioBackend.OpenAL:
+#if !EXCLUDE_OPENAL_BACKEND
+                //return D3D12.D3D12GraphicsDevice.IsSupported();
+                return false;
+#else
+                return false;
+#endif
+
+            default:
+                return ThrowHelper.ThrowArgumentException<bool>("Invalid AudioBackend value");
+        }
+    }
+
     public static AudioDevice CreateDefault(AudioBackend preferredBackend = AudioBackend.Count)
     {
-        foreach (AudioDeviceFactory factory in _factories)
+        if (preferredBackend == AudioBackend.Count)
         {
-            if (preferredBackend == AudioBackend.Count)
+#if !EXCLUDE_XAUDIO2_BACKEND
+            if(IsBackendSupported(AudioBackend.XAudio2))
             {
-                return factory.CreateDevice();
+                return new XAudio2.XAudio2Device();
             }
-            else if (factory.BackendType == preferredBackend)
+#endif
+
+#if !EXCLUDE_OPENAL_BACKEND
+            if (IsBackendSupported(AudioBackend.OpenAL))
             {
-                return factory.CreateDevice();
+                return new OpenAL.OpenALDevice();
             }
+#endif
         }
 
         throw new PlatformNotSupportedException("Cannot find capable audio device");

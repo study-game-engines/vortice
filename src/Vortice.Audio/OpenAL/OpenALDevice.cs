@@ -5,11 +5,12 @@
 
 namespace Vortice.Audio.OpenAL;
 
-internal unsafe class OpenALEngine : AudioDevice
+internal unsafe class OpenALDevice : AudioDevice
 {
     //private readonly nint _device;
 
-    public OpenALEngine()
+    public OpenALDevice()
+        : base(AudioBackend.OpenAL)
     {
         //_device = alcOpenDevice(null);
     }
@@ -18,7 +19,4 @@ internal unsafe class OpenALEngine : AudioDevice
     protected override void OnDispose()
     {
     }
-
-    // <inheritdoc />
-    public override AudioBackend BackendType => AudioBackend.OpenAL;
 }
