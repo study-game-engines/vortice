@@ -34,16 +34,6 @@ public abstract class GraphicsDevice : DisposableObject
     public ulong FrameCount => _frameCount;
 
     /// <summary>
-    /// Get the graphics <see cref="CommandQueue"/>.
-    /// </summary>
-    //public abstract CommandQueue GraphicsQueue { get; }
-
-    /// <summary>
-    /// Get the compute <see cref="CommandQueue"/>.
-    /// </summary>
-    //public abstract CommandQueue ComputeQueue { get; }
-
-    /// <summary>
     /// Checks whether the given <see cref="GraphicsBackend"/> is supported on this system.
     /// </summary>
     /// <param name="backend">The GraphicsBackend to check.</param>
@@ -123,20 +113,25 @@ public abstract class GraphicsDevice : DisposableObject
         return _frameCount;
     }
 
-    public CommandBuffer BeginCommandBuffer(string? label = default)
+    /// <summary>
+    /// Begin new <see cref="CommandBuffer"/> in recording state.
+    /// </summary>
+    /// <param name="label">Optional label.</param>
+    /// <returns></returns>
+    public abstract CommandBuffer BeginCommandBuffer(string? label = default);
+
+    public void Submit(CommandBuffer commandBuffer)
     {
-        return default;
+        SubmitCommandBuffers(new[] { commandBuffer }, 1);
     }
 
-    public unsafe void Submit(CommandBuffer commandBuffer)
+    public void Submit(CommandBuffer[] commandBuffers)
     {
-    }
-
-    public unsafe void Submit(CommandBuffer[] commandBuffers)
-    {
+        SubmitCommandBuffers(commandBuffers, commandBuffers.Length);
     }
 
     protected abstract Texture CreateTextureCore(in TextureDescription description);
 
     protected abstract SwapChain CreateSwapChainCore(SwapChainSurface surface, in SwapChainDescription description);
+    protected abstract void SubmitCommandBuffers(CommandBuffer[] commandBuffers, int count);
 }

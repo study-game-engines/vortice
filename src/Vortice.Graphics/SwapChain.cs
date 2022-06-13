@@ -1,6 +1,8 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using Vortice.Mathematics;
+
 namespace Vortice.Graphics;
 
 public abstract class SwapChain : GraphicsResource
@@ -9,6 +11,7 @@ public abstract class SwapChain : GraphicsResource
         : base(device, description.Label)
     {
         Surface = surface;
+        DrawableSize = new(description.Width, description.Height);
     }
 
     public SwapChainSurface Surface { get; }
@@ -17,15 +20,7 @@ public abstract class SwapChain : GraphicsResource
     public PresentMode PresentMode { get; }
 
     public bool AutoResizeDrawable { get; set; } = true;
-
-    //public void Resize(int width, int height)
-    //{
-    //    PresentationParameters.BackBufferWidth = width;
-    //    PresentationParameters.BackBufferHeight = height;
-
-    //    ResizeBackBuffer(width, height);
-    //    ResizeDepthStencilBuffer(width, height);
-    //}
+    public SizeI DrawableSize { get; set; }
 
     protected abstract void ResizeBackBuffer(int width, int height);
 }

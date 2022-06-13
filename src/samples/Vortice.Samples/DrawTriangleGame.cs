@@ -52,15 +52,15 @@ public sealed class DrawTriangleGame : Game
     {
         base.Draw(gameTime);
 
-        //CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer("Frame");
-        //Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(View.SwapChain, out SizeI swapChainSize);
-        //if (swapChainTexture != null)
-        //{
-        //    commandBuffer.BeginRenderPass(swapChainTexture!, Colors.CornflowerBlue);
-        //    commandBuffer.EndRenderPass();
-        //}
+        CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer("Frame");
+        Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(View.SwapChain!);
+        if (swapChainTexture != null)
+        {
+            //commandBuffer.BeginRenderPass(swapChainTexture!, Colors.CornflowerBlue);
+            //commandBuffer.EndRenderPass();
+        }
 
-        //GraphicsDevice.Submit(commandBuffer);
+        GraphicsDevice.Submit(commandBuffer);
     }
 
     public readonly record struct VertexPositionColor(Vector3 Position, Color4 Color);

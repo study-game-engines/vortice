@@ -9,10 +9,13 @@ using Vortice.DXGI.Debug;
 using static Vortice.DXGI.DXGI;
 using static Vortice.Direct3D11.D3D11;
 using Vortice.Direct3D11.Debug;
+using static Vortice.Graphics.D3DCommon.D3DUtils;
+using SharpGen.Runtime;
+using System.Runtime.InteropServices;
 
 namespace Vortice.Graphics.D3D11;
 
-internal class D3D11GraphicsDevice : GraphicsDevice
+internal unsafe class D3D11GraphicsDevice : GraphicsDevice
 {
     public const uint D3D11_REQ_TEXTURE1D_U_DIMENSION = 16384u;
     public const uint D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION = 16384u;
@@ -34,10 +37,22 @@ internal class D3D11GraphicsDevice : GraphicsDevice
     private readonly GraphicsDeviceLimits _limits;
     private readonly FeatureLevel _featureLevel;
 
+    private readonly SRWLOCK* _commandBufferAcquisitionMutex;
+    private readonly SRWLOCK* _contextLock;
+
+    private readonly List<D3D11CommandBuffer> _commandBuffersPool = new();
+    private readonly Queue<D3D11CommandBuffer> _availableCommandBuffers = new();
+
     public D3D11GraphicsDevice(ValidationMode validationMode)
         : base(GraphicsBackend.Direct3D11)
     {
         Guard.IsTrue(IsSupported(), nameof(D3D11GraphicsDevice), "Direct3D11 is not supported");
+
+        _commandBufferAcquisitionMutex = (SRWLOCK*)Marshal.AllocHGlobal(sizeof(SRWLOCK));
+        InitializeSRWLock(_commandBufferAcquisitionMutex);
+
+        _contextLock = (SRWLOCK*)Marshal.AllocHGlobal(sizeof(SRWLOCK));
+        InitializeSRWLock(_contextLock);
 
         bool dxgiDebug = false;
 #if !WINDOWS_UWP
@@ -320,6 +335,12 @@ internal class D3D11GraphicsDevice : GraphicsDevice
             ImmediateContext.Flush();
             ImmediateContext.Dispose();
 
+            for (int i = 0; i < _commandBuffersPool.Count; ++i)
+            {
+                _commandBuffersPool[i].Dispose();
+            }
+            _commandBuffersPool.Clear();
+
 #if DEBUG
             uint refCount = NativeDevice.Release();
             if (refCount > 0)
@@ -346,6 +367,9 @@ internal class D3D11GraphicsDevice : GraphicsDevice
                 dxgiDebug!.Dispose();
             }
 #endif
+
+            Marshal.FreeHGlobal((IntPtr)_contextLock);
+            Marshal.FreeHGlobal((IntPtr)_commandBufferAcquisitionMutex);
         }
     }
 
@@ -362,6 +386,44 @@ internal class D3D11GraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
+    protected override void SubmitCommandBuffers(CommandBuffer[] commandBuffers, int count)
+    {
+        for (int i = 0; i < count; i += 1)
+        {
+            D3D11CommandBuffer commandBuffer = (D3D11CommandBuffer)commandBuffers[i];
+
+            if (commandBuffer.HasLabel)
+            {
+                commandBuffer.PopDebugGroup();
+            }
+
+            commandBuffer.End();
+
+            // Submit the command list to the immediate context *
+            {
+                AcquireSRWLockExclusive(_contextLock);
+                ImmediateContext.ExecuteCommandList(commandBuffer.CommandList!, false);
+                ReleaseSRWLockExclusive(_contextLock);
+            }
+
+            // Mark the command buffer as not-recording so that it can be used to record again. 
+            {
+                AcquireSRWLockExclusive(_commandBufferAcquisitionMutex);
+                commandBuffer.IsRecording = false;
+                _availableCommandBuffers.Enqueue(commandBuffer);
+                ReleaseSRWLockExclusive(_commandBufferAcquisitionMutex);
+            }
+
+            // Present acquired SwapChains 
+            {
+                AcquireSRWLockExclusive(_contextLock);
+                commandBuffer.PresentSwapChains();
+                ReleaseSRWLockExclusive(_contextLock);
+            }
+        }
+    }
+
+    /// <inheritdoc />
     protected override Texture CreateTextureCore(in TextureDescription description)
     {
         return new D3D11Texture(this, description);
@@ -371,6 +433,37 @@ internal class D3D11GraphicsDevice : GraphicsDevice
     protected override SwapChain CreateSwapChainCore(SwapChainSurface surface, in SwapChainDescription description)
     {
         return new D3D11SwapChain(this, surface, description);
+    }
+
+    /// <inheritdoc />
+    public override CommandBuffer BeginCommandBuffer(string? label = null)
+    {
+        AcquireSRWLockExclusive(_commandBufferAcquisitionMutex);
+
+        /* Try to use an existing command buffer, if one is available. */
+        D3D11CommandBuffer commandBuffer;
+
+        if (_availableCommandBuffers.Count == 0)
+        {
+            commandBuffer = new D3D11CommandBuffer(this);
+            _commandBuffersPool.Add(commandBuffer);
+        }
+        else
+        {
+            commandBuffer = _availableCommandBuffers.Dequeue();
+            commandBuffer.Reset();
+        }
+
+        commandBuffer.IsRecording = true;
+        commandBuffer.HasLabel = false;
+        if (string.IsNullOrEmpty(label) == false)
+        {
+            commandBuffer.PushDebugGroup(label!);
+            commandBuffer.HasLabel = true;
+        }
+
+        ReleaseSRWLockExclusive(_commandBufferAcquisitionMutex);
+        return commandBuffer;
     }
 
     private static bool CheckIsSupported()

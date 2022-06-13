@@ -90,4 +90,17 @@ internal abstract class D3DSwapChainBase : SwapChain
 #else
     public IDXGISwapChain1 Handle { get; }
 #endif
+
+    public bool NeedResize()
+    {
+        // Check for window size changes and resize the swapchain if needed. 
+        SwapChainDescription1 swapChainDesc = Handle.Description1;
+        if (swapChainDesc.Width != DrawableSize.Width ||
+            swapChainDesc.Height != DrawableSize.Height)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
