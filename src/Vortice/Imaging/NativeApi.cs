@@ -21,21 +21,21 @@ internal static unsafe partial class NativeApi
 
     private static IntPtr LoadNativeLibrary()
     {
-        if (PlatformInfo.IsWindows)
+        if (OperatingSystem.IsWindows())
         {
             return LibraryLoader.Load("vortice_image.dll");
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        else if (OperatingSystem.IsLinux())
         {
             return LibraryLoader.Load("vortice_image.so");
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
         {
             return LibraryLoader.Load("vortice_image.dylib");
         }
         else
         {
-            return LibraryLoader.Load("libAlimer");
+            return LibraryLoader.Load("vortice_image");
         }
     }
 }

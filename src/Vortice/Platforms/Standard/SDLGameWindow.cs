@@ -64,7 +64,14 @@ internal class SDLGameWindow : GameView
     public IntPtr Handle { get; }
 
     /// <inheritdoc />
-    public override SizeI ClientSize { get; }
+    public override SizeI ClientSize
+    {
+        get
+        {
+            SDL_GetWindowSize(Handle, out int width, out int height);
+            return new(width, height);
+        }
+    }
 
     /// <inheritdoc />
     public override SwapChainSurface Surface { get; }

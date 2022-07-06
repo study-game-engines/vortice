@@ -3,7 +3,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Microsoft.Toolkit.Diagnostics;
+using CommunityToolkit.Diagnostics;
 using Vortice.DXGI;
 
 namespace Vortice.Graphics.D3DCommon;

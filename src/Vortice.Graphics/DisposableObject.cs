@@ -10,11 +10,7 @@ namespace Vortice.Graphics;
 /// </summary>
 public abstract class DisposableObject : IDisposable
 {
-#if NET6_0_OR_GREATER
     private volatile uint _isDisposed = 0;
-#else
-    private volatile int _isDisposed;
-#endif
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DisposableObject" /> class.

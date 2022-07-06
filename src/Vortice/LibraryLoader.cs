@@ -11,9 +11,9 @@ public static class LibraryLoader
 
     static LibraryLoader()
     {
-        if (PlatformInfo.IsWindows)
+        if (OperatingSystem.IsWindows())
             Extension = ".dll";
-        else if (PlatformInfo.IsMacOS)
+        else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             Extension = ".dylib";
         else
             Extension = ".so";
@@ -25,14 +25,15 @@ public static class LibraryLoader
     {
         get
         {
-#if NET6_0_OR_GREATER
             yield return RuntimeInformation.RuntimeIdentifier;
-#endif
-            string archName = PlatformInfo.Is64Bit
-                ? PlatformInfo.IsArm ? "arm64" : "x64"
-                : PlatformInfo.IsArm ? "arm" : "x86";
 
-            if (PlatformInfo.IsWindows)
+            bool isArm = RuntimeInformation.ProcessArchitecture == Architecture.Arm || RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
+
+            string archName = Environment.Is64BitOperatingSystem
+                ? isArm ? "arm64" : "x64"
+                : isArm ? "arm" : "x86";
+
+            if (OperatingSystem.IsWindows())
             {
                 yield return $"win-{archName}";
             }
@@ -91,7 +92,7 @@ public static class LibraryLoader
                 {
                     string libraryPath = Path.Combine(AppContext.BaseDirectory, $@"runtimes\{rid}\native\{libWithExt}");
                     // Windows has multiple fallback win10 -> win
-                    if (PlatformInfo.IsWindows)
+                    if (OperatingSystem.IsWindows())
                     {
                         if (LoadPlatformLibrary(libraryPath) != IntPtr.Zero)
                         {
@@ -193,30 +194,8 @@ public static class LibraryLoader
 
     private static ILibraryLoader GetPlatformDefaultLoader()
     {
-#if NET6_0_OR_GREATER
         return new NetNativeLibraryLoader();
-#else
-        if (PlatformInfo.IsWindows)
-        {
-            return new Win32LibraryLoader();
-        }
-
-        if (PlatformInfo.IsLinux)
-        {
-            return new UnixLibraryLoader();
-        }
-
-        if (PlatformInfo.IsMacOS ||
-            PlatformInfo.IsFreeBSD)
-        {
-            return new BsdLibraryLoader();
-        }
-
-        throw new PlatformNotSupportedException("This platform cannot load native libraries.");
-#endif
     }
-
-
 
     public interface ILibraryLoader
     {
@@ -225,7 +204,6 @@ public static class LibraryLoader
         IntPtr GetExport(IntPtr handle, string symbolName);
     }
 
-#if NET6_0_OR_GREATER
     private class NetNativeLibraryLoader : ILibraryLoader
     {
         public IntPtr Load(string name)
@@ -253,120 +231,4 @@ public static class LibraryLoader
             return IntPtr.Zero;
         }
     }
-#else
-    private class Win32LibraryLoader : ILibraryLoader
-    {
-        public IntPtr Load(string name)
-        {
-            return LoadLibrary(name);
-        }
-
-        public void Free(IntPtr handle)
-        {
-            FreeLibrary(handle);
-        }
-
-        public IntPtr GetExport(IntPtr handle, string functionName)
-        {
-            return GetProcAddress(handle, functionName);
-        }
-
-        [DllImport("kernel32")]
-        private static extern nint LoadLibrary(string fileName);
-
-        [DllImport("kernel32")]
-        private static extern int FreeLibrary(nint module);
-
-        [DllImport("kernel32")]
-        private static extern nint GetProcAddress(nint module, string procName);
-    }
-
-    private class UnixLibraryLoader : ILibraryLoader
-    {
-        private const string SystemLibrary = "libdl.so";
-        private const string SystemLibrary2 = "libdl.so.2"; // newer Linux distros use this
-
-        private const int RTLD_LAZY = 1;
-        private const int RTLD_NOW = 2;
-
-        private static bool UseSystemLibrary2 = true;
-
-        public IntPtr Load(string name)
-        {
-            try
-            {
-                return dlopen2(name, RTLD_LAZY);
-            }
-            catch (DllNotFoundException)
-            {
-                UseSystemLibrary2 = false;
-                return dlopen1(name, RTLD_LAZY);
-            }
-        }
-
-        public void Free(IntPtr handle)
-        {
-            if (UseSystemLibrary2)
-                dlclose2(handle);
-            else
-                dlclose1(handle);
-        }
-
-        public IntPtr GetExport(IntPtr handle, string symbolName)
-        {
-            return UseSystemLibrary2 ? dlsym2(handle, symbolName) : dlsym1(handle, symbolName);
-        }
-
-
-        [DllImport(SystemLibrary, EntryPoint = "dlopen")]
-        private static extern IntPtr dlopen1(string path, int mode);
-
-        [DllImport(SystemLibrary, EntryPoint = "dlsym")]
-        private static extern IntPtr dlsym1(IntPtr handle, string symbol);
-
-        [DllImport(SystemLibrary, EntryPoint = "dlclose")]
-        private static extern void dlclose1(IntPtr handle);
-
-        [DllImport(SystemLibrary2, EntryPoint = "dlopen")]
-        private static extern IntPtr dlopen2(string path, int mode);
-
-        [DllImport(SystemLibrary2, EntryPoint = "dlsym")]
-        private static extern IntPtr dlsym2(IntPtr handle, string symbol);
-
-        [DllImport(SystemLibrary2, EntryPoint = "dlclose")]
-        private static extern void dlclose2(IntPtr handle);
-    }
-
-    private class BsdLibraryLoader : ILibraryLoader
-    {
-        private const int RtldNow = 0x002;
-
-        public nint Load(string name)
-        {
-            return dlopen(name, RtldNow);
-        }
-
-        public void Free(nint handle)
-        {
-            dlclose(handle);
-        }
-
-        public nint GetExport(nint handle, string functionName)
-        {
-            return dlsym(handle, functionName);
-        }
-
-        [DllImport("libc")]
-        private static extern nint dlopen(string fileName, int flags);
-
-        [DllImport("libc")]
-        private static extern nint dlsym(nint handle, string name);
-
-        [DllImport("libc")]
-        private static extern int dlclose(nint handle);
-
-        [DllImport("libc")]
-        private static extern string dlerror();
-    }
-#endif
 }

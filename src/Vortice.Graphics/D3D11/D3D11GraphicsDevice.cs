@@ -1,7 +1,6 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Microsoft.Toolkit.Diagnostics;
 using Vortice.Direct3D;
 using Vortice.Direct3D11;
 using Vortice.DXGI;
@@ -12,6 +11,7 @@ using Vortice.Direct3D11.Debug;
 using static Vortice.Graphics.D3DCommon.D3DUtils;
 using SharpGen.Runtime;
 using System.Runtime.InteropServices;
+using CommunityToolkit.Diagnostics;
 
 namespace Vortice.Graphics.D3D11;
 
@@ -470,7 +470,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     {
         try
         {
-            if (!PlatformInfo.IsWindows)
+            if (!OperatingSystem.IsWindows())
             {
                 return false;
             }

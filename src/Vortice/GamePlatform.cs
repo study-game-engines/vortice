@@ -2,7 +2,6 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Diagnostics;
 using Vortice.Graphics;
 
 namespace Vortice;
@@ -31,7 +30,7 @@ public abstract class GamePlatform
     {
 #if WINDOWS
         return new WinFormsGamePlatform();
-#elif NETSTANDARD2_0 || NET6_0_OR_GREATER
+#elif NET6_0_OR_GREATER
         return new SDLGamePlatform();
 #elif WINDOWS_UWP
         return new WinUIGamePlatform();
