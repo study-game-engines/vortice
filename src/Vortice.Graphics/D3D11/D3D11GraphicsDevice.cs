@@ -1,17 +1,18 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Vortice.Direct3D;
-using Vortice.Direct3D11;
-using Vortice.DXGI;
-using Vortice.DXGI.Debug;
-using static Vortice.DXGI.DXGI;
-using static Vortice.Direct3D11.D3D11;
-using Vortice.Direct3D11.Debug;
-using static Vortice.Graphics.D3DCommon.D3DUtils;
-using SharpGen.Runtime;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Diagnostics;
+using TerraFX.Interop.Windows;
+using TerraFX.Interop.DirectX;
+using static TerraFX.Interop.Windows.Windows;
+using static TerraFX.Interop.DirectX.DirectX;
+using static TerraFX.Interop.DirectX.D3D_FEATURE_LEVEL;
+using static Vortice.Graphics.D3DCommon.D3DUtils;
+using static TerraFX.Interop.DirectX.DXGI;
+using static TerraFX.Interop.DirectX.DXGI_INFO_QUEUE_MESSAGE_SEVERITY;
+using static TerraFX.Interop.DirectX.DXGI_FEATURE;
+using System.Diagnostics;
 
 namespace Vortice.Graphics.D3D11;
 
@@ -25,17 +26,19 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
 
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
-    private static readonly FeatureLevel[] s_featureLevels = new[]
+    private static readonly D3D_FEATURE_LEVEL[] s_featureLevels = new[]
     {
-        FeatureLevel.Level_11_1,
-        FeatureLevel.Level_11_0
+        D3D_FEATURE_LEVEL_11_1,
+        D3D_FEATURE_LEVEL_11_0
     };
 
     public static bool IsSupported() => s_isSupported.Value;
 
+    private readonly ComPtr<IDXGIFactory2> _dxgiFactory2;
+
     private readonly GraphicsAdapterInfo _adapterInfo;
     private readonly GraphicsDeviceLimits _limits;
-    private readonly FeatureLevel _featureLevel;
+    private readonly D3D_FEATURE_LEVEL _featureLevel;
 
     private readonly SRWLOCK* _commandBufferAcquisitionMutex;
     private readonly SRWLOCK* _contextLock;
@@ -48,46 +51,70 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     {
         Guard.IsTrue(IsSupported(), nameof(D3D11GraphicsDevice), "Direct3D11 is not supported");
 
-        _commandBufferAcquisitionMutex = (SRWLOCK*)Marshal.AllocHGlobal(sizeof(SRWLOCK));
+        _commandBufferAcquisitionMutex = (SRWLOCK*)NativeMemory.Alloc((nuint)sizeof(SRWLOCK));
         InitializeSRWLock(_commandBufferAcquisitionMutex);
 
-        _contextLock = (SRWLOCK*)Marshal.AllocHGlobal(sizeof(SRWLOCK));
+        _contextLock = (SRWLOCK*)NativeMemory.Alloc((nuint)sizeof(SRWLOCK));
         InitializeSRWLock(_contextLock);
 
-        bool dxgiDebug = false;
-#if !WINDOWS_UWP
+        uint dxgiDebugFlags = 0u;
         if (validationMode != ValidationMode.Disabled)
         {
-            if (DXGIGetDebugInterface1(out IDXGIInfoQueue? dxgiInfoQueue).Success)
+            if (OperatingSystem.IsWindowsVersionAtLeast(8, 1))
             {
-                dxgiDebug = true;
-                dxgiInfoQueue!.SetBreakOnSeverity(DebugAll, InfoQueueMessageSeverity.Error, true);
-                dxgiInfoQueue!.SetBreakOnSeverity(DebugAll, InfoQueueMessageSeverity.Corruption, true);
+                using ComPtr<IDXGIInfoQueue> dxgiInfoQueue = default;
+                if (DXGIGetDebugInterface1(0, __uuidof<IDXGIInfoQueue>(), dxgiInfoQueue.GetVoidAddressOf()).SUCCEEDED)
+                {
+                    dxgiDebugFlags = DXGI_CREATE_FACTORY_DEBUG;
+                    dxgiInfoQueue.Get()->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+                    dxgiInfoQueue.Get()->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
 
-                int[] hide = new[]
-                {
-                    80 /* IDXGISwapChain::GetContainingOutput: The swapchain's adapter does not control the output on which the swapchain's window resides. */,
-                };
-                Vortice.DXGI.Debug.InfoQueueFilter filter = new();
-                filter.DenyList = new Vortice.DXGI.Debug.InfoQueueFilterDescription
-                {
-                    Ids = hide
-                };
-                dxgiInfoQueue!.AddStorageFilterEntries(DebugDxgi, filter);
-                dxgiInfoQueue!.Dispose();
+                    int* hide = stackalloc int[1]
+                    {
+                        80 /* IDXGISwapChain::GetContainingOutput: The swapchain's adapter does not control the output on which the swapchain's window resides. */,
+                    };
+                    DXGI_INFO_QUEUE_FILTER filter = new();
+                    filter.DenyList = new DXGI_INFO_QUEUE_FILTER_DESC()
+                    {
+                        NumIDs = 1u,
+                        pIDList = hide
+                    };
+                    dxgiInfoQueue.Get()->AddStorageFilterEntries(DXGI_DEBUG_DXGI, &filter);
+                }
             }
         }
-#endif
 
-        DXGIFactory = CreateDXGIFactory2<IDXGIFactory2>(dxgiDebug);
-
-        using (IDXGIFactory5? dxgiFactory5 = DXGIFactory.QueryInterfaceOrNull<IDXGIFactory5>())
+        if (OperatingSystem.IsWindowsVersionAtLeast(8, 1))
         {
-            if (dxgiFactory5 != null)
+            ThrowIfFailed(CreateDXGIFactory2(dxgiDebugFlags, __uuidof<IDXGIFactory2>(), _dxgiFactory2.GetVoidAddressOf()));
+        }
+        else
+        {
+            ThrowIfFailed(CreateDXGIFactory1(__uuidof<IDXGIFactory2>(), _dxgiFactory2.GetVoidAddressOf()));
+        }
+
+        // Determines whether tearing support is available for fullscreen borderless windows.
+        {
+            BOOL allowTearing = false;
+
+            using ComPtr<IDXGIFactory5> dxgiFactory5 = default;
+            HRESULT hr = _dxgiFactory2.CopyTo(dxgiFactory5.GetAddressOf());
+            if (hr.SUCCEEDED)
             {
-                IsTearingSupported = dxgiFactory5.PresentAllowTearing;
+                hr = dxgiFactory5.Get()->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(BOOL));
+            }
+
+            if (hr.FAILED || !allowTearing)
+            {
+                IsTearingSupported = false;
+                Debug.WriteLine("Direct3D11: Variable refresh rate displays not supported");
+            }
+            else
+            {
+                IsTearingSupported = true;
             }
         }
+#if TODO
 
         IDXGIAdapter1? adapter = default;
 
@@ -258,7 +285,8 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             AdapterName = adapterDesc.Description,
             DriverDescription = driverDescription,
             AdapterType = adapterType,
-        };
+        }; 
+#endif
 
         //_features = new()
         //{
@@ -308,14 +336,15 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             //MaxComputeWorkGroupSizeZ = ComputeShaderThreadGroupMaxZ,
         };
 
-        adapter.Dispose();
+        //adapter.Dispose();
     }
 
-    public IDXGIFactory2 DXGIFactory { get; }
+    public IDXGIFactory2* DXGIFactory => _dxgiFactory2;
+
     public bool IsTearingSupported { get; }
-    public ID3D11Device1 NativeDevice { get; }
-    public ID3D11DeviceContext1 ImmediateContext { get; }
-    public FeatureLevel FeatureLevel => _featureLevel;
+    //public ID3D11Device1 NativeDevice { get; }
+    //public ID3D11DeviceContext1 ImmediateContext { get; }
+    public D3D_FEATURE_LEVEL FeatureLevel => _featureLevel;
 
     /// <inheritdoc />
     public override GraphicsAdapterInfo AdapterInfo => _adapterInfo;
@@ -332,8 +361,8 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     {
         if (isDisposing)
         {
-            ImmediateContext.Flush();
-            ImmediateContext.Dispose();
+            //ImmediateContext.Flush();
+            //ImmediateContext.Dispose();
 
             for (int i = 0; i < _commandBuffersPool.Count; ++i)
             {
@@ -342,34 +371,35 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             _commandBuffersPool.Clear();
 
 #if DEBUG
-            uint refCount = NativeDevice.Release();
-            if (refCount > 0)
-            {
-                System.Diagnostics.Debug.WriteLine($"Direct3D11: There are {refCount} unreleased references left on the device");
-
-                ID3D11Debug? d3d11Debug = NativeDevice.QueryInterfaceOrNull<ID3D11Debug>();
-                if (d3d11Debug != null)
-                {
-                    d3d11Debug.ReportLiveDeviceObjects(ReportLiveDeviceObjectFlags.Detail | ReportLiveDeviceObjectFlags.IgnoreInternal);
-                    d3d11Debug.Dispose();
-                }
-            }
+            //uint refCount = NativeDevice.Release();
+            //if (refCount > 0)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"Direct3D11: There are {refCount} unreleased references left on the device");
+            //
+            //    ID3D11Debug? d3d11Debug = NativeDevice.QueryInterfaceOrNull<ID3D11Debug>();
+            //    if (d3d11Debug != null)
+            //    {
+            //        d3d11Debug.ReportLiveDeviceObjects(ReportLiveDeviceObjectFlags.Detail | ReportLiveDeviceObjectFlags.IgnoreInternal);
+            //        d3d11Debug.Dispose();
+            //    }
+            //}
 #else
-            NativeDevice.Dispose();
+            //NativeDevice.Dispose();
 #endif
 
-            DXGIFactory.Dispose();
+            _dxgiFactory2.Dispose();
 
-#if DEBUG && !WINDOWS_UWP
-            if (DXGIGetDebugInterface1(out IDXGIDebug1? dxgiDebug).Success)
-            {
-                dxgiDebug!.ReportLiveObjects(DebugAll, ReportLiveObjectFlags.Summary | ReportLiveObjectFlags.IgnoreInternal);
-                dxgiDebug!.Dispose();
-            }
+#if DEBUG
+            //using ComPtr<IDXGIDebug1> dxgiDebug = default;
+            //if (DXGIGetDebugInterface1(0, __uuidof<IDXGIDebug1>(), dxgiDebug.GetVoidAddressOf()).SUCCEEDED)
+            //{
+            //    dxgiDebug!.ReportLiveObjects(DebugAll, ReportLiveObjectFlags.Summary | ReportLiveObjectFlags.IgnoreInternal);
+            //    dxgiDebug!.Dispose();
+            //}
 #endif
 
-            Marshal.FreeHGlobal((IntPtr)_contextLock);
-            Marshal.FreeHGlobal((IntPtr)_commandBufferAcquisitionMutex);
+            NativeMemory.Free(_contextLock);
+            NativeMemory.Free(_commandBufferAcquisitionMutex);
         }
     }
 
@@ -382,7 +412,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     public override void WaitIdle()
     {
-        ImmediateContext.Flush();
+        //ImmediateContext.Flush();
     }
 
     /// <inheritdoc />
@@ -402,7 +432,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             // Submit the command list to the immediate context *
             {
                 AcquireSRWLockExclusive(_contextLock);
-                ImmediateContext.ExecuteCommandList(commandBuffer.CommandList!, false);
+                //ImmediateContext.ExecuteCommandList(commandBuffer.CommandList!, false);
                 ReleaseSRWLockExclusive(_contextLock);
             }
 
@@ -475,6 +505,9 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                 return false;
             }
 
+            return true;
+#if TODO
+
             using IDXGIFactory2 dxgiFactory = CreateDXGIFactory1<IDXGIFactory2>();
 
             bool foundCompatibleDevice = false;
@@ -501,7 +534,8 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                 return false;
             }
 
-            return IsSupportedFeatureLevel(FeatureLevel.Level_11_0, DeviceCreationFlags.BgraSupport);
+            return IsSupportedFeatureLevel(FeatureLevel.Level_11_0, DeviceCreationFlags.BgraSupport); 
+#endif
         }
         catch
         {

@@ -16,8 +16,8 @@ internal sealed class D3D11CommandBuffer : CommandBuffer, IDisposable
     public D3D11CommandBuffer(D3D11GraphicsDevice device)
         : base(device)
     {
-        Context = device.NativeDevice.CreateDeferredContext1();
-        UserDefinedAnnotation = Context.QueryInterface<ID3DUserDefinedAnnotation>();
+        //Context = device.NativeDevice.CreateDeferredContext1();
+        //UserDefinedAnnotation = Context.QueryInterface<ID3DUserDefinedAnnotation>();
     }
 
     public ID3D11DeviceContext1 Context { get; }
@@ -98,7 +98,9 @@ internal sealed class D3D11CommandBuffer : CommandBuffer, IDisposable
         {
             D3D11SwapChain swapChain = _swapChains[i];
 
+#if TODO
             PresentFlags presentFlags = 0;
+            swapChain.Handle->GetFullscreenState()
             bool fullscreen = swapChain.Handle.IsFullscreen;
 
             if (swapChain.SyncInterval == 0 && !fullscreen)
@@ -116,7 +118,8 @@ internal sealed class D3D11CommandBuffer : CommandBuffer, IDisposable
                 //System.Diagnostics.Debug.WriteLine($"Device Lost on Present: Reason code {logResult}");
 #endif
                 //HandleDeviceLost();
-            }
+            } 
+#endif
 
             _swapChains.Clear();
         }

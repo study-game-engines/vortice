@@ -6,10 +6,10 @@ using Vortice.Graphics.D3DCommon;
 
 namespace Vortice.Graphics.D3D11;
 
-internal class D3D11SwapChain : D3DSwapChainBase
+internal unsafe class D3D11SwapChain : D3DSwapChainBase
 {
     public D3D11SwapChain(D3D11GraphicsDevice device, SwapChainSurface surface, in SwapChainDescription description)
-        : base(device.DXGIFactory, device.IsTearingSupported, device.NativeDevice, device, surface, description)
+        : base(device.DXGIFactory, device.IsTearingSupported, null/*device.NativeDevice*/, device, surface, description)
     {
         SyncInterval = 1;
         ResizeBackBuffer(description.Width, description.Height);
@@ -27,7 +27,7 @@ internal class D3D11SwapChain : D3DSwapChainBase
         {
             BackbufferTexture?.Dispose();
             BackbufferTexture = default;
-            Handle.Dispose();
+            base.Dispose(disposing);
         }
     }
 
@@ -44,8 +44,8 @@ internal class D3D11SwapChain : D3DSwapChainBase
         }
         else
         {
-            using ID3D11Texture2D backbufferTexture = Handle.GetBuffer<ID3D11Texture2D>(0);
-            BackbufferTexture = new D3D11Texture(Device, backbufferTexture);
+            //using ID3D11Texture2D backbufferTexture = Handle.GetBuffer<ID3D11Texture2D>(0);
+            //BackbufferTexture = new D3D11Texture(Device, backbufferTexture);
         }
     }
 }

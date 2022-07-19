@@ -39,13 +39,13 @@ internal static class D3D11Utils
         return new TextureDescription()
         {
             Dimension = TextureDimension.Texture2D,
-            Format = FromDXGIFormat(description.Format),
+            //Format = FromDXGIFormat(description.Format),
             Width = description.Width,
             Height = description.Height,
             DepthOrArraySize = description.ArraySize,
             MipLevels = description.MipLevels,
             Usage = FromD3D11(description.BindFlags),
-            SampleCount = FromD3DSampleCount(description.SampleDescription.Count)
+            //SampleCount = FromSampleCount(description.SampleDescription.Count)
         };
     }
 }
