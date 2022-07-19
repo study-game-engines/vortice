@@ -1,8 +1,6 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using static Vortice.Graphics.VGPU;
-
 namespace Vortice.Graphics;
 
 /// <summary>
@@ -41,14 +39,4 @@ public record struct BufferDescription
     /// Gets or sets the label of <see cref="Buffer"/>.
     /// </summary>
     public string? Label { get; init; }
-
-    internal BufferDesc ToVGPU()
-    {
-        return new BufferDesc
-        {
-            size = Size,
-            usage = Usage,
-            cpuAccess = CpuAccess,
-        };
-    }
 }

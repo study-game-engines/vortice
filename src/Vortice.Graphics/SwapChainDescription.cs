@@ -2,7 +2,6 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using CommunityToolkit.Diagnostics;
-using static Vortice.Graphics.VGPU;
 
 namespace Vortice.Graphics;
 
@@ -30,16 +29,4 @@ public readonly record struct SwapChainDescription
     public bool IsFullscreen { get; init; } = false;
 
     public string? Label { get; init; } = default;
-
-    internal SwapChainDesc ToVGPU()
-    {
-        return new SwapChainDesc
-        {
-            width = (uint)Width,
-            height = (uint)Height,
-            format = Format,
-            presentMode = PresentMode,
-            isFullscreen = IsFullscreen
-        };
-    }
 }

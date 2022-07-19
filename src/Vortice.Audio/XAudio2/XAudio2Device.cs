@@ -7,6 +7,7 @@ using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.Windows;
 using static TerraFX.Interop.DirectX.DirectX;
 using static TerraFX.Interop.Windows.AUDIO_STREAM_CATEGORY;
+using System.Runtime.InteropServices;
 
 namespace Vortice.Audio.XAudio2;
 
@@ -18,18 +19,21 @@ internal unsafe class XAudio2Device : AudioDevice
 
     private readonly ComPtr<IXAudio2> _xaudio2 = default;
     private XAudio2EngineCallback* _engineCallback;
-    //private IXAudio2MasteringVoice _masterVoice;
-    private readonly int _masterChannelMask;
-    private readonly int _masterChannels;
-    private readonly int _masterRate;
-    //private readonly X3DAudio _x3DAudio;
+    private IXAudio2MasteringVoice* _masterVoice;
+    private IXAudio2SubmixVoice* _reverbVoice = default;
+
+    private readonly uint _masterChannelMask;
+    private readonly uint _masterChannels;
+    private readonly uint _masterRate;
+    private byte* _X3DAudio;
 
     public static bool IsSupported() => s_isSupported.Value;
 
     public XAudio2Device()
         : base(AudioBackend.XAudio2)
     {
-        ThrowIfFailed(XAudio2Create(_xaudio2.GetAddressOf()));
+        HRESULT hr = XAudio2Create(_xaudio2.GetAddressOf());
+        ThrowIfFailed(hr);
 
 #if DEBUG
         //if (mEngineFlags & AudioEngine_Debug)
@@ -46,38 +50,94 @@ internal unsafe class XAudio2Device : AudioDevice
 #endif
 
         XAudio2EngineCallback.Create(out _engineCallback);
-        HRESULT hr = _xaudio2.Get()->RegisterForCallbacks((IXAudio2EngineCallback*)_engineCallback);
+        hr = _xaudio2.Get()->RegisterForCallbacks((IXAudio2EngineCallback*)_engineCallback);
         if (hr.FAILED)
         {
             _xaudio2.Dispose();
             return;
         }
 
-        //_masterVoice = _xaudio2.CreateMasteringVoice(
-        //    DefaultChannels,
-        //    DefaultSampleRate,
-        //    _category,
-        //    string.Empty
-        //    );
-        //
-        //_masterChannelMask = _masterVoice.ChannelMask;
-        //VoiceDetails details = _masterVoice.VoiceDetails;
-        //
-        //_masterChannels = details.InputChannels;
-        //_masterRate = details.InputSampleRate;
-        //Debug.WriteLine($"Mastering voice has {_masterChannels} channels, {_masterRate} sample rate, {_masterChannelMask} channels");
-        //
-        //_masterVoice.SetVolume(1.0f);
-        //
-        //// Setup 3D audio
-        //_x3DAudio = new(_masterChannelMask);
+        IXAudio2MasteringVoice* masterVoice;
+        hr = _xaudio2.Get()->CreateMasteringVoice(
+            &masterVoice,
+            XAUDIO2_DEFAULT_CHANNELS,
+            XAUDIO2_DEFAULT_SAMPLERATE,
+            0u,
+            null,
+            null,
+            _category
+            );
+        if (hr.FAILED)
+        {
+            _xaudio2.Dispose();
+            return;
+        }
+
+        _masterVoice = masterVoice;
+
+        uint dwChannelMask;
+        hr = _masterVoice->GetChannelMask(&dwChannelMask);
+        if (hr.FAILED)
+        {
+            _masterVoice->DestroyVoice();
+            _masterVoice = default;
+            _xaudio2.Dispose();
+            return;
+        }
+
+        XAUDIO2_VOICE_DETAILS details;
+        _masterVoice->GetVoiceDetails(&details);
+
+        _masterChannelMask = dwChannelMask;
+        _masterChannels = details.InputChannels;
+        _masterRate = details.InputSampleRate;
+        Debug.WriteLine($"Mastering voice has {_masterChannels} channels, {_masterRate} sample rate, {_masterChannelMask} channels");
+
+        // Setup 3D audio
+        _X3DAudio = (byte*)NativeMemory.Alloc(X3DAUDIO_HANDLE_BYTESIZE);
+        hr = X3DAudioInitialize(_masterChannelMask, X3DAUDIO_SPEED_OF_SOUND, _X3DAudio);
+        if (hr.FAILED)
+        {
+            if (_reverbVoice != null)
+            {
+                _reverbVoice->DestroyVoice();
+                _reverbVoice = default;
+            }
+
+            _masterVoice->DestroyVoice();
+            _masterVoice = default;
+            //_reverbEffect.Reset();
+            //_volumeLimiter.Reset();
+            _xaudio2.Dispose();
+        }
+
     }
 
     /// <inheritdoc />
     protected override void OnDispose()
     {
-        //_masterVoice.DestroyVoice();
+        if (_reverbVoice != null)
+        {
+            _reverbVoice->DestroyVoice();
+            _reverbVoice = default;
+        }
+
+        _masterVoice->DestroyVoice();
+        _masterVoice = default;
         _xaudio2.Dispose();
+        XAudio2EngineCallback.Free(_engineCallback);
+        NativeMemory.Free(_X3DAudio);
+    }
+
+    /// <inheritdoc />
+    protected override void OnMasterVolumeChanged(float volume)
+    {
+        Debug.Assert(volume >= -XAUDIO2_MAX_VOLUME_LEVEL && volume <= XAUDIO2_MAX_VOLUME_LEVEL);
+
+        if (_masterVoice != null)
+        {
+            ThrowIfFailed(_masterVoice->SetVolume(volume));
+        }
     }
 
     private static bool CheckIsSupported()

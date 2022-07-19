@@ -35,6 +35,11 @@ internal unsafe struct XAudio2EngineCallback
         callback = @this;
     }
 
+    public static void Free(XAudio2EngineCallback* callback)
+    {
+        NativeMemory.Free(callback);
+    }
+
     [UnmanagedCallersOnly]
     private static void OnProcessingPassStart(XAudio2EngineCallback* @this)
     {

@@ -9,6 +9,7 @@ namespace Vortice.Audio;
 public abstract class AudioDevice : IDisposable
 {
     private volatile int _isDisposed;
+    private float _masterVolume = 1.0f;
 
     protected AudioDevice(AudioBackend backend)
     {
@@ -30,6 +31,16 @@ public abstract class AudioDevice : IDisposable
     /// Get the device backend type.
     /// </summary>
     public AudioBackend Backend { get; }
+
+    public float MasterVolume
+    {
+        get => _masterVolume;
+        set
+        {
+            _masterVolume = value;
+            OnMasterVolumeChanged(value);
+        }
+    }
 
     /// <summary>
     /// Gets whether or not the current instance has already been disposed.
@@ -119,4 +130,6 @@ public abstract class AudioDevice : IDisposable
 
         throw new PlatformNotSupportedException("Cannot find capable audio device");
     }
+
+    protected abstract void OnMasterVolumeChanged(float volume);
 }
