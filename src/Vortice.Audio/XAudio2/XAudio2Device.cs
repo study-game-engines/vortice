@@ -2,82 +2,86 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Vortice.Multimedia;
-using Vortice.XAudio2;
-using static Vortice.XAudio2.XAudio2;
+using TerraFX.Interop.DirectX;
+using TerraFX.Interop.Windows;
+using static TerraFX.Interop.Windows.Windows;
+using static TerraFX.Interop.DirectX.DirectX;
+using static TerraFX.Interop.Windows.AUDIO_STREAM_CATEGORY;
 
 namespace Vortice.Audio.XAudio2;
 
-internal class XAudio2Device : AudioDevice
+internal unsafe class XAudio2Device : AudioDevice
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
-    private readonly AudioStreamCategory _category = AudioStreamCategory.GameEffects;
+    private readonly AUDIO_STREAM_CATEGORY _category = AudioCategory_GameEffects;
 
-    private readonly IXAudio2 _xaudio2;
-    private IXAudio2MasteringVoice _masterVoice;
+    private readonly ComPtr<IXAudio2> _xaudio2 = default;
+    private XAudio2EngineCallback* _engineCallback;
+    //private IXAudio2MasteringVoice _masterVoice;
     private readonly int _masterChannelMask;
     private readonly int _masterChannels;
     private readonly int _masterRate;
-    private readonly X3DAudio _x3DAudio;
+    //private readonly X3DAudio _x3DAudio;
 
     public static bool IsSupported() => s_isSupported.Value;
 
     public XAudio2Device()
         : base(AudioBackend.XAudio2)
     {
-        _xaudio2 = XAudio2Create(ProcessorSpecifier.DefaultProcessor);
+        ThrowIfFailed(XAudio2Create(_xaudio2.GetAddressOf()));
 
 #if DEBUG
         //if (mEngineFlags & AudioEngine_Debug)
         {
-            DebugConfiguration debug = new()
+            XAUDIO2_DEBUG_CONFIGURATION debug = new()
             {
-                TraceMask = LogType.Errors | LogType.Warnings,
-                BreakMask = LogType.Errors
+                TraceMask = XAUDIO2_LOG_ERRORS | XAUDIO2_LOG_WARNINGS,
+                BreakMask = XAUDIO2_LOG_ERRORS
             };
-            _xaudio2.SetDebugConfiguration(debug);
+            _xaudio2.Get()->SetDebugConfiguration(&debug);
             Debug.WriteLine("INFO: XAudio 2.9 debugging enabled");
 
         }
 #endif
 
-        _masterVoice = _xaudio2.CreateMasteringVoice(
-            DefaultChannels,
-            DefaultSampleRate,
-            _category,
-            string.Empty
-            );
+        XAudio2EngineCallback.Create(out _engineCallback);
+        HRESULT hr = _xaudio2.Get()->RegisterForCallbacks((IXAudio2EngineCallback*)_engineCallback);
+        if (hr.FAILED)
+        {
+            _xaudio2.Dispose();
+            return;
+        }
 
-        _masterChannelMask = _masterVoice.ChannelMask;
-        VoiceDetails details = _masterVoice.VoiceDetails;
-
-        _masterChannels = details.InputChannels;
-        _masterRate = details.InputSampleRate;
-        Debug.WriteLine($"Mastering voice has {_masterChannels} channels, {_masterRate} sample rate, {_masterChannelMask} channels");
-
-        _masterVoice.SetVolume(1.0f);
-
-        // Setup 3D audio
-        _x3DAudio = new(_masterChannelMask);
+        //_masterVoice = _xaudio2.CreateMasteringVoice(
+        //    DefaultChannels,
+        //    DefaultSampleRate,
+        //    _category,
+        //    string.Empty
+        //    );
+        //
+        //_masterChannelMask = _masterVoice.ChannelMask;
+        //VoiceDetails details = _masterVoice.VoiceDetails;
+        //
+        //_masterChannels = details.InputChannels;
+        //_masterRate = details.InputSampleRate;
+        //Debug.WriteLine($"Mastering voice has {_masterChannels} channels, {_masterRate} sample rate, {_masterChannelMask} channels");
+        //
+        //_masterVoice.SetVolume(1.0f);
+        //
+        //// Setup 3D audio
+        //_x3DAudio = new(_masterChannelMask);
     }
 
     /// <inheritdoc />
     protected override void OnDispose()
     {
-        _masterVoice.DestroyVoice();
+        //_masterVoice.DestroyVoice();
         _xaudio2.Dispose();
     }
 
     private static bool CheckIsSupported()
     {
-#if WINDOWS_UWP
-        return true;
-#elif NETSTANDARD2_0
-        return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#else
         return OperatingSystem.IsWindows();
-#endif
     }
 }

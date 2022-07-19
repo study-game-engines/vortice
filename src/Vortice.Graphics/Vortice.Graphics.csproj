@@ -30,4 +30,6 @@
     <PackageReference Include="Vortice.Mathematics" />
   </ItemGroup>
 
+  <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />
+
 </Project>

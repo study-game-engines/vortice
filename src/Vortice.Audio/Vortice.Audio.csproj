@@ -17,12 +17,13 @@
   <ItemGroup>
     <Compile Remove="XAudio2\**\*.cs" Condition="'$(ExcludeXAudio2)' == 'true'" />
     <Compile Remove="OpenAL\**\*.cs" Condition="'$(ExcludeOpenAL)' == 'true'" />
-    <PackageReference Include="Vortice.XAudio2" Condition="'$(ExcludeXAudio2)' != 'true'" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Vortice.Mathematics" />
   </ItemGroup>
+
+  <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />
 
 </Project>
