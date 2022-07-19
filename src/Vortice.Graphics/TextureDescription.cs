@@ -16,17 +16,20 @@ public record struct TextureDescription
         int depthOrArraySize,
         int mipLevels = 1,
         TextureUsage usage = TextureUsage.ShaderRead,
-        TextureSampleCount sampleCount = TextureSampleCount.Count1)
+        TextureSampleCount sampleCount = TextureSampleCount.Count1,
+        CpuAccessMode access = CpuAccessMode.None,
+        string? label = default)
     {
         Dimension = dimension;
         Format = format;
         Width = width;
         Height = height;
         DepthOrArraySize = depthOrArraySize;
-        MipLevels = mipLevels == 1 ? CountMipLevels(width, height, dimension == TextureDimension.Texture3D ? depthOrArraySize : 1) : mipLevels;
+        MipLevels = mipLevels == 0 ? CountMipLevels(width, height, dimension == TextureDimension.Texture3D ? depthOrArraySize : 1) : mipLevels;
         SampleCount = sampleCount;
         Usage = usage;
-        Label = default;
+        CpuAccess = access;
+        Label = label;
     }
 
     public static TextureDescription Texture1D(
@@ -34,7 +37,9 @@ public record struct TextureDescription
         int width,
         int mipLevels = 1,
         int arrayLayers = 1,
-        TextureUsage usage = TextureUsage.ShaderRead)
+        TextureUsage usage = TextureUsage.ShaderRead,
+        CpuAccessMode access = CpuAccessMode.None,
+        string? label = default)
     {
         return new TextureDescription(
             TextureDimension.Texture1D,
@@ -44,7 +49,9 @@ public record struct TextureDescription
             arrayLayers,
             mipLevels,
             usage,
-            TextureSampleCount.Count1);
+            TextureSampleCount.Count1,
+            access,
+            label);
     }
 
     public static TextureDescription Texture2D(
@@ -54,8 +61,9 @@ public record struct TextureDescription
         int mipLevels = 1,
         int arrayLayers = 1,
         TextureUsage usage = TextureUsage.ShaderRead,
-        TextureSampleCount sampleCount = TextureSampleCount.Count1
-        )
+        TextureSampleCount sampleCount = TextureSampleCount.Count1,
+        CpuAccessMode access = CpuAccessMode.None,
+        string? label = default)
     {
         return new TextureDescription(
             TextureDimension.Texture2D,
@@ -65,7 +73,9 @@ public record struct TextureDescription
             arrayLayers,
             mipLevels,
             usage,
-            sampleCount);
+            sampleCount,
+            access,
+            label);
     }
 
     public static TextureDescription Texture3D(
@@ -74,7 +84,9 @@ public record struct TextureDescription
         int height,
         int depth = 1,
         int mipLevels = 1,
-        TextureUsage usage = TextureUsage.ShaderRead)
+        TextureUsage usage = TextureUsage.ShaderRead,
+        CpuAccessMode access = CpuAccessMode.None,
+        string? label = default)
     {
         return new TextureDescription(
             TextureDimension.Texture3D,
@@ -84,7 +96,9 @@ public record struct TextureDescription
             depth,
             mipLevels,
             usage,
-            TextureSampleCount.Count1);
+            TextureSampleCount.Count1,
+            access,
+            label);
     }
 
     /// <summary>
@@ -100,6 +114,11 @@ public record struct TextureDescription
     public int MipLevels { get; init; }
     public TextureUsage Usage { get; init; }
     public TextureSampleCount SampleCount { get; init; }
+
+    /// <summary>
+    /// CPU access of the <see cref="Texture"/>.
+    /// </summary>
+    public CpuAccessMode CpuAccess { get; init; }
 
     // <summary>
     /// Gets or sets the label of <see cref="Texture"/>.
@@ -117,7 +136,7 @@ public record struct TextureDescription
     {
         int numMips = 0;
         int size = Math.Max(Math.Max(width, height), depth);
-        while (1 << numMips <= size)
+        while (1u << numMips <= size)
         {
             ++numMips;
         }

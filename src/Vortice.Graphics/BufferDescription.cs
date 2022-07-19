@@ -6,7 +6,7 @@ namespace Vortice.Graphics;
 /// <summary>
 /// Structure that describes the <see cref="GraphicsBuffer"/>.
 /// </summary>
-public record struct BufferDescription 
+public record struct BufferDescription
 {
     public BufferDescription(
         ulong size,
@@ -31,7 +31,7 @@ public record struct BufferDescription
     public BufferUsage Usage { get; init; }
 
     /// <summary>
-    /// CPU access of <see cref="Buffer"/>
+    /// CPU access of the <see cref="Buffer"/>.
     /// </summary>
     public CpuAccessMode CpuAccess { get; init; }
 

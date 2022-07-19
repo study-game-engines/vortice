@@ -33,7 +33,11 @@ public abstract class Game : DisposableObject, IGame
 
         // Get required services.
         Input = _serviceProvider.GetRequiredService<InputManager>();
-        GraphicsDevice = GraphicsDevice.CreateDefault();
+        ValidationMode validationMode = ValidationMode.Disabled;
+#if DEBUG
+        validationMode = ValidationMode.Enabled;
+#endif
+        GraphicsDevice = GraphicsDevice.CreateDefault(validationMode);
 
         // Get optional services.
         AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();

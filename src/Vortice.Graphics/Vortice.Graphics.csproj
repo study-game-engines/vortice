@@ -21,8 +21,6 @@
     <Compile Remove="D3D11\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true'" />
     <Compile Remove="D3D12\**\*.cs" Condition="'$(ExcludeD3D12)' == 'true'" />
     <!--<Compile Remove="Vulkan\**\*.cs" Condition="'$(ExcludeVulkan)' == 'true'" />-->
-    <PackageReference Include="Vortice.Direct3D11" Condition="'$(ExcludeD3D11)' != 'true'" />
-    <PackageReference Include="Vortice.Direct3D12" Condition="'$(ExcludeD3D12)' != 'true'" />
     <!--<PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />-->
   </ItemGroup>
 

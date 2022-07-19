@@ -1,15 +1,17 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Vortice.Direct3D11;
+using TerraFX.Interop.DirectX;
+using TerraFX.Interop.Windows;
 using Vortice.Graphics.D3DCommon;
+using static TerraFX.Interop.Windows.Windows;
 
 namespace Vortice.Graphics.D3D11;
 
 internal unsafe class D3D11SwapChain : D3DSwapChainBase
 {
     public D3D11SwapChain(D3D11GraphicsDevice device, SwapChainSurface surface, in SwapChainDescription description)
-        : base(device.DXGIFactory, device.IsTearingSupported, null/*device.NativeDevice*/, device, surface, description)
+        : base(device.DXGIFactory, device.IsTearingSupported, (IUnknown*)device.NativeDevice, device, surface, description)
     {
         SyncInterval = 1;
         ResizeBackBuffer(description.Width, description.Height);
@@ -31,7 +33,7 @@ internal unsafe class D3D11SwapChain : D3DSwapChainBase
         }
     }
 
-    public int SyncInterval { get; }
+    public uint SyncInterval { get; }
 
     public D3D11Texture? BackbufferTexture { get; private set; }
 
@@ -44,8 +46,12 @@ internal unsafe class D3D11SwapChain : D3DSwapChainBase
         }
         else
         {
-            //using ID3D11Texture2D backbufferTexture = Handle.GetBuffer<ID3D11Texture2D>(0);
-            //BackbufferTexture = new D3D11Texture(Device, backbufferTexture);
+            using ComPtr<ID3D11Texture2D> backbufferTexture = default;
+            ThrowIfFailed(Handle->GetBuffer(0, __uuidof<ID3D11Texture2D>(), backbufferTexture.GetVoidAddressOf()));
+
+            D3D11_TEXTURE2D_DESC description;
+            backbufferTexture.Get()->GetDesc(&description);
+            BackbufferTexture = new D3D11Texture(Device, backbufferTexture.Get(), description);
         }
     }
 }

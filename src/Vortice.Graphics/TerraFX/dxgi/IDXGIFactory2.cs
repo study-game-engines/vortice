@@ -43,12 +43,11 @@ internal unsafe partial struct IDXGIFactory2
         return ((delegate* unmanaged<IDXGIFactory2*, uint>)(lpVtbl[2]))((IDXGIFactory2*)Unsafe.AsPointer(ref this));
     }
 
-    /// <inheritdoc cref="IDXGIObject.GetParent" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [VtblIndex(6)]
-    public HRESULT GetParent([NativeTypeName("const IID &")] Guid* riid, void** ppParent)
+    [VtblIndex(12)]
+    public HRESULT EnumAdapters1(uint Adapter, IDXGIAdapter1** ppAdapter)
     {
-        return ((delegate* unmanaged<IDXGIFactory2*, Guid*, void**, int>)(lpVtbl[6]))((IDXGIFactory2*)Unsafe.AsPointer(ref this), riid, ppParent);
+        return ((delegate* unmanaged<IDXGIFactory4*, uint, IDXGIAdapter1**, int>)(lpVtbl[12]))((IDXGIFactory4*)Unsafe.AsPointer(ref this), Adapter, ppAdapter);
     }
 
     /// <inheritdoc cref="IDXGIFactory.MakeWindowAssociation" />

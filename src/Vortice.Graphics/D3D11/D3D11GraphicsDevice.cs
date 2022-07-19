@@ -7,34 +7,33 @@ using TerraFX.Interop.Windows;
 using TerraFX.Interop.DirectX;
 using static TerraFX.Interop.Windows.Windows;
 using static TerraFX.Interop.DirectX.DirectX;
+using static TerraFX.Interop.DirectX.D3D11;
 using static TerraFX.Interop.DirectX.D3D_FEATURE_LEVEL;
+using static TerraFX.Interop.DirectX.D3D_DRIVER_TYPE;
 using static Vortice.Graphics.D3DCommon.D3DUtils;
 using static TerraFX.Interop.DirectX.DXGI;
 using static TerraFX.Interop.DirectX.DXGI_INFO_QUEUE_MESSAGE_SEVERITY;
 using static TerraFX.Interop.DirectX.DXGI_FEATURE;
+using static TerraFX.Interop.DirectX.DXGI_ADAPTER_FLAG;
+using static TerraFX.Interop.DirectX.D3D11_CREATE_DEVICE_FLAG;
+using static TerraFX.Interop.DirectX.D3D11_RLDO_FLAGS;
+using static TerraFX.Interop.DirectX.D3D11_MESSAGE_SEVERITY;
+using static TerraFX.Interop.DirectX.D3D11_MESSAGE_ID;
+using static TerraFX.Interop.DirectX.D3D11_FEATURE;
+using static Vortice.Graphics.D3D11.D3D11Utils;
 using System.Diagnostics;
 
 namespace Vortice.Graphics.D3D11;
 
 internal unsafe class D3D11GraphicsDevice : GraphicsDevice
 {
-    public const uint D3D11_REQ_TEXTURE1D_U_DIMENSION = 16384u;
-    public const uint D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION = 16384u;
-    public const uint D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION = 2048u;
-    public const uint D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION = 2048u;
-    public const uint D3D11_REQ_IMMEDIATE_CONSTANT_BUFFER_ELEMENT_COUNT = 4096u;
-
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
-
-    private static readonly D3D_FEATURE_LEVEL[] s_featureLevels = new[]
-    {
-        D3D_FEATURE_LEVEL_11_1,
-        D3D_FEATURE_LEVEL_11_0
-    };
 
     public static bool IsSupported() => s_isSupported.Value;
 
     private readonly ComPtr<IDXGIFactory2> _dxgiFactory2;
+    private readonly ComPtr<ID3D11Device1> _device;
+    private readonly ComPtr<ID3D11DeviceContext1> _immediateContext;
 
     private readonly GraphicsAdapterInfo _adapterInfo;
     private readonly GraphicsDeviceLimits _limits;
@@ -46,7 +45,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     private readonly List<D3D11CommandBuffer> _commandBuffersPool = new();
     private readonly Queue<D3D11CommandBuffer> _availableCommandBuffers = new();
 
-    public D3D11GraphicsDevice(ValidationMode validationMode)
+    public D3D11GraphicsDevice(ValidationMode validationMode, GpuPowerPreference powerPreference)
         : base(GraphicsBackend.Direct3D11)
     {
         Guard.IsTrue(IsSupported(), nameof(D3D11GraphicsDevice), "Direct3D11 is not supported");
@@ -114,179 +113,215 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                 IsTearingSupported = true;
             }
         }
-#if TODO
 
-        IDXGIAdapter1? adapter = default;
-
-        using (IDXGIFactory6? dxgiFactory6 = DXGIFactory.QueryInterfaceOrNull<IDXGIFactory6>())
+        // Get adapter and create device
         {
-            if (dxgiFactory6 != null)
+            using ComPtr<IDXGIAdapter1> dxgiAdapter = default;
+
+            using ComPtr<IDXGIFactory6> dxgiFactory6 = default;
+            HRESULT hr = _dxgiFactory2.CopyTo(dxgiFactory6.GetAddressOf());
+            if (hr.SUCCEEDED)
             {
-                for (int adapterIndex = 0; dxgiFactory6.EnumAdapterByGpuPreference(adapterIndex,
-                    GpuPreference.HighPerformance, out adapter).Success; adapterIndex++)
+                for (uint adapterIndex = 0;
+                    dxgiFactory6.Get()->EnumAdapterByGpuPreference(adapterIndex,
+                        ToDXGI(powerPreference),
+                        __uuidof<IDXGIAdapter1>(), (void**)dxgiAdapter.ReleaseAndGetAddressOf()
+                        ).SUCCEEDED;
+                    adapterIndex++)
                 {
-                    AdapterDescription1 desc = adapter!.Description1;
+                    DXGI_ADAPTER_DESC1 desc;
+                    ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&desc));
 
-                    // Don't select the Basic Render Driver adapter.
-                    if ((desc.Flags & AdapterFlags.Software) != AdapterFlags.None)
+                    if ((desc.Flags & (uint)DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
                     {
-                        adapter.Dispose();
-
+                        // Don't select the Basic Render Driver adapter.
                         continue;
                     }
 
                     break;
                 }
             }
-            else
+
+            if (dxgiAdapter.Get() == null)
             {
-                for (int adapterIndex = 0; DXGIFactory.EnumAdapters1(adapterIndex, out adapter).Success; adapterIndex++)
+                for (uint adapterIndex = 0;
+                    _dxgiFactory2.Get()->EnumAdapters1(
+                        adapterIndex,
+                        dxgiAdapter.ReleaseAndGetAddressOf()).SUCCEEDED;
+                    ++adapterIndex)
                 {
-                    AdapterDescription1 desc = adapter.Description1;
+                    DXGI_ADAPTER_DESC1 desc;
+                    ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&desc));
 
-                    // Don't select the Basic Render Driver adapter.
-                    if ((desc.Flags & AdapterFlags.Software) != AdapterFlags.None)
+                    if ((desc.Flags & (uint)DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
                     {
-                        adapter.Dispose();
-
+                        // Don't select the Basic Render Driver adapter.
                         continue;
                     }
 
                     break;
                 }
             }
-        }
 
-        if (adapter == null)
-            throw new GraphicsException("D3D11: No adapter detected");
+            if (dxgiAdapter.Get() is null)
+                throw new GraphicsException("Direct3D11: No adapter detected");
 
-        // Create device now
-        {
-            DeviceCreationFlags creationFlags = DeviceCreationFlags.BgraSupport;
+            D3D11_CREATE_DEVICE_FLAG creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
             if (validationMode != ValidationMode.Disabled && SdkLayersAvailable())
             {
-                creationFlags |= DeviceCreationFlags.Debug;
+                creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
             }
 
-            if (D3D11CreateDevice(
-                adapter,
-                DriverType.Unknown,
-                creationFlags,
-                s_featureLevels,
-                out ID3D11Device tempDevice, out _featureLevel, out ID3D11DeviceContext tempContext).Failure)
+            using ComPtr<ID3D11Device> tempDevice = default;
+            using ComPtr<ID3D11DeviceContext> tempContext = default;
+
+            D3D_FEATURE_LEVEL* featureLevels = stackalloc[]
+            {
+                D3D_FEATURE_LEVEL_11_1,
+                D3D_FEATURE_LEVEL_11_0,
+            };
+
+            D3D_FEATURE_LEVEL d3dFeatureLevel;
+            hr = D3D11CreateDevice(
+                dxgiAdapter.Get(),
+               D3D_DRIVER_TYPE_UNKNOWN,
+               null,
+               (uint)creationFlags,
+               featureLevels,
+               2,
+               D3D11_SDK_VERSION,
+               tempDevice.GetAddressOf(),
+               &d3dFeatureLevel,
+               tempContext.GetAddressOf()
+            );
+
+            if (hr.FAILED)
             {
                 // If the initialization fails, fall back to the WARP device.
                 // For more information on WARP, see:
                 // http://go.microsoft.com/fwlink/?LinkId=286690
-                D3D11CreateDevice(
-                    IntPtr.Zero,
-                    DriverType.Warp,
-                    creationFlags,
-                    s_featureLevels,
-                    out tempDevice, out _featureLevel, out tempContext).CheckError();
-            }
+                hr = D3D11CreateDevice(
+                    null,
+                    D3D_DRIVER_TYPE_WARP, // Create a WARP device instead of a hardware device.
+                    null,
+                    (uint)creationFlags,
+                    featureLevels,
+                    2,
+                    D3D11_SDK_VERSION,
+                    tempDevice.GetAddressOf(),
+                    &d3dFeatureLevel,
+                    tempContext.GetAddressOf()
+                );
 
-            NativeDevice = tempDevice.QueryInterface<ID3D11Device1>();
-            ImmediateContext = tempContext.QueryInterface<ID3D11DeviceContext1>();
-            tempContext.Dispose();
-            tempDevice.Dispose();
-        }
-
-        // Configure debug device (if active).
-        if (validationMode != ValidationMode.Disabled)
-        {
-            ID3D11Debug? d3dDebug = NativeDevice.QueryInterfaceOrNull<ID3D11Debug>();
-            if (d3dDebug != null)
-            {
-                ID3D11InfoQueue? d3dInfoQueue = d3dDebug.QueryInterfaceOrNull<ID3D11InfoQueue>();
-                if (d3dInfoQueue != null)
+                if (hr.SUCCEEDED)
                 {
-                    d3dInfoQueue!.SetBreakOnSeverity(MessageSeverity.Corruption, true);
-                    d3dInfoQueue!.SetBreakOnSeverity(MessageSeverity.Error, true);
-
-                    List<MessageSeverity> enabledSeverities = new()
-                    {
-                        // These severities should be seen all the time
-                        MessageSeverity.Corruption,
-                        MessageSeverity.Error,
-                        MessageSeverity.Warning,
-                        MessageSeverity.Message
-                    };
-
-                    if (validationMode == ValidationMode.Verbose)
-                    {
-                        // Verbose only filters
-                        enabledSeverities.Add(MessageSeverity.Info);
-                    }
-
-                    List<MessageId> disabledMessages = new();
-                    disabledMessages.Add(MessageId.SetPrivateDataChangingParams);
-
-                    Direct3D11.Debug.InfoQueueFilter filter = new()
-                    {
-                        AllowList = new Direct3D11.Debug.InfoQueueFilterDescription()
-                        {
-                            Severities = enabledSeverities.ToArray()
-                        },
-                        DenyList = new Direct3D11.Debug.InfoQueueFilterDescription
-                        {
-                            Ids = disabledMessages.ToArray()
-                        }
-                    };
-
-                    // Clear out the existing filters since we're taking full control of them
-                    d3dInfoQueue.PushEmptyStorageFilter();
-
-                    d3dInfoQueue.AddStorageFilterEntries(filter);
-                    d3dInfoQueue.AddApplicationMessage(MessageSeverity.Message, "D3D11 Debug Filters setup");
-                    d3dInfoQueue.Dispose();
+                    Debug.WriteLine("Direct3D11 Adapter - WARP");
                 }
-
-                d3dDebug.Dispose();
             }
-        }
 
-        // Init capabilites.
-        AdapterDescription1 adapterDesc = adapter.Description1;
-        FeatureDataArchitectureInfo architectureInfo = NativeDevice.CheckFeatureArchitectureInfo();
-        var options = NativeDevice.CheckFeatureOptions();
-        var options1 = NativeDevice.CheckFeatureOptions1();
-        var options2 = NativeDevice.CheckFeatureOptions2();
-        var options3 = NativeDevice.CheckFeatureOptions3();
+            ThrowIfFailed(hr);
 
-        // Detect adapter type.
-        GpuAdapterType adapterType = GpuAdapterType.Other;
-        if ((adapterDesc.Flags & AdapterFlags.Software) != AdapterFlags.None)
-        {
-            adapterType = GpuAdapterType.Cpu;
-        }
-        else
-        {
-            adapterType = options2.UnifiedMemoryArchitecture ? GpuAdapterType.IntegratedGpu : GpuAdapterType.DiscreteGpu;
-        }
-
-        // Convert the adapter's D3D12 driver version to a readable string like "24.21.13.9793".
-        string driverDescription = string.Empty;
-        if (adapter.CheckInterfaceSupport<IDXGIDevice>(out long umdVersion))
-        {
-            driverDescription = "D3D11 driver version ";
-
-            for (int i = 0; i < 4; ++i)
+            // Configure debug device (if active).
+            if (validationMode != ValidationMode.Disabled)
             {
-                ushort driverVersion = (ushort)((umdVersion >> (48 - 16 * i)) & 0xFFFF);
-                driverDescription += driverVersion + ".";
-            }
-        }
+                using ComPtr<ID3D11Debug> d3d11Debug = default;
+                if (tempDevice.CopyTo(d3d11Debug.GetAddressOf()).SUCCEEDED)
+                {
+                    using ComPtr<ID3D11InfoQueue> d3d11InfoQueue = default;
+                    if (d3d11Debug.CopyTo(d3d11InfoQueue.GetAddressOf()).SUCCEEDED)
+                    {
+                        d3d11InfoQueue.Get()->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
+                        d3d11InfoQueue.Get()->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
 
-        _adapterInfo = new()
-        {
-            VendorId = (GpuVendorId)adapterDesc.VendorId,
-            DeviceId = (uint)adapterDesc.DeviceId,
-            AdapterName = adapterDesc.Description,
-            DriverDescription = driverDescription,
-            AdapterType = adapterType,
-        }; 
-#endif
+                        uint NumSeverities = 4;
+                        //uint NumIDs = 6;
+                        D3D11_MESSAGE_SEVERITY* enabledSeverities = stackalloc D3D11_MESSAGE_SEVERITY[5];
+
+                        // These severities should be seen all the time
+                        enabledSeverities[0] = D3D11_MESSAGE_SEVERITY_CORRUPTION;
+                        enabledSeverities[1] = D3D11_MESSAGE_SEVERITY_ERROR;
+                        enabledSeverities[2] = D3D11_MESSAGE_SEVERITY_WARNING;
+                        enabledSeverities[3] = D3D11_MESSAGE_SEVERITY_MESSAGE;
+
+                        if (validationMode == ValidationMode.Verbose)
+                        {
+                            // Verbose only filters
+                            enabledSeverities[4] = D3D11_MESSAGE_SEVERITY_INFO;
+                            NumSeverities++;
+                        }
+
+                        uint NumIDs = 1;
+                        D3D11_MESSAGE_ID* disabledMessages = stackalloc D3D11_MESSAGE_ID[10];
+                        disabledMessages[0] = D3D11_MESSAGE_ID_SETPRIVATEDATA_CHANGINGPARAMS;
+
+                        D3D11_INFO_QUEUE_FILTER filter = new();
+                        filter.AllowList.NumSeverities = NumSeverities;
+                        filter.AllowList.pSeverityList = enabledSeverities;
+                        filter.DenyList.NumIDs = NumIDs;
+                        filter.DenyList.pIDList = disabledMessages;
+
+                        // Clear out the existing filters since we're taking full control of them
+                        d3d11InfoQueue.Get()->PushEmptyStorageFilter();
+
+                        d3d11InfoQueue.Get()->AddStorageFilterEntries(&filter);
+                    }
+                }
+            }
+
+            ThrowIfFailed(tempDevice.CopyTo(_device.GetAddressOf()));
+            ThrowIfFailed(tempContext.CopyTo(_immediateContext.GetAddressOf()));
+            _featureLevel = d3dFeatureLevel;
+
+            // Init capabilites.
+            DXGI_ADAPTER_DESC1 adapterDesc;
+            ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&adapterDesc));
+
+            D3D11_FEATURE_DATA_ARCHITECTURE_INFO architectureInfo = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_ARCHITECTURE_INFO>(D3D11_FEATURE_ARCHITECTURE_INFO);
+            D3D11_FEATURE_DATA_D3D11_OPTIONS options = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS>(D3D11_FEATURE_D3D11_OPTIONS);
+            D3D11_FEATURE_DATA_D3D11_OPTIONS1 options1 = default;
+            D3D11_FEATURE_DATA_D3D11_OPTIONS2 options2 = default;
+            //var options3 = NativeDevice.CheckFeatureOptions3();
+
+            if (OperatingSystem.IsWindowsVersionAtLeast(10))
+            {
+                options1 = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS1>(D3D11_FEATURE_D3D11_OPTIONS1);
+                options2 = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS2>(D3D11_FEATURE_D3D11_OPTIONS2);
+            }
+
+            // Detect adapter type.
+            GpuAdapterType adapterType = GpuAdapterType.Other;
+            if ((adapterDesc.Flags & (uint)DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
+            {
+                adapterType = GpuAdapterType.Cpu;
+            }
+            else
+            {
+                adapterType = options2.UnifiedMemoryArchitecture ? GpuAdapterType.IntegratedGpu : GpuAdapterType.DiscreteGpu;
+            }
+
+            // Convert the adapter's D3D12 driver version to a readable string like "24.21.13.9793".
+            string driverDescription = string.Empty;
+            LARGE_INTEGER umdVersion = default;
+            if (dxgiAdapter.Get()->CheckInterfaceSupport(__uuidof<IDXGIDevice>(), &umdVersion) != DXGI_ERROR_UNSUPPORTED)
+            {
+                driverDescription = "D3D11 driver version ";
+
+                for (int i = 0; i < 4; ++i)
+                {
+                    ushort driverVersion = (ushort)((umdVersion >> (48 - 16 * i)) & 0xFFFF);
+                    driverDescription += driverVersion + ".";
+                }
+            }
+
+            _adapterInfo = new()
+            {
+                VendorId = (GpuVendorId)adapterDesc.VendorId,
+                DeviceId = adapterDesc.DeviceId,
+                //AdapterName = adapterDesc.Description,
+                DriverDescription = driverDescription,
+                AdapterType = adapterType,
+            };
+        }
 
         //_features = new()
         //{
@@ -307,16 +342,16 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
 
         _limits = new()
         {
-            //MaxVertexAttributes = 16,
-            //MaxVertexBindings = 16,
+            MaxVertexAttributes = 16,
+            MaxVertexBuffers = 16,
             //MaxVertexAttributeOffset = 2047,
-            //MaxVertexBindingStride = 2048,
-            //MaxTextureDimension1D = D3D11_REQ_TEXTURE1D_U_DIMENSION,
-            //MaxTextureDimension2D = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION,
-            //MaxTextureDimension3D = D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION,
-            //MaxTextureDimensionCube = D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION,
-            //MaxTextureArrayLayers = 2048,
-            //MaxColorAttachments = 8,
+            MaxVertexBufferArrayStride = 2048,
+            MaxTextureDimension1D = D3D11_REQ_TEXTURE1D_U_DIMENSION,
+            MaxTextureDimension2D = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION,
+            MaxTextureDimension3D = D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION,
+            MaxTextureDimensionCube = D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION,
+            MaxTextureArrayLayers = D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION,
+            MaxColorAttachments = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT,
             //MaxUniformBufferRange = D3D11_REQ_IMMEDIATE_CONSTANT_BUFFER_ELEMENT_COUNT * 16,
             //MaxStorageBufferRange = uint.MaxValue,
             //MinUniformBufferOffsetAlignment = 256,
@@ -335,15 +370,13 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             //MaxComputeWorkGroupSizeY = ComputeShaderThreadGroupMaxY,
             //MaxComputeWorkGroupSizeZ = ComputeShaderThreadGroupMaxZ,
         };
-
-        //adapter.Dispose();
     }
 
     public IDXGIFactory2* DXGIFactory => _dxgiFactory2;
 
     public bool IsTearingSupported { get; }
-    //public ID3D11Device1 NativeDevice { get; }
-    //public ID3D11DeviceContext1 ImmediateContext { get; }
+    public ID3D11Device1* NativeDevice => _device;
+    public ID3D11DeviceContext1* ImmediateContext => _immediateContext;
     public D3D_FEATURE_LEVEL FeatureLevel => _featureLevel;
 
     /// <inheritdoc />
@@ -361,8 +394,8 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     {
         if (isDisposing)
         {
-            //ImmediateContext.Flush();
-            //ImmediateContext.Dispose();
+            _immediateContext.Get()->Flush();
+            _immediateContext.Dispose();
 
             for (int i = 0; i < _commandBuffersPool.Count; ++i)
             {
@@ -371,31 +404,31 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             _commandBuffersPool.Clear();
 
 #if DEBUG
-            //uint refCount = NativeDevice.Release();
-            //if (refCount > 0)
-            //{
-            //    System.Diagnostics.Debug.WriteLine($"Direct3D11: There are {refCount} unreleased references left on the device");
-            //
-            //    ID3D11Debug? d3d11Debug = NativeDevice.QueryInterfaceOrNull<ID3D11Debug>();
-            //    if (d3d11Debug != null)
-            //    {
-            //        d3d11Debug.ReportLiveDeviceObjects(ReportLiveDeviceObjectFlags.Detail | ReportLiveDeviceObjectFlags.IgnoreInternal);
-            //        d3d11Debug.Dispose();
-            //    }
-            //}
+            uint refCount = NativeDevice->Release();
+            if (refCount > 0)
+            {
+                Debug.WriteLine($"Direct3D11: There are {refCount} unreleased references left on the device");
+
+                using ComPtr<ID3D11Debug> d3d11Debug = default;
+                if (_device.CopyTo(d3d11Debug.GetAddressOf()).SUCCEEDED)
+                {
+                    d3d11Debug.Get()->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
+                }
+            }
 #else
-            //NativeDevice.Dispose();
+            _device.Dispose();
 #endif
 
             _dxgiFactory2.Dispose();
-
 #if DEBUG
-            //using ComPtr<IDXGIDebug1> dxgiDebug = default;
-            //if (DXGIGetDebugInterface1(0, __uuidof<IDXGIDebug1>(), dxgiDebug.GetVoidAddressOf()).SUCCEEDED)
-            //{
-            //    dxgiDebug!.ReportLiveObjects(DebugAll, ReportLiveObjectFlags.Summary | ReportLiveObjectFlags.IgnoreInternal);
-            //    dxgiDebug!.Dispose();
-            //}
+            if (OperatingSystem.IsWindowsVersionAtLeast(8, 1))
+            {
+                using ComPtr<IDXGIDebug1> dxgiDebug = default;
+                if (DXGIGetDebugInterface1(0, __uuidof<IDXGIDebug1>(), dxgiDebug.GetVoidAddressOf()).SUCCEEDED)
+                {
+                    dxgiDebug.Get()->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS.DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_FLAGS.DXGI_DEBUG_RLO_IGNORE_INTERNAL);
+                }
+            }
 #endif
 
             NativeMemory.Free(_contextLock);
@@ -412,7 +445,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     /// <inheritdoc />
     public override void WaitIdle()
     {
-        //ImmediateContext.Flush();
+        _immediateContext.Get()->Flush();
     }
 
     /// <inheritdoc />
@@ -432,7 +465,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             // Submit the command list to the immediate context *
             {
                 AcquireSRWLockExclusive(_contextLock);
-                //ImmediateContext.ExecuteCommandList(commandBuffer.CommandList!, false);
+                ImmediateContext->ExecuteCommandList(commandBuffer.CommandList, false);
                 ReleaseSRWLockExclusive(_contextLock);
             }
 
@@ -505,21 +538,24 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                 return false;
             }
 
-            return true;
-#if TODO
+            using ComPtr<IDXGIFactory2> dxgiFactory = default;
+            HRESULT hr = CreateDXGIFactory1(__uuidof<IDXGIFactory2>(), dxgiFactory.GetVoidAddressOf());
+            if (hr.FAILED)
+            {
+                return false;
+            }
 
-            using IDXGIFactory2 dxgiFactory = CreateDXGIFactory1<IDXGIFactory2>();
+            using ComPtr<IDXGIAdapter1> dxgiAdapter = default;
 
             bool foundCompatibleDevice = false;
-            for (int adapterIndex = 0;
-                dxgiFactory.EnumAdapters1(adapterIndex, out IDXGIAdapter1? dxgiAdapter).Success;
+            for (uint adapterIndex = 0;
+                dxgiFactory.Get()->EnumAdapters1(adapterIndex, dxgiAdapter.ReleaseAndGetAddressOf()).SUCCEEDED;
                 adapterIndex++)
             {
-                AdapterDescription1 desc = dxgiAdapter.Description1;
+                DXGI_ADAPTER_DESC1 desc;
+                ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&desc));
 
-                dxgiAdapter.Dispose();
-
-                if ((desc.Flags & AdapterFlags.Software) != AdapterFlags.None)
+                if ((desc.Flags & (uint)DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
                 {
                     // Don't select the Basic Render Driver adapter.
                     continue;
@@ -534,8 +570,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                 return false;
             }
 
-            return IsSupportedFeatureLevel(FeatureLevel.Level_11_0, DeviceCreationFlags.BgraSupport); 
-#endif
+            return true;
         }
         catch
         {

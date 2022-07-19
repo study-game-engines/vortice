@@ -1,28 +1,30 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using SharpGen.Runtime;
-using Vortice.Direct3D11;
-using Vortice.DXGI;
-using Vortice.Graphics.D3DCommon;
-using Vortice.Mathematics;
+using TerraFX.Interop.Windows;
+using static TerraFX.Interop.Windows.Windows;
+using static TerraFX.Interop.DirectX.DXGI;
+using TerraFX.Interop.DirectX;
 
 namespace Vortice.Graphics.D3D11;
 
-internal sealed class D3D11CommandBuffer : CommandBuffer, IDisposable
+internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
 {
+    private readonly ComPtr<ID3D11DeviceContext1> _handle = default;
+    private readonly ComPtr<ID3DUserDefinedAnnotation> _userDefinedAnnotation = default;
+    private readonly ComPtr<ID3D11CommandList> _commandList;
     private readonly List<D3D11SwapChain> _swapChains = new();
 
     public D3D11CommandBuffer(D3D11GraphicsDevice device)
         : base(device)
     {
-        //Context = device.NativeDevice.CreateDeferredContext1();
-        //UserDefinedAnnotation = Context.QueryInterface<ID3DUserDefinedAnnotation>();
+        ThrowIfFailed(device.NativeDevice->CreateDeferredContext1(0u, _handle.GetAddressOf()));
+        _handle.CopyTo(_userDefinedAnnotation.GetAddressOf());
     }
 
-    public ID3D11DeviceContext1 Context { get; }
-    public ID3DUserDefinedAnnotation UserDefinedAnnotation { get; }
-    internal ID3D11CommandList? CommandList { get; private set; }
+    public ID3D11DeviceContext1* Handle => _handle;
+    public ID3DUserDefinedAnnotation* UserDefinedAnnotation => _userDefinedAnnotation;
+    public ID3D11CommandList* CommandList => _commandList;
     public bool IsRecording { get; internal set; }
     public bool HasLabel { get; internal set; }
 
@@ -39,16 +41,15 @@ internal sealed class D3D11CommandBuffer : CommandBuffer, IDisposable
     {
         if (disposing)
         {
-            CommandList?.Dispose();
-            UserDefinedAnnotation.Dispose();
-            Context.Dispose();
+            _commandList.Dispose();
+            _userDefinedAnnotation.Dispose();
+            _handle.Dispose();
         }
     }
 
     public void Reset()
     {
-        CommandList?.Dispose();
-        CommandList = default;
+        _commandList.Dispose();
 
         _swapChains.Clear();
     }
@@ -56,26 +57,32 @@ internal sealed class D3D11CommandBuffer : CommandBuffer, IDisposable
     public void End()
     {
         // Serialize the commands into a command list 
-        CommandList = Context.FinishCommandList(false);
+        ThrowIfFailed(_handle.Get()->FinishCommandList(false, _commandList.GetAddressOf()));
     }
 
     /// <inheritdoc />
     public override void PushDebugGroup(string groupLabel)
     {
-        _ = UserDefinedAnnotation.BeginEvent(groupLabel);
+        fixed (char* groupLabelPtr = groupLabel)
+        {
+            _ = _userDefinedAnnotation.Get()->BeginEvent((ushort*)groupLabelPtr);
+        }
     }
 
 
     /// <inheritdoc />
     public override void PopDebugGroup()
     {
-        _ = UserDefinedAnnotation.EndEvent();
+        _ = _userDefinedAnnotation.Get()->EndEvent();
     }
 
     /// <inheritdoc />
     public override void InsertDebugMarker(string debugLabel)
     {
-        UserDefinedAnnotation.SetMarker(debugLabel);
+        fixed (char* debugLabelPtr = debugLabel)
+        {
+            _userDefinedAnnotation.Get()->SetMarker((ushort*)debugLabelPtr);
+        }
     }
 
     /// <inheritdoc />
@@ -98,28 +105,26 @@ internal sealed class D3D11CommandBuffer : CommandBuffer, IDisposable
         {
             D3D11SwapChain swapChain = _swapChains[i];
 
-#if TODO
-            PresentFlags presentFlags = 0;
-            swapChain.Handle->GetFullscreenState()
-            bool fullscreen = swapChain.Handle.IsFullscreen;
+            BOOL fullscreen = false;
+            swapChain.Handle->GetFullscreenState(&fullscreen, null);
 
+            uint presentFlags = 0;
             if (swapChain.SyncInterval == 0 && !fullscreen)
             {
-                presentFlags = PresentFlags.AllowTearing;
+                presentFlags = DXGI_PRESENT_ALLOW_TEARING;
             }
 
-            Result result = swapChain.Handle.Present(swapChain.SyncInterval, presentFlags);
+            HRESULT result = swapChain.Handle->Present(swapChain.SyncInterval, presentFlags);
 
             // If the device was reset we must completely reinitialize the renderer.
-            if (result == DXGI.ResultCode.DeviceRemoved || result == DXGI.ResultCode.DeviceReset)
+            if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
             {
 #if DEBUG
                 //Result logResult = (result == DXGI.ResultCode.DeviceRemoved) ? Device.d3d.DeviceRemovedReason : result;
                 //System.Diagnostics.Debug.WriteLine($"Device Lost on Present: Reason code {logResult}");
 #endif
                 //HandleDeviceLost();
-            } 
-#endif
+            }
 
             _swapChains.Clear();
         }

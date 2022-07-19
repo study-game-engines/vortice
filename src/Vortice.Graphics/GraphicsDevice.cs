@@ -72,7 +72,7 @@ public abstract class GraphicsDevice : DisposableObject
     public static GraphicsDevice CreateDefault(ValidationMode validationMode = ValidationMode.Disabled)
     {
 #if !EXCLUDE_D3D11_BACKEND
-        return new D3D11.D3D11GraphicsDevice(validationMode);
+        return new D3D11.D3D11GraphicsDevice(validationMode, GpuPowerPreference.HighPerformance);
 #endif
 
 #if WINDOWS || WINDOWS_UWP

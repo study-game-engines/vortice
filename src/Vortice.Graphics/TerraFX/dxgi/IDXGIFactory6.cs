@@ -42,39 +42,6 @@ internal unsafe partial struct IDXGIFactory6
         return ((delegate* unmanaged<IDXGIFactory6*, uint>)(lpVtbl[2]))((IDXGIFactory6*)Unsafe.AsPointer(ref this));
     }
 
-    /// <inheritdoc cref="IDXGIObject.SetPrivateData" />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [VtblIndex(3)]
-    public HRESULT SetPrivateData([NativeTypeName("const GUID &")] Guid* Name, uint DataSize, [NativeTypeName("const void *")] void* pData)
-    {
-        return ((delegate* unmanaged<IDXGIFactory6*, Guid*, uint, void*, int>)(lpVtbl[3]))((IDXGIFactory6*)Unsafe.AsPointer(ref this), Name, DataSize, pData);
-    }
-
-    /// <inheritdoc cref="IDXGIObject.SetPrivateDataInterface" />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [VtblIndex(4)]
-    public HRESULT SetPrivateDataInterface([NativeTypeName("const GUID &")] Guid* Name, [NativeTypeName("const IUnknown *")] IUnknown* pUnknown)
-    {
-        return ((delegate* unmanaged<IDXGIFactory6*, Guid*, IUnknown*, int>)(lpVtbl[4]))((IDXGIFactory6*)Unsafe.AsPointer(ref this), Name, pUnknown);
-    }
-
-    /// <inheritdoc cref="IDXGIObject.GetPrivateData" />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [VtblIndex(5)]
-    public HRESULT GetPrivateData([NativeTypeName("const GUID &")] Guid* Name, uint* pDataSize, void* pData)
-    {
-        return ((delegate* unmanaged<IDXGIFactory6*, Guid*, uint*, void*, int>)(lpVtbl[5]))((IDXGIFactory6*)Unsafe.AsPointer(ref this), Name, pDataSize, pData);
-    }
-
-    /// <inheritdoc cref="IDXGIObject.GetParent" />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [VtblIndex(6)]
-    public HRESULT GetParent([NativeTypeName("const IID &")] Guid* riid, void** ppParent)
-    {
-        return ((delegate* unmanaged<IDXGIFactory6*, Guid*, void**, int>)(lpVtbl[6]))((IDXGIFactory6*)Unsafe.AsPointer(ref this), riid, ppParent);
-    }
-
-    /// <include file='IDXGIFactory6.xml' path='doc/member[@name="IDXGIFactory6.EnumAdapterByGpuPreference"]/*' />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [VtblIndex(29)]
     public HRESULT EnumAdapterByGpuPreference(uint Adapter, DXGI_GPU_PREFERENCE GpuPreference, [NativeTypeName("const IID &")] Guid* riid, void** ppvAdapter)
