@@ -12,9 +12,6 @@ namespace TerraFX.Interop.DirectX;
 internal static unsafe partial class DirectX
 {
     [DllImport("dxgi", ExactSpelling = true)]
-    public static extern HRESULT CreateDXGIFactory1([NativeTypeName("const IID &")] Guid* riid, void** ppFactory);
-
-    [DllImport("dxgi", ExactSpelling = true)]
     [SupportedOSPlatform("windows8.1")]
     public static extern HRESULT CreateDXGIFactory2(uint Flags, [NativeTypeName("const IID &")] Guid* riid, void** ppFactory);
 

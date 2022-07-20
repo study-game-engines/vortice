@@ -59,38 +59,28 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
         uint dxgiDebugFlags = 0u;
         if (validationMode != ValidationMode.Disabled)
         {
-            if (OperatingSystem.IsWindowsVersionAtLeast(8, 1))
+            using ComPtr<IDXGIInfoQueue> dxgiInfoQueue = default;
+            if (DXGIGetDebugInterface1(0, __uuidof<IDXGIInfoQueue>(), dxgiInfoQueue.GetVoidAddressOf()).SUCCEEDED)
             {
-                using ComPtr<IDXGIInfoQueue> dxgiInfoQueue = default;
-                if (DXGIGetDebugInterface1(0, __uuidof<IDXGIInfoQueue>(), dxgiInfoQueue.GetVoidAddressOf()).SUCCEEDED)
-                {
-                    dxgiDebugFlags = DXGI_CREATE_FACTORY_DEBUG;
-                    dxgiInfoQueue.Get()->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
-                    dxgiInfoQueue.Get()->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+                dxgiDebugFlags = DXGI_CREATE_FACTORY_DEBUG;
+                dxgiInfoQueue.Get()->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+                dxgiInfoQueue.Get()->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
 
-                    int* hide = stackalloc int[1]
-                    {
-                        80 /* IDXGISwapChain::GetContainingOutput: The swapchain's adapter does not control the output on which the swapchain's window resides. */,
-                    };
-                    DXGI_INFO_QUEUE_FILTER filter = new();
-                    filter.DenyList = new DXGI_INFO_QUEUE_FILTER_DESC()
-                    {
-                        NumIDs = 1u,
-                        pIDList = hide
-                    };
-                    dxgiInfoQueue.Get()->AddStorageFilterEntries(DXGI_DEBUG_DXGI, &filter);
-                }
+                int* hide = stackalloc int[1]
+                {
+                    80 /* IDXGISwapChain::GetContainingOutput: The swapchain's adapter does not control the output on which the swapchain's window resides. */,
+                };
+                DXGI_INFO_QUEUE_FILTER filter = new();
+                filter.DenyList = new DXGI_INFO_QUEUE_FILTER_DESC()
+                {
+                    NumIDs = 1u,
+                    pIDList = hide
+                };
+                dxgiInfoQueue.Get()->AddStorageFilterEntries(DXGI_DEBUG_DXGI, &filter);
             }
         }
 
-        if (OperatingSystem.IsWindowsVersionAtLeast(8, 1))
-        {
-            ThrowIfFailed(CreateDXGIFactory2(dxgiDebugFlags, __uuidof<IDXGIFactory2>(), _dxgiFactory2.GetVoidAddressOf()));
-        }
-        else
-        {
-            ThrowIfFailed(CreateDXGIFactory1(__uuidof<IDXGIFactory2>(), _dxgiFactory2.GetVoidAddressOf()));
-        }
+        ThrowIfFailed(CreateDXGIFactory2(dxgiDebugFlags, __uuidof<IDXGIFactory2>(), _dxgiFactory2.GetVoidAddressOf()));
 
         // Determines whether tearing support is available for fullscreen borderless windows.
         {
@@ -278,15 +268,8 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
 
             D3D11_FEATURE_DATA_ARCHITECTURE_INFO architectureInfo = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_ARCHITECTURE_INFO>(D3D11_FEATURE_ARCHITECTURE_INFO);
             D3D11_FEATURE_DATA_D3D11_OPTIONS options = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS>(D3D11_FEATURE_D3D11_OPTIONS);
-            D3D11_FEATURE_DATA_D3D11_OPTIONS1 options1 = default;
-            D3D11_FEATURE_DATA_D3D11_OPTIONS2 options2 = default;
-            //var options3 = NativeDevice.CheckFeatureOptions3();
-
-            if (OperatingSystem.IsWindowsVersionAtLeast(10))
-            {
-                options1 = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS1>(D3D11_FEATURE_D3D11_OPTIONS1);
-                options2 = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS2>(D3D11_FEATURE_D3D11_OPTIONS2);
-            }
+            D3D11_FEATURE_DATA_D3D11_OPTIONS1 options1 = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS1>(D3D11_FEATURE_D3D11_OPTIONS1);
+            D3D11_FEATURE_DATA_D3D11_OPTIONS2 options2 = NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS2>(D3D11_FEATURE_D3D11_OPTIONS2);
 
             // Detect adapter type.
             GpuAdapterType adapterType = GpuAdapterType.Other;
@@ -421,13 +404,10 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
 
             _dxgiFactory2.Dispose();
 #if DEBUG
-            if (OperatingSystem.IsWindowsVersionAtLeast(8, 1))
+            using ComPtr<IDXGIDebug1> dxgiDebug = default;
+            if (DXGIGetDebugInterface1(0, __uuidof<IDXGIDebug1>(), dxgiDebug.GetVoidAddressOf()).SUCCEEDED)
             {
-                using ComPtr<IDXGIDebug1> dxgiDebug = default;
-                if (DXGIGetDebugInterface1(0, __uuidof<IDXGIDebug1>(), dxgiDebug.GetVoidAddressOf()).SUCCEEDED)
-                {
-                    dxgiDebug.Get()->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS.DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_FLAGS.DXGI_DEBUG_RLO_IGNORE_INTERNAL);
-                }
+                dxgiDebug.Get()->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS.DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_FLAGS.DXGI_DEBUG_RLO_IGNORE_INTERNAL);
             }
 #endif
 
@@ -446,6 +426,37 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     public override void WaitIdle()
     {
         _immediateContext.Get()->Flush();
+    }
+
+    /// <inheritdoc />
+    public override CommandBuffer BeginCommandBuffer(string? label = null)
+    {
+        AcquireSRWLockExclusive(_commandBufferAcquisitionMutex);
+
+        /* Try to use an existing command buffer, if one is available. */
+        D3D11CommandBuffer commandBuffer;
+
+        if (_availableCommandBuffers.Count == 0)
+        {
+            commandBuffer = new D3D11CommandBuffer(this);
+            _commandBuffersPool.Add(commandBuffer);
+        }
+        else
+        {
+            commandBuffer = _availableCommandBuffers.Dequeue();
+            commandBuffer.Reset();
+        }
+
+        commandBuffer.IsRecording = true;
+        commandBuffer.HasLabel = false;
+        if (string.IsNullOrEmpty(label) == false)
+        {
+            commandBuffer.PushDebugGroup(label!);
+            commandBuffer.HasLabel = true;
+        }
+
+        ReleaseSRWLockExclusive(_commandBufferAcquisitionMutex);
+        return commandBuffer;
     }
 
     /// <inheritdoc />
@@ -498,48 +509,17 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
         return new D3D11SwapChain(this, surface, description);
     }
 
-    /// <inheritdoc />
-    public override CommandBuffer BeginCommandBuffer(string? label = null)
-    {
-        AcquireSRWLockExclusive(_commandBufferAcquisitionMutex);
-
-        /* Try to use an existing command buffer, if one is available. */
-        D3D11CommandBuffer commandBuffer;
-
-        if (_availableCommandBuffers.Count == 0)
-        {
-            commandBuffer = new D3D11CommandBuffer(this);
-            _commandBuffersPool.Add(commandBuffer);
-        }
-        else
-        {
-            commandBuffer = _availableCommandBuffers.Dequeue();
-            commandBuffer.Reset();
-        }
-
-        commandBuffer.IsRecording = true;
-        commandBuffer.HasLabel = false;
-        if (string.IsNullOrEmpty(label) == false)
-        {
-            commandBuffer.PushDebugGroup(label!);
-            commandBuffer.HasLabel = true;
-        }
-
-        ReleaseSRWLockExclusive(_commandBufferAcquisitionMutex);
-        return commandBuffer;
-    }
-
     private static bool CheckIsSupported()
     {
         try
         {
-            if (!OperatingSystem.IsWindows())
+            if (!OperatingSystem.IsWindowsVersionAtLeast(10))
             {
                 return false;
             }
 
             using ComPtr<IDXGIFactory2> dxgiFactory = default;
-            HRESULT hr = CreateDXGIFactory1(__uuidof<IDXGIFactory2>(), dxgiFactory.GetVoidAddressOf());
+            HRESULT hr = CreateDXGIFactory2(0u, __uuidof<IDXGIFactory2>(), dxgiFactory.GetVoidAddressOf());
             if (hr.FAILED)
             {
                 return false;

@@ -7,7 +7,7 @@
   </ItemGroup>
 
   <!-- Windows Forms and WPF -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
+  <PropertyGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
@@ -22,12 +22,12 @@
     <Compile Include="Platforms\WinUI\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
-  <!-- Win32/WinForms/UWP -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
+  <!-- Win32/WinForms -->
+  <PropertyGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
   
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
+  <ItemGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
     <Compile Include="Platforms\Windows\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 

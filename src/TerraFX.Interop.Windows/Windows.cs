@@ -147,7 +147,7 @@ internal static unsafe partial class Windows
         /// <returns>A pointer to memory holding the <see cref="Guid"/> value for the current type.</returns>
         private static Guid* CreateRIID()
         {
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
             var p = (Guid*)RuntimeHelpers.AllocateTypeAssociatedMemory(typeof(T), sizeof(Guid));
 #else
             var p = (Guid*)Marshal.AllocHGlobal(sizeof(Guid));

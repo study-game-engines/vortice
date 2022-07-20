@@ -26,6 +26,18 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
   </PropertyGroup>
 
+  <!-- Settings that append the existing setting value -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);AD0001;NU5105</NoWarn>
+  </PropertyGroup>
+
+  <!-- Assembly attributes to include for every project -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.Versioning.SupportedOSPlatformAttribute">
+      <_Parameter1>windows10.0.17763.0</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
   <!-- Settings that are only set for executables -->
   <PropertyGroup Condition="'$(OutputType)' != 'Library' AND '$(UseWindowsForms)' != 'true'  AND '$(UseWPF)' != 'true'">
     <PublishTrimmed>true</PublishTrimmed>

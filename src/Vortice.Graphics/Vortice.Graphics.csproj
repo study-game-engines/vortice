@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net6.0-windows;</TargetFrameworks>
-    <ExcludeVulkan>True</ExcludeVulkan>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net6.0-windows10.0.19041;</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" $([MSBuild]::IsOSPlatform('windows')) ">
+  <PropertyGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
     <ExcludeVulkan>True</ExcludeVulkan>
   </PropertyGroup>
 
@@ -20,13 +19,13 @@
     <Compile Remove="D3DCommon\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true' AND '$(ExcludeD3D12)' == 'true'" />
     <Compile Remove="D3D11\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true'" />
     <Compile Remove="D3D12\**\*.cs" Condition="'$(ExcludeD3D12)' == 'true'" />
-    <!--<Compile Remove="Vulkan\**\*.cs" Condition="'$(ExcludeVulkan)' == 'true'" />-->
-    <!--<PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />-->
+    <Compile Remove="Vulkan\**\*.cs" Condition="'$(ExcludeVulkan)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Vortice.Mathematics" />
+    <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
   </ItemGroup>
 
   <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" Condition="'$(ExcludeD3D11)' != 'true' OR '$(ExcludeD3D12)' != 'true'" />
