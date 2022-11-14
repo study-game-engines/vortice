@@ -6,24 +6,28 @@
     <None Include="Platforms\**\*.cs" />
   </ItemGroup>
 
-  <!-- Windows Forms and WPF -->
-  <PropertyGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
-    <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
-
   <!-- SDL2 -->
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' OR $(TargetFramework.StartsWith('netstandard2'))">
     <Compile Include="Platforms\Standard\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
-  <!-- Win32/WinForms -->
-  <PropertyGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
+  <!-- Windows Modern/WinUI -->
+  <PropertyGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
-  
-  <ItemGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
+  <ItemGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
     <Compile Include="Platforms\Windows\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+  </ItemGroup>
+
+  <!-- Windows Forms/WPF Classic -->
+  <PropertyGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10')) == 'False'">
+    <DefineConstants>$(DefineConstants);WINDOWS_CLASSIC</DefineConstants>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10')) == 'False'">
+    <Compile Include="Platforms\WindowsClassic\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
 </Project>

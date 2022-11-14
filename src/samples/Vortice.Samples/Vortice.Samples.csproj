@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net7.0-windows10.0.19041;</TargetFrameworks>
@@ -8,7 +8,11 @@
     <RootNamespace>Vortice.Samples</RootNamespace>
     <PublishAot>true</PublishAot>
   </PropertyGroup>
-  
+
+  <PropertyGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
+    <UseWinUI>true</UseWinUI>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
   </ItemGroup>

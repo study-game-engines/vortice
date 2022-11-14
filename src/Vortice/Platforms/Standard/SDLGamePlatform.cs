@@ -89,6 +89,6 @@ internal class SDLGamePlatform : GamePlatform
 
     private void RunOneFrame()
     {
-        Tick();
+        OnTick();
     }
 }

@@ -3,9 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net7.0-windows10.0.19041;</TargetFrameworks>
+    <ExcludeOpenAL>True</ExcludeOpenAL>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" $([MSBuild]::IsOSPlatform('windows')) ">
+  <PropertyGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' ">
     <ExcludeOpenAL>True</ExcludeOpenAL>
   </PropertyGroup>
 

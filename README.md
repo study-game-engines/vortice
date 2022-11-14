@@ -1,7 +1,7 @@
 [![Build status](https://github.com/amerkoleci/vortice/workflows/Build/badge.svg)](https://github.com/amerkoleci/vortice/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/amerkoleci/vortice/blob/main/LICENSE)
 
-**Vortice** is a modern cross-platform .NET 6.0 game engine.
+**Vortice** is a modern cross-platform .NET 7.0 game engine.
 
 ## Features
 
@@ -16,7 +16,6 @@ Please consider [SPONSOR](https://github.com/sponsors/amerkoleci) me to further 
 Uses the following open-source and third-party libraries:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan): Cross platform .NET bindings for Vulkan
-- [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows): .NET bindings for Direct3D12, Direct3D11, WIC, Direct2D1, XInput, XAudio, X3DAudio, DXC, Direct3D9 and DirectInput.
 - [terrafx.interop.windows](https://github.com/terrafx/terrafx.interop.windows): Interop bindings for Windows.
 
 ## License

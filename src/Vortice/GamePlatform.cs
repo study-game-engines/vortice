@@ -2,7 +2,6 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Microsoft.Extensions.DependencyInjection;
-using Vortice.Graphics;
 
 namespace Vortice;
 
@@ -21,19 +20,19 @@ public abstract class GamePlatform
 
     public abstract void RunMainLoop(Action init);
 
-    protected void Tick()
+    protected internal void OnTick()
     {
         TickRequested?.Invoke(this, EventArgs.Empty);
     }
 
     public static GamePlatform CreateDefault()
     {
-#if WINDOWS
+#if WINDOWS_CLASSIC
         return new WinFormsGamePlatform();
+#elif WINDOWS
+        return new WindowsGamePlatform();
 #elif NET6_0_OR_GREATER
         return new SDLGamePlatform();
-#elif WINDOWS_UWP
-        return new WinUIGamePlatform();
 #endif
     }
 }
