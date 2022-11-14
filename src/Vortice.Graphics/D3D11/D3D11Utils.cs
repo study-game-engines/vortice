@@ -4,6 +4,7 @@
 using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.Windows;
 using static TerraFX.Interop.DirectX.D3D11;
+using static TerraFX.Interop.DirectX.DirectX;
 using static TerraFX.Interop.DirectX.D3D_DRIVER_TYPE;
 using static TerraFX.Interop.DirectX.D3D11_CREATE_DEVICE_FLAG;
 using static TerraFX.Interop.DirectX.D3D11_BIND_FLAG;
@@ -20,7 +21,7 @@ internal static unsafe class D3D11Utils
         HRESULT hr = D3D11CreateDevice(
             null,
             D3D_DRIVER_TYPE_NULL,       // There is no need to create a real hardware device.
-            null,
+            HMODULE.NULL,
             (uint)D3D11_CREATE_DEVICE_DEBUG,  // Check for the SDK layers.
             null,                    // Any feature level will do.
             0,
@@ -86,7 +87,7 @@ internal static unsafe class D3D11Utils
             Height = (int)description.Height,
             DepthOrArraySize = (int)description.ArraySize,
             MipLevels = (int)description.MipLevels,
-            Usage = FromD3D11(description.BindFlags),
+            Usage = FromD3D11((D3D11_BIND_FLAG)description.BindFlags),
             SampleCount = FromSampleCount(description.SampleDesc.Count)
         };
     }

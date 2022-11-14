@@ -13,13 +13,8 @@
   </PropertyGroup>
 
   <!-- SDL2 -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' OR $(TargetFramework.StartsWith('netstandard2'))">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' OR $(TargetFramework.StartsWith('netstandard2'))">
     <Compile Include="Platforms\Standard\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-  </ItemGroup>
-
-  <!-- UAP -->
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
-    <Compile Include="Platforms\WinUI\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
   <!-- Win32/WinForms -->

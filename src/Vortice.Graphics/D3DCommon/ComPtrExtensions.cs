@@ -1,58 +1,16 @@
-// https://github.com/Sergio0694/ComputeSharp/blob/main/LICENSE
+// Copyright © Amer Koleci and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.CompilerServices;
+using TerraFX.Interop.Windows;
 
-namespace TerraFX.Interop.Windows;
+namespace Vortice.Graphics;
 
 /// <summary>
 /// Helper methods for working with the <see cref="ComPtr{T}"/> type.
 /// </summary>
 internal static class ComPtrExtensions
 {
-    /// <summary>
-    /// Invokes <see cref="IUnknown.AddRef"/> on the wrapped object for an input <see cref="ComPtr{T}"/> value.
-    /// </summary>
-    /// <typeparam name="T">The type of the current <see cref="ComPtr{T}"/> instance.</typeparam>
-    /// <param name="ptr">The input <see cref="ComPtr{T}"/> instance to increment the reference count for.</param>
-    /// <returns>A <see cref="ComPtr{T}"/> instance of type <see cref="IUnknown"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe uint AddRef<T>(this ComPtr<T> ptr)
-        where T : unmanaged
-    {
-        if (ptr.Get() is not null)
-        {
-            return ((IUnknown*)ptr.Get())->AddRef();
-        }
-
-        return 0;
-    }
-
-    /// <summary>
-    /// Invokes <see cref="IUnknown.Release"/> on the wrapped object for an input <see cref="ComPtr{T}"/> value.
-    /// If the object has been deleted, it also resets <paramref name="ptr"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the current <see cref="ComPtr{T}"/> instance.</typeparam>
-    /// <param name="ptr">The input <see cref="ComPtr{T}"/> instance to release.</param>
-    /// <returns>A <see cref="ComPtr{T}"/> instance of type <see cref="IUnknown"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe uint Release<T>(this ref ComPtr<T> ptr)
-        where T : unmanaged
-    {
-        if (ptr.Get() is not null)
-        {
-            uint count = ((IUnknown*)ptr.Get())->Release();
-
-            if (count == 0)
-            {
-                ptr = default;
-            }
-
-            return count;
-        }
-
-        return 0;
-    }
-
     /// <summary>
     /// Reinterprets the current <see cref="ComPtr{T}"/> instance as one of type <see cref="IUnknown"/>.
     /// </summary>
@@ -65,7 +23,7 @@ internal static class ComPtrExtensions
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ref readonly ComPtr<IUnknown> AsIUnknown<T>(this in ComPtr<T> ptr)
-        where T : unmanaged
+        where T : unmanaged, IUnknown.Interface
     {
         return ref Unsafe.As<ComPtr<T>, ComPtr<IUnknown>>(ref Unsafe.AsRef(in ptr));
     }
@@ -79,7 +37,7 @@ internal static class ComPtrExtensions
     /// <remarks>This method is only valid when the current <see cref="ComPtr{T}"/> instance is on the stack or pinned.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void** GetVoidAddressOf<T>(this in ComPtr<T> ptr)
-        where T : unmanaged
+        where T : unmanaged, IUnknown.Interface
     {
         return (void**)Unsafe.AsPointer(ref Unsafe.AsRef(in ptr));
     }
@@ -92,7 +50,7 @@ internal static class ComPtrExtensions
     /// <returns>The moved <see cref="ComPtr{T}"/> instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ComPtr<T> Move<T>(this in ComPtr<T> ptr)
-        where T : unmanaged
+        where T : unmanaged, IUnknown.Interface
     {
         ComPtr<T> copy = default;
 

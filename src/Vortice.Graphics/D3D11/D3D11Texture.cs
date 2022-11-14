@@ -88,13 +88,13 @@ internal unsafe class D3D11Texture : Texture
             desc.Format = format;
             desc.SampleDesc = new DXGI_SAMPLE_DESC(ToSampleCount(description.SampleCount), 0);
             desc.Usage = usage;
-            desc.BindFlags = bindFlags;
-            desc.CPUAccessFlags = cpuAccessFlags;
-            desc.MiscFlags = miscFlags;
+            desc.BindFlags = (uint)bindFlags;
+            desc.CPUAccessFlags = (uint)cpuAccessFlags;
+            desc.MiscFlags = (uint)miscFlags;
 
             if (description.SampleCount == TextureSampleCount.Count1 && desc.Width == desc.Height && (description.DepthOrArraySize % 6 == 0))
             {
-                desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
+                desc.MiscFlags |= (uint)D3D11_RESOURCE_MISC_TEXTURECUBE;
             }
 
             HRESULT hr = device.NativeDevice->CreateTexture2D(&desc, null, (ID3D11Texture2D**)_handle.GetAddressOf());

@@ -90,7 +90,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             HRESULT hr = _dxgiFactory2.CopyTo(dxgiFactory5.GetAddressOf());
             if (hr.SUCCEEDED)
             {
-                hr = dxgiFactory5.Get()->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(BOOL));
+                hr = dxgiFactory5.Get()->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, (uint)sizeof(BOOL));
             }
 
             if (hr.FAILED || !allowTearing)
@@ -173,16 +173,16 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
 
             D3D_FEATURE_LEVEL d3dFeatureLevel;
             hr = D3D11CreateDevice(
-                dxgiAdapter.Get(),
-               D3D_DRIVER_TYPE_UNKNOWN,
-               null,
-               (uint)creationFlags,
-               featureLevels,
-               2,
-               D3D11_SDK_VERSION,
-               tempDevice.GetAddressOf(),
-               &d3dFeatureLevel,
-               tempContext.GetAddressOf()
+                (IDXGIAdapter*)dxgiAdapter.Get(),
+                D3D_DRIVER_TYPE_UNKNOWN,
+                HMODULE.NULL,
+                (uint)creationFlags,
+                featureLevels,
+                2,
+                D3D11_SDK_VERSION,
+                tempDevice.GetAddressOf(),
+                &d3dFeatureLevel,
+                tempContext.GetAddressOf()
             );
 
             if (hr.FAILED)
@@ -193,7 +193,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                 hr = D3D11CreateDevice(
                     null,
                     D3D_DRIVER_TYPE_WARP, // Create a WARP device instead of a hardware device.
-                    null,
+                    HMODULE.NULL,
                     (uint)creationFlags,
                     featureLevels,
                     2,

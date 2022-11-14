@@ -79,7 +79,7 @@ internal abstract unsafe class D3DSwapChainBase : SwapChain
 
                 ThrowIfFailed(factory->CreateSwapChainForHwnd(
                     deviceOrCommandQueue,
-                    win32Source.Hwnd.ToPointer(),
+                    (HWND)win32Source.Hwnd.ToPointer(),
                     &swapChainDesc,
                     &fsSwapChainDesc,
                     null,
@@ -87,7 +87,7 @@ internal abstract unsafe class D3DSwapChainBase : SwapChain
                     );
 
                 // This class does not support exclusive full-screen mode and prevents DXGI from responding to the ALT+ENTER shortcut
-                ThrowIfFailed(factory->MakeWindowAssociation(win32Source.Hwnd.ToPointer(), DXGI_MWA_NO_ALT_ENTER));
+                ThrowIfFailed(factory->MakeWindowAssociation((HWND)win32Source.Hwnd.ToPointer(), DXGI_MWA_NO_ALT_ENTER));
                 break;
 #endif
 

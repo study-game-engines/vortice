@@ -14,27 +14,25 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      uses: actions/checkout@v3
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
 
-    - name: Setup .NET 6 SDK
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET 7 SDK
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 7.0.100
 
     - name: Build/Pack
       run: msbuild Vortice.sln -t:restore,build,pack /p:Configuration=Release /p:SymbolPackageFormat=snupkg /p:Packing=true
 
     - name: Upload Package Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Packages
         path: artifacts\*.nupkg

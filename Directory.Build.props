@@ -2,11 +2,6 @@
 <Project>
   <PropertyGroup>
     <_VorticeTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_VorticeTargetPlatformIdentifier>
-    <_VorticeTargetPlatformIsAndroid Condition="'$(_VorticeTargetPlatformIdentifier)' == 'android'">True</_VorticeTargetPlatformIsAndroid>
-    <_VorticeTargetPlatformIsiOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'ios'">True</_VorticeTargetPlatformIsiOS>
-    <_VorticeTargetPlatformIsMacCatalyst Condition="'$(_VorticeTargetPlatformIdentifier)' == 'maccatalyst'">True</_VorticeTargetPlatformIsMacCatalyst>
-    <_VorticeTargetPlatformIsmacOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'macos'">True</_VorticeTargetPlatformIsmacOS>
-    <_VorticeTargetPlatformIstvOS Condition="'$(_VorticeTargetPlatformIdentifier)' == 'tvos'">True</_VorticeTargetPlatformIstvOS>
     <_VorticeTargetPlatformIsWindows Condition="$(_VorticeTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_VorticeTargetPlatformIsWindows>
   </PropertyGroup>
 
@@ -51,6 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
   </ItemGroup>
   
 </Project>

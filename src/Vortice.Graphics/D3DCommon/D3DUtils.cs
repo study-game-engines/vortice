@@ -205,21 +205,4 @@ internal static unsafe class D3DUtils
                 return ThrowHelper.ThrowArgumentException<uint>("Invalid present mode");
         }
     }
-
-    public unsafe readonly struct SRWLOCK
-    {
-        public readonly void* Ptr;
-    }
-
-    [DllImport("kernel32", ExactSpelling = true)]
-    public static extern void InitializeSRWLock(SRWLOCK* SRWLock);
-
-    [DllImport("kernel32", ExactSpelling = true)]
-    public static extern void ReleaseSRWLockExclusive(SRWLOCK* SRWLock);
-
-    [DllImport("kernel32", ExactSpelling = true)]
-    public static extern void AcquireSRWLockExclusive(SRWLOCK* SRWLock);
-
-    [DllImport("kernel32", ExactSpelling = true)]
-    public static extern byte TryAcquireSRWLockExclusive(SRWLOCK* SRWLock);
 }

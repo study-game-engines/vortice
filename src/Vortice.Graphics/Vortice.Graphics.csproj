@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net6.0-windows10.0.19041;</TargetFrameworks>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net7.0-windows10.0.19041;</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
@@ -25,9 +25,9 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Vortice.Mathematics" />
+    <PackageReference Include="TerraFX.Interop.Windows" Condition="'$(ExcludeD3D12)' != 'true'" />
+    <PackageReference Include="TerraFX.Interop.D3D12MemoryAllocator" Condition="'$(ExcludeD3D12)' != 'true'" />
     <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
   </ItemGroup>
-
-  <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" Condition="'$(ExcludeD3D11)' != 'true' OR '$(ExcludeD3D12)' != 'true'" />
 
 </Project>
