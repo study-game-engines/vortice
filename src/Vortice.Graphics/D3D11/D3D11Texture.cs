@@ -1,12 +1,9 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using TerraFX.Interop.DirectX;
-using TerraFX.Interop.Windows;
-using static TerraFX.Interop.DirectX.D3D11_USAGE;
-using static TerraFX.Interop.DirectX.D3D11_BIND_FLAG;
-using static TerraFX.Interop.DirectX.D3D11_CPU_ACCESS_FLAG;
-using static TerraFX.Interop.DirectX.D3D11_RESOURCE_MISC_FLAG;
+using Win32;
+using Win32.Graphics.Direct3D11;
+using Win32.Graphics.Dxgi.Common;
 using static Vortice.Graphics.D3D11.D3D11Utils;
 using static Vortice.Graphics.D3DCommon.D3DUtils;
 
@@ -19,11 +16,11 @@ internal unsafe class D3D11Texture : Texture
     public D3D11Texture(D3D11GraphicsDevice device, in TextureDescription description)
         : base(device, description)
     {
-        D3D11_USAGE usage = (description.CpuAccess == CpuAccessMode.None) ? D3D11_USAGE_DEFAULT : D3D11_USAGE_STAGING;
-        D3D11_BIND_FLAG bindFlags = 0;
-        D3D11_CPU_ACCESS_FLAG cpuAccessFlags = 0u;
-        DXGI_FORMAT format = ToDXGIFormat(description.Format);
-        D3D11_RESOURCE_MISC_FLAG miscFlags = 0;
+        Usage usage = (description.CpuAccess == CpuAccessMode.None) ? Win32.Graphics.Direct3D11.Usage.Default : Win32.Graphics.Direct3D11.Usage.Staging;
+        BindFlags bindFlags = 0;
+        CpuAccessFlags cpuAccessFlags = 0u;
+        Format format = description.Format.ToDxgiFormat();
+        ResourceMiscFlags miscFlags = 0;
 
         bool isDepthStencil = description.Format.IsDepthStencilFormat();
 
@@ -31,27 +28,27 @@ internal unsafe class D3D11Texture : Texture
         if (description.CpuAccess == CpuAccessMode.None)
         {
             if ((description.Usage & TextureUsage.ShaderRead) != TextureUsage.None)
-                bindFlags |= D3D11_BIND_SHADER_RESOURCE;
+                bindFlags |= BindFlags.ShaderResource;
 
             if ((description.Usage & TextureUsage.ShaderWrite) != TextureUsage.None)
-                bindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+                bindFlags |= BindFlags.UnorderedAccess;
 
             if ((description.Usage & TextureUsage.RenderTarget) != TextureUsage.None)
             {
                 if (isDepthStencil)
                 {
-                    bindFlags |= D3D11_BIND_DEPTH_STENCIL;
+                    bindFlags |= BindFlags.DepthStencil;
                 }
                 else
                 {
-                    bindFlags |= D3D11_BIND_RENDER_TARGET;
+                    bindFlags |= BindFlags.RenderTarget;
                 }
             }
 
             // If ShaderRead and depth format, set to typeless.
             if (isDepthStencil && description.Usage.HasFlag(TextureUsage.ShaderRead))
             {
-                format = GetTypelessFormatFromDepthFormat(description.Format);
+                format = description.Format.GetTypelessFormatFromDepthFormat();
             }
 
             // Mutually exclusive.
@@ -67,9 +64,9 @@ internal unsafe class D3D11Texture : Texture
         else
         {
             if (description.CpuAccess == CpuAccessMode.Read)
-                cpuAccessFlags = D3D11_CPU_ACCESS_READ;
+                cpuAccessFlags = CpuAccessFlags.Read;
             if (description.CpuAccess == CpuAccessMode.Write)
-                cpuAccessFlags = D3D11_CPU_ACCESS_WRITE;
+                cpuAccessFlags = CpuAccessFlags.Write;
         }
 
         if (description.Dimension == TextureDimension.Texture1D)
@@ -80,25 +77,28 @@ internal unsafe class D3D11Texture : Texture
         }
         else
         {
-            D3D11_TEXTURE2D_DESC desc = new();
-            desc.Width = (uint)description.Width;
-            desc.Height = (uint)description.Height;
-            desc.MipLevels = (uint)description.MipLevels;
-            desc.ArraySize = (uint)description.DepthOrArraySize;
-            desc.Format = format;
-            desc.SampleDesc = new DXGI_SAMPLE_DESC(ToSampleCount(description.SampleCount), 0);
-            desc.Usage = usage;
-            desc.BindFlags = (uint)bindFlags;
-            desc.CPUAccessFlags = (uint)cpuAccessFlags;
-            desc.MiscFlags = (uint)miscFlags;
-
-            if (description.SampleCount == TextureSampleCount.Count1 && desc.Width == desc.Height && (description.DepthOrArraySize % 6 == 0))
+            Texture2DDescription desc = new()
             {
-                desc.MiscFlags |= (uint)D3D11_RESOURCE_MISC_TEXTURECUBE;
+                Width = (uint)description.Width,
+                Height = (uint)description.Height,
+                MipLevels = (uint)description.MipLevels,
+                ArraySize = (uint)description.DepthOrArraySize,
+                Format = format,
+                SampleDesc = new(ToSampleCount(description.SampleCount), 0),
+                Usage = usage,
+                BindFlags = bindFlags,
+                CPUAccessFlags = cpuAccessFlags,
+                MiscFlags = miscFlags
+            };
+
+            if (description.SampleCount == TextureSampleCount.Count1 &&
+                desc.Width == desc.Height && (description.DepthOrArraySize % 6 == 0))
+            {
+                desc.MiscFlags |= ResourceMiscFlags.TextureCube;
             }
 
-            HRESULT hr = device.NativeDevice->CreateTexture2D(&desc, null, (ID3D11Texture2D**)_handle.GetAddressOf());
-            if (hr.FAILED)
+            HResult hr = device.NativeDevice->CreateTexture2D(&desc, null, (ID3D11Texture2D**)_handle.GetAddressOf());
+            if (hr.Failure)
             {
                 //LOGE("D3D11: Failed to create 2D texture");
                 return;
@@ -106,7 +106,7 @@ internal unsafe class D3D11Texture : Texture
         }
     }
 
-    public D3D11Texture(GraphicsDevice device, ID3D11Texture2D* existingTexture, in D3D11_TEXTURE2D_DESC desc)
+    public D3D11Texture(GraphicsDevice device, ID3D11Texture2D* existingTexture, in Texture2DDescription desc)
         : base(device, FromD3D11(desc))
     {
         // Keep reference to texture.

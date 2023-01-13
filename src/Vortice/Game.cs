@@ -2,8 +2,8 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
-using Vortice.Audio;
 using Vortice.Graphics;
 using Vortice.Input;
 
@@ -25,6 +25,9 @@ public abstract class Game : DisposableObject, IGame
     {
         _platform = platform ?? GamePlatform.CreateDefault();
 
+        Log.Info($"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
+        Log.Info($"Framework: {RuntimeInformation.FrameworkDescription}");
+
         ServiceCollection services = new();
         _platform.ConfigureServices(services);
         ConfigureServices(services);
@@ -40,8 +43,8 @@ public abstract class Game : DisposableObject, IGame
         GraphicsDevice = GraphicsDevice.CreateDefault(validationMode);
 
         // Get optional services.
-        AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();
-        AudioDevice = audioDevice ?? AudioDevice.CreateDefault();
+        //AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();
+        //AudioDevice = audioDevice ?? AudioDevice.CreateDefault();
     }
 
     public event EventHandler<EventArgs>? Activated;
@@ -63,7 +66,7 @@ public abstract class Game : DisposableObject, IGame
 
     public GraphicsDevice GraphicsDevice { get; }
 
-    public AudioDevice AudioDevice { get; }
+    //public AudioDevice AudioDevice { get; }
 
     public IList<IGameSystem> GameSystems { get; } = new List<IGameSystem>();
 
@@ -76,7 +79,7 @@ public abstract class Game : DisposableObject, IGame
             View.SwapChain?.Dispose();
             GraphicsDevice.Dispose();
 
-            AudioDevice?.Dispose();
+            //AudioDevice?.Dispose();
 
             Disposed?.Invoke(this, EventArgs.Empty);
         }

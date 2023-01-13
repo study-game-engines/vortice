@@ -1,15 +1,10 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using TerraFX.Interop.DirectX;
-using TerraFX.Interop.Windows;
-using static TerraFX.Interop.Windows.Windows;
+using Win32;
+using Win32.Graphics.Dxgi;
+using static Win32.Apis;
 using static Vortice.Graphics.D3DCommon.D3DUtils;
-using static TerraFX.Interop.DirectX.DXGI;
-using static TerraFX.Interop.DirectX.DXGI_SCALING;
-using static TerraFX.Interop.DirectX.DXGI_SWAP_EFFECT;
-using static TerraFX.Interop.DirectX.DXGI_ALPHA_MODE;
-using static TerraFX.Interop.DirectX.DXGI_SWAP_CHAIN_FLAG;
 
 namespace Vortice.Graphics.D3DCommon;
 
@@ -21,19 +16,19 @@ internal abstract unsafe class D3DSwapChainBase : SwapChain
         GraphicsDevice device, SwapChainSurface surface, in SwapChainDescription description)
         : base(device, surface, description)
     {
-        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = new()
+        SwapChainDescription1 swapChainDesc = new()
         {
             Width = (uint)description.Width,
             Height = (uint)description.Height,
             Format = ToDXGISwapChainFormat(description.Format),
             Stereo = false,
             SampleDesc = new(1, 0),
-            BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+            BufferUsage = Usage.RenderTargetOutput,
             BufferCount = PresentModeToBufferCount(description.PresentMode),
-            Scaling = DXGI_SCALING_STRETCH,
-            SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD,
-            AlphaMode = DXGI_ALPHA_MODE_IGNORE,
-            Flags = tearingSupported ? (uint)DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0u
+            Scaling = Scaling.Stretch,
+            SwapEffect = SwapEffect.FlipDiscard,
+            AlphaMode = Win32.Graphics.Dxgi.Common.AlphaMode.Ignore,
+            Flags = tearingSupported ? SwapChainFlags.AllowTearing : SwapChainFlags.None
         };
 
         switch (surface)
@@ -72,14 +67,14 @@ internal abstract unsafe class D3DSwapChainBase : SwapChain
                 break;
 #else
             case Win32SwapChainSurface win32Source:
-                DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsSwapChainDesc = new()
+                SwapChainFullscreenDescription fsSwapChainDesc = new()
                 {
                     Windowed = !description.IsFullscreen
                 };
 
                 ThrowIfFailed(factory->CreateSwapChainForHwnd(
                     deviceOrCommandQueue,
-                    (HWND)win32Source.Hwnd.ToPointer(),
+                    win32Source.Hwnd,
                     &swapChainDesc,
                     &fsSwapChainDesc,
                     null,
@@ -87,7 +82,7 @@ internal abstract unsafe class D3DSwapChainBase : SwapChain
                     );
 
                 // This class does not support exclusive full-screen mode and prevents DXGI from responding to the ALT+ENTER shortcut
-                ThrowIfFailed(factory->MakeWindowAssociation((HWND)win32Source.Hwnd.ToPointer(), DXGI_MWA_NO_ALT_ENTER));
+                ThrowIfFailed(factory->MakeWindowAssociation(win32Source.Hwnd, WindowAssociationFlags.NoAltEnter));
                 break;
 #endif
 
@@ -110,7 +105,7 @@ internal abstract unsafe class D3DSwapChainBase : SwapChain
     public bool NeedResize()
     {
         // Check for window size changes and resize the swapchain if needed.
-        DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
+        SwapChainDescription1 swapChainDesc;
         ThrowIfFailed(_handle.Get()->GetDesc1(&swapChainDesc));
         if (swapChainDesc.Width != DrawableSize.Width ||
             swapChainDesc.Height != DrawableSize.Height)

@@ -1,3 +1,4 @@
+#if TODO
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
@@ -7,7 +8,7 @@ using TerraFX.Interop.Windows;
 
 namespace Vortice.Audio.XAudio2;
 
-internal unsafe struct XAudio2EngineCallback 
+internal unsafe struct XAudio2EngineCallback
 {
     public static readonly void** Vtbl = InitVtbl();
 
@@ -15,9 +16,12 @@ internal unsafe struct XAudio2EngineCallback
     {
         void** lpVtbl = (void**)RuntimeHelpers.AllocateTypeAssociatedMemory(typeof(XAudio2EngineCallback), sizeof(void*) * 3);
 
-        /* OnProcessingPassStart */ lpVtbl[0] = (delegate* unmanaged<XAudio2EngineCallback*, void>)&OnProcessingPassStart;
-        /* OnProcessingPassEnd */   lpVtbl[1] = (delegate* unmanaged<XAudio2EngineCallback*, void>)&OnProcessingPassEnd;
-        /* OnCriticalError */       lpVtbl[2] = (delegate* unmanaged<XAudio2EngineCallback*, HRESULT, void>)&OnCriticalError;
+        /* OnProcessingPassStart */
+        lpVtbl[0] = (delegate* unmanaged<XAudio2EngineCallback*, void>)&OnProcessingPassStart;
+        /* OnProcessingPassEnd */
+        lpVtbl[1] = (delegate* unmanaged<XAudio2EngineCallback*, void>)&OnProcessingPassEnd;
+        /* OnCriticalError */
+        lpVtbl[2] = (delegate* unmanaged<XAudio2EngineCallback*, HRESULT, void>)&OnCriticalError;
 
         return lpVtbl;
     }
@@ -55,3 +59,5 @@ internal unsafe struct XAudio2EngineCallback
     {
     }
 }
+
+#endif

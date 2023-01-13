@@ -10,7 +10,7 @@ public readonly record struct SwapChainDescription
     public SwapChainDescription(
         int width,
         int height,
-        TextureFormat colorFormat = TextureFormat.BGRA8UNormSrgb,
+        TextureFormat colorFormat = TextureFormat.Bgra8UnormSrgb,
         PresentMode presentMode = PresentMode.Fifo)
     {
         Guard.IsTrue(width >= 0, nameof(width));
@@ -24,7 +24,7 @@ public readonly record struct SwapChainDescription
 
     public int Width { get; init; }
     public int Height { get; init; }
-    public TextureFormat Format { get; init; } = TextureFormat.BGRA8UNormSrgb;
+    public TextureFormat Format { get; init; } = TextureFormat.Bgra8UnormSrgb;
     public PresentMode PresentMode { get; init; } = PresentMode.Fifo;
     public bool IsFullscreen { get; init; } = false;
 

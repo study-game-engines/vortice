@@ -14,9 +14,9 @@ public static class TextureFormatUtils
     {
         switch (format)
         {
-            case TextureFormat.Depth16UNorm:
+            case TextureFormat.Depth16Unorm:
             case TextureFormat.Depth32Float:
-            case TextureFormat.Depth24UNormStencil8:
+            case TextureFormat.Depth24UnormStencil8:
             case TextureFormat.Depth32FloatStencil8:
                 return true;
 
@@ -34,7 +34,7 @@ public static class TextureFormatUtils
     {
         switch (format)
         {
-            case TextureFormat.Depth24UNormStencil8:
+            case TextureFormat.Depth24UnormStencil8:
             case TextureFormat.Depth32FloatStencil8:
                 return true;
 
@@ -62,20 +62,20 @@ public static class TextureFormatUtils
     {
         switch (format)
         {
-            case TextureFormat.BC1UNorm:
-            case TextureFormat.BC1UNormSrgb:
-            case TextureFormat.BC2UNorm:
-            case TextureFormat.BC2UNormSrgb:
-            case TextureFormat.BC3UNorm:
-            case TextureFormat.BC3UNormSrgb:
-            case TextureFormat.BC4UNorm:
-            case TextureFormat.BC4SNorm:
-            case TextureFormat.BC5UNorm:
-            case TextureFormat.BC5SNorm:
-            case TextureFormat.BC6HUFloat:
-            case TextureFormat.BC6HSFloat:
-            case TextureFormat.BC7UNorm:
-            case TextureFormat.BC7UNormSrgb:
+            case TextureFormat.Bc1RgbaUnorm:
+            case TextureFormat.Bc1RgbaUnormSrgb:
+            case TextureFormat.Bc2RgbaUnorm:
+            case TextureFormat.Bc2RgbaUnormSrgb:
+            case TextureFormat.Bc3RgbaUnorm:
+            case TextureFormat.Bc3RgbaUnormSrgb:
+            case TextureFormat.Bc4RUnorm:
+            case TextureFormat.Bc4RSnorm:
+            case TextureFormat.Bc5RgUnorm:
+            case TextureFormat.Bc5RgSnorm:
+            case TextureFormat.Bc6hRgbUfloat:
+            case TextureFormat.Bc6hRgbSfloat:
+            case TextureFormat.Bc7RgbaUnorm:
+            case TextureFormat.Bc7RgbaUnormSrgb:
                 return true;
 
             default:

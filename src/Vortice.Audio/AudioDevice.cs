@@ -91,7 +91,8 @@ public abstract class AudioDevice : IDisposable
         {
             case AudioBackend.XAudio2:
 #if !EXCLUDE_XAUDIO2_BACKEND
-                return XAudio2.XAudio2Device.IsSupported();
+                return false;
+                //return XAudio2.XAudio2Device.IsSupported();
 #else
                 return false;
 #endif
@@ -114,10 +115,10 @@ public abstract class AudioDevice : IDisposable
         if (preferredBackend == AudioBackend.Count)
         {
 #if !EXCLUDE_XAUDIO2_BACKEND
-            if(IsBackendSupported(AudioBackend.XAudio2))
-            {
-                return new XAudio2.XAudio2Device();
-            }
+            //if(IsBackendSupported(AudioBackend.XAudio2))
+            //{
+            //    return new XAudio2.XAudio2Device();
+            //}
 #endif
 
 #if !EXCLUDE_OPENAL_BACKEND

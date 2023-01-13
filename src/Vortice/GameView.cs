@@ -10,6 +10,7 @@ public abstract class GameView
 {
     public event EventHandler? SizeChanged;
 
+    public abstract bool IsMinimized { get; }
     public abstract Size ClientSize { get; }
 
     public abstract SwapChainSurface Surface { get; }

@@ -1,31 +1,42 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using static SDL2.SDL;
-using static SDL2.SDL.SDL_EventType;
-using static SDL2.SDL.SDL_WindowEventID;
-//using Vortice.Content;
+using System.Runtime.InteropServices;
+using static Alimer.Bindings.SDL.SDL;
+using static Alimer.Bindings.SDL.SDL.SDL_EventType;
+using static Alimer.Bindings.SDL.SDL.SDL_LogPriority;
+//using static SDL2.SDL.SDL_WindowEventID;
 
 namespace Vortice;
 
-internal class SDLGamePlatform : GamePlatform
+internal unsafe class SDLGamePlatform : GamePlatform
 {
     private const int _eventsPerPeep = 64;
-    private readonly SDL_Event[] _events = new SDL_Event[_eventsPerPeep];
+    private readonly SDL_Event* _events = (SDL_Event*)NativeMemory.Alloc(_eventsPerPeep, (nuint)sizeof(SDL_Event));
 
     private readonly SDLGameWindow _window;
     private bool _exitRequested;
 
     public SDLGamePlatform()
     {
+        SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+        SDL_LogSetOutputFunction(&OnLog, IntPtr.Zero);
+
+        SDL_GetVersion(out SDL_version version);
+        Log.Info($"SDL v{version.major}.{version.minor}.{version.patch}");
+
+        // DPI aware on Windows
+        SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+        SDL_SetHint(SDL_HINT_WINDOWS_DPI_SCALING, true);
+
         // Init SDL2
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
         {
-            SDL_Log($"Unable to initialize SDL: {SDL_GetError()}");
+            Log.Error($"Unable to initialize SDL: {SDL_GetError()}");
             throw new Exception("");
         }
 
-        View = (_window = new SDLGameWindow(this));
+        View = (_window = new SDLGameWindow());
     }
 
     // <inheritdoc />
@@ -39,14 +50,14 @@ internal class SDLGamePlatform : GamePlatform
 
         while (!_exitRequested)
         {
-            PollSDLEvents();
-            RunOneFrame();
+            PollEvents();
+            OnTick();
         }
 
         SDL_Quit();
     }
 
-    private void PollSDLEvents()
+    private void PollEvents()
     {
         SDL_PumpEvents();
         int eventsRead;
@@ -78,17 +89,14 @@ internal class SDLGamePlatform : GamePlatform
 
     private void HandleWindowEvent(in SDL_Event evt)
     {
-        switch (evt.window.windowEvent)
-        {
-            case SDL_WINDOWEVENT_SIZE_CHANGED:
-                //updateWindowSize();
-                break;
-
-        }
+        var window = SDLGameWindow.Get(evt.window.windowID);
+        window.HandleEvent(evt);
     }
 
-    private void RunOneFrame()
+    [UnmanagedCallersOnly]
+    private static unsafe void OnLog(nint userData, int category, SDL_LogPriority priority, sbyte* messagePtr)
     {
-        OnTick();
+        string message = new(messagePtr);
+        Log.Info($"SDL: {message}");
     }
 }

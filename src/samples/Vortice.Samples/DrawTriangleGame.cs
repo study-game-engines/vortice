@@ -3,7 +3,6 @@
 
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
-using Vortice.Audio;
 using Vortice.Engine;
 using Vortice.Graphics;
 using Vortice.Mathematics;
@@ -43,7 +42,7 @@ public sealed class DrawTriangleGame : Game
 
         //using GraphicsBuffer vertexBuffer = GraphicsBuffer.Create(GraphicsDevice, triangleVertices, BufferUsage.Vertex);
         //
-        using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(TextureFormat.RGBA8UNorm, 256, 256)))
+        using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(TextureFormat.Rgba8Unorm, 256, 256)))
         {
         }
     }

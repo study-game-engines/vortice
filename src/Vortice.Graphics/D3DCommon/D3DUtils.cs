@@ -4,135 +4,139 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Diagnostics;
-using TerraFX.Interop.DirectX;
-using static TerraFX.Interop.DirectX.DXGI_FORMAT;
-using static TerraFX.Interop.DirectX.DXGI_GPU_PREFERENCE;
+using Win32.Graphics.Dxgi;
+using Win32.Graphics.Dxgi.Common;
 
 namespace Vortice.Graphics.D3DCommon;
 
 internal static unsafe class D3DUtils
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DXGI_FORMAT ToDXGISwapChainFormat(TextureFormat format)
+    public static Format ToDXGISwapChainFormat(TextureFormat format)
     {
         // FLIP_DISCARD and FLIP_SEQEUNTIAL swapchain buffers only support these formats
         switch (format)
         {
-            case TextureFormat.RGBA16Float:
-                return DXGI_FORMAT_R16G16B16A16_FLOAT;
+            case TextureFormat.Rgba16Float:
+                return Format.R16G16B16A16Float;
 
-            case TextureFormat.BGRA8UNorm:
-            case TextureFormat.BGRA8UNormSrgb:
-                return DXGI_FORMAT_B8G8R8A8_UNORM;
+            case TextureFormat.Bgra8Unorm :
+            case TextureFormat.Bgra8UnormSrgb:
+                return Format.B8G8R8A8Unorm;
 
-            case TextureFormat.RGBA8UNorm:
-            case TextureFormat.RGBA8UNormSrgb:
-                return DXGI_FORMAT_R8G8B8A8_UNORM;
+            case TextureFormat.Rgba8Unorm:
+            case TextureFormat.Rgba8UnormSrgb:
+                return Format.R8G8B8A8Unorm;
 
-            case TextureFormat.RGB10A2UNorm:
-                return DXGI_FORMAT_R10G10B10A2_UNORM;
+            case TextureFormat.Rgb10a2Unorm:
+                return Format.R10G10B10A2Unorm;
 
             default:
-                return DXGI_FORMAT_B8G8R8A8_UNORM;
+                return Format.B8G8R8A8Unorm;
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DXGI_FORMAT ToDXGIFormat(TextureFormat format)
+    public static Format ToDxgiFormat(this TextureFormat format)
     {
         switch (format)
         {
             // 8-bit formats
-            case TextureFormat.R8UNorm: return DXGI_FORMAT_R8_UNORM;
-            case TextureFormat.R8SNorm: return DXGI_FORMAT_R8_SNORM;
-            case TextureFormat.R8UInt: return DXGI_FORMAT_R8_UINT;
-            case TextureFormat.R8SInt: return DXGI_FORMAT_R8_SINT;
+            case TextureFormat.R8Unorm: return Format.R8Unorm;
+            case TextureFormat.R8Snorm: return Format.R8Snorm;
+            case TextureFormat.R8Uint: return Format.R8Uint;
+            case TextureFormat.R8Sint: return Format.R8Sint;
             // 16-bit formats
-            case TextureFormat.R16UNorm: return DXGI_FORMAT_R16_UNORM;
-            case TextureFormat.R16SNorm: return DXGI_FORMAT_R16_SNORM;
-            case TextureFormat.R16UInt: return DXGI_FORMAT_R16_UINT;
-            case TextureFormat.R16SInt: return DXGI_FORMAT_R16_SINT;
-            case TextureFormat.R16Float: return DXGI_FORMAT_R16_FLOAT;
-            case TextureFormat.RG8UNorm: return DXGI_FORMAT_R8G8_UNORM;
-            case TextureFormat.RG8SNorm: return DXGI_FORMAT_R8G8_SNORM;
-            case TextureFormat.RG8UInt: return DXGI_FORMAT_R8G8_UINT;
-            case TextureFormat.RG8SInt: return DXGI_FORMAT_R8G8_SINT;
+            case TextureFormat.R16Unorm: return Format.R16Unorm;
+            case TextureFormat.R16Snorm: return Format.R16Snorm;
+            case TextureFormat.R16Uint: return Format.R16Uint;
+            case TextureFormat.R16Sint: return Format.R16Sint;
+            case TextureFormat.R16Float: return Format.R16Float;
+            case TextureFormat.Rg8Unorm: return Format.R8G8Unorm;
+            case TextureFormat.Rg8Snorm: return Format.R8G8Snorm;
+            case TextureFormat.Rg8Uint: return Format.R8G8Uint;
+            case TextureFormat.Rg8Sint: return Format.R8G8Sint;
+            // Packed 16-Bit Pixel Formats
+            case TextureFormat.Bgra4Unorm: return Format.B4G4R4A4Unorm;
+            case TextureFormat.B5G6R5Unorm: return Format.B5G6R5Unorm;
+            case TextureFormat.Bgr5A1Unorm: return Format.B5G5R5A1Unorm;
             // 32-bit formats
-            case TextureFormat.R32UInt: return DXGI_FORMAT_R32_UINT;
-            case TextureFormat.R32SInt: return DXGI_FORMAT_R32_SINT;
-            case TextureFormat.R32Float: return DXGI_FORMAT_R32_FLOAT;
-            case TextureFormat.RG16UNorm: return DXGI_FORMAT_R16G16_UNORM;
-            case TextureFormat.RG16SNorm: return DXGI_FORMAT_R16G16_SNORM;
-            case TextureFormat.RG16UInt: return DXGI_FORMAT_R16G16_UINT;
-            case TextureFormat.RG16SInt: return DXGI_FORMAT_R16G16_SINT;
-            case TextureFormat.RG16Float: return DXGI_FORMAT_R16G16_FLOAT;
-            case TextureFormat.RGBA8UNorm: return DXGI_FORMAT_R8G8B8A8_UNORM;
-            case TextureFormat.RGBA8UNormSrgb: return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-            case TextureFormat.RGBA8SNorm: return DXGI_FORMAT_R8G8B8A8_SNORM;
-            case TextureFormat.RGBA8UInt: return DXGI_FORMAT_R8G8B8A8_UINT;
-            case TextureFormat.RGBA8SInt: return DXGI_FORMAT_R8G8B8A8_SINT;
-            case TextureFormat.BGRA8UNorm: return DXGI_FORMAT_B8G8R8A8_UNORM;
-            case TextureFormat.BGRA8UNormSrgb: return DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+            case TextureFormat.R32Uint: return Format.R32Uint;
+            case TextureFormat.R32Sint: return Format.R32Sint;
+            case TextureFormat.R32Float: return Format.R32Float;
+            case TextureFormat.Rg16Unorm: return Format.R16G16Unorm;
+            case TextureFormat.Rg16Snorm: return Format.R16G16Snorm;
+            case TextureFormat.Rg16Uint: return Format.R16G16Uint;
+            case TextureFormat.Rg16Sint: return Format.R16G16Sint;
+            case TextureFormat.Rg16Float: return Format.R16G16Float;
+            case TextureFormat.Rgba8Unorm: return Format.R8G8B8A8Unorm;
+            case TextureFormat.Rgba8UnormSrgb: return Format.R8G8B8A8UnormSrgb;
+            case TextureFormat.Rgba8Snorm: return Format.R8G8B8A8Snorm;
+            case TextureFormat.Rgba8Uint: return Format.R8G8B8A8Uint;
+            case TextureFormat.Rgba8Sint: return Format.R8G8B8A8Sint;
+            case TextureFormat.Bgra8Unorm: return Format.B8G8R8A8Unorm;
+            case TextureFormat.Bgra8UnormSrgb: return Format.B8G8R8A8UnormSrgb;
             // Packed 32-Bit formats
-            case TextureFormat.RGB10A2UNorm: return DXGI_FORMAT_R10G10B10A2_UNORM;
-            case TextureFormat.RG11B10Float: return DXGI_FORMAT_R11G11B10_FLOAT;
-            case TextureFormat.RGB9E5Float: return DXGI_FORMAT_R9G9B9E5_SHAREDEXP;
+            case TextureFormat.Rgb9e5Ufloat: return Format.R9G9B9E5SharedExp;
+            case TextureFormat.Rgb10a2Unorm: return Format.R10G10B10A2Unorm;
+            case TextureFormat.Rgb10a2Uint: return Format.R10G10B10A2Uint;
+            case TextureFormat.Rg11b10Float: return Format.R11G11B10Float;
             // 64-Bit formats
-            case TextureFormat.RG32UInt: return DXGI_FORMAT_R32G32_UINT;
-            case TextureFormat.RG32SInt: return DXGI_FORMAT_R32G32_SINT;
-            case TextureFormat.RG32Float: return DXGI_FORMAT_R32G32_FLOAT;
-            case TextureFormat.RGBA16UNorm: return DXGI_FORMAT_R16G16B16A16_UNORM;
-            case TextureFormat.RGBA16SNorm: return DXGI_FORMAT_R16G16B16A16_SNORM;
-            case TextureFormat.RGBA16UInt: return DXGI_FORMAT_R16G16B16A16_UINT;
-            case TextureFormat.RGBA16SInt: return DXGI_FORMAT_R16G16B16A16_SINT;
-            case TextureFormat.RGBA16Float: return DXGI_FORMAT_R16G16B16A16_FLOAT;
+            case TextureFormat.Rg32Uint: return Format.R32G32Uint;
+            case TextureFormat.Rg32Sint: return Format.R32G32Sint;
+            case TextureFormat.Rg32Float: return Format.R32G32Float;
+            case TextureFormat.Rgba16Unorm: return Format.R16G16B16A16Unorm;
+            case TextureFormat.Rgba16Snorm: return Format.R16G16B16A16Snorm;
+            case TextureFormat.Rgba16Uint: return Format.R16G16B16A16Uint;
+            case TextureFormat.Rgba16Sint: return Format.R16G16B16A16Sint;
+            case TextureFormat.Rgba16Float: return Format.R16G16B16A16Float;
             // 128-Bit formats
-            case TextureFormat.RGBA32UInt: return DXGI_FORMAT_R32G32B32A32_UINT;
-            case TextureFormat.RGBA32SInt: return DXGI_FORMAT_R32G32B32A32_SINT;
-            case TextureFormat.RGBA32Float: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+            case TextureFormat.Rgba32Uint: return Format.R32G32B32A32Uint;
+            case TextureFormat.Rgba32Sint: return Format.R32G32B32A32Sint;
+            case TextureFormat.Rgba32Float: return Format.R32G32B32A32Float;
             // Depth-stencil formats
-            case TextureFormat.Depth16UNorm: return DXGI_FORMAT_D16_UNORM;
-            case TextureFormat.Depth32Float: return DXGI_FORMAT_D32_FLOAT;
-            case TextureFormat.Depth24UNormStencil8: return DXGI_FORMAT_D24_UNORM_S8_UINT;
-            case TextureFormat.Depth32FloatStencil8: return DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+            case TextureFormat.Depth16Unorm: return Format.D16Unorm;
+            case TextureFormat.Depth32Float: return Format.D32Float;
+            case TextureFormat.Stencil8: return Format.D24UnormS8Uint;
+            case TextureFormat.Depth24UnormStencil8: return Format.D24UnormS8Uint;
+            case TextureFormat.Depth32FloatStencil8: return Format.D32FloatS8X24Uint;
             // Compressed BC formats
-            case TextureFormat.BC1UNorm: return DXGI_FORMAT_BC1_UNORM;
-            case TextureFormat.BC1UNormSrgb: return DXGI_FORMAT_BC1_UNORM_SRGB;
-            case TextureFormat.BC2UNorm: return DXGI_FORMAT_BC2_UNORM;
-            case TextureFormat.BC2UNormSrgb: return DXGI_FORMAT_BC2_UNORM_SRGB;
-            case TextureFormat.BC3UNorm: return DXGI_FORMAT_BC3_UNORM;
-            case TextureFormat.BC3UNormSrgb: return DXGI_FORMAT_BC3_UNORM_SRGB;
-            case TextureFormat.BC4UNorm: return DXGI_FORMAT_BC4_UNORM;
-            case TextureFormat.BC4SNorm: return DXGI_FORMAT_BC4_SNORM;
-            case TextureFormat.BC5UNorm: return DXGI_FORMAT_BC5_UNORM;
-            case TextureFormat.BC5SNorm: return DXGI_FORMAT_BC5_SNORM;
-            case TextureFormat.BC6HUFloat: return DXGI_FORMAT_BC6H_UF16;
-            case TextureFormat.BC6HSFloat: return DXGI_FORMAT_BC6H_SF16;
-            case TextureFormat.BC7UNorm: return DXGI_FORMAT_BC7_UNORM;
-            case TextureFormat.BC7UNormSrgb: return DXGI_FORMAT_BC7_UNORM_SRGB;
+            case TextureFormat.Bc1RgbaUnorm: return Format.BC1Unorm;
+            case TextureFormat.Bc1RgbaUnormSrgb: return Format.BC1UnormSrgb;
+            case TextureFormat.Bc2RgbaUnorm: return Format.BC2Unorm;
+            case TextureFormat.Bc2RgbaUnormSrgb: return Format.BC2UnormSrgb;
+            case TextureFormat.Bc3RgbaUnorm: return Format.BC3Unorm;
+            case TextureFormat.Bc3RgbaUnormSrgb: return Format.BC3UnormSrgb;
+            case TextureFormat.Bc4RSnorm: return Format.BC4Unorm;
+            case TextureFormat.Bc4RUnorm: return Format.BC4Snorm;
+            case TextureFormat.Bc5RgUnorm: return Format.BC5Unorm;
+            case TextureFormat.Bc5RgSnorm: return Format.BC5Snorm;
+            case TextureFormat.Bc6hRgbSfloat: return Format.BC6HSF16;
+            case TextureFormat.Bc6hRgbUfloat: return Format.BC6HUF16;
+            case TextureFormat.Bc7RgbaUnorm: return Format.BC7Unorm;
+            case TextureFormat.Bc7RgbaUnormSrgb: return Format.BC7UnormSrgb;
 
             default:
-                return ThrowHelper.ThrowArgumentException<DXGI_FORMAT>("Invalid texture format");
+                return Format.Unknown;
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DXGI_FORMAT GetTypelessFormatFromDepthFormat(TextureFormat format)
+    public static Format GetTypelessFormatFromDepthFormat(this TextureFormat format)
     {
         switch (format)
         {
-            case TextureFormat.Depth16UNorm:
-                return DXGI_FORMAT_R16_TYPELESS;
+            case TextureFormat.Depth16Unorm:
+                return Format.R16Typeless ;
             case TextureFormat.Depth32Float:
-                return DXGI_FORMAT_R32_TYPELESS;
-            case TextureFormat.Depth24UNormStencil8:
-                return DXGI_FORMAT_R24G8_TYPELESS;
+                return Format.R32Typeless;
+            case TextureFormat.Depth24UnormStencil8:
+                return Format.R24G8Typeless;
             case TextureFormat.Depth32FloatStencil8:
-                return DXGI_FORMAT_R32G8X24_TYPELESS;
+                return Format.R32G8X24Typeless;
 
             default:
                 Guard.IsFalse(format.IsDepthFormat(), nameof(format));
-                return ToDXGIFormat(format);
+                return ToDxgiFormat(format);
         }
     }
 
@@ -168,17 +172,19 @@ internal static unsafe class D3DUtils
         };
     }
 
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DXGI_GPU_PREFERENCE ToDXGI(GpuPowerPreference powerPreference)
+    public static GpuPreference ToDxgi(this GpuPowerPreference preference)
     {
-        return powerPreference switch
+        switch (preference)
         {
-            GpuPowerPreference.HighPerformance => DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
-            GpuPowerPreference.LowPower => DXGI_GPU_PREFERENCE_MINIMUM_POWER,
-            _ => ThrowHelper.ThrowArgumentException<DXGI_GPU_PREFERENCE>("Invalid power preference"),
-        };
+            case GpuPowerPreference.LowPower:
+                return GpuPreference.MinimumPower;
+
+            default:
+            case GpuPowerPreference.HighPerformance:
+                return GpuPreference.HighPerformance;
+        }
     }
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static uint PresentModeToBufferCount(PresentMode mode)
@@ -205,4 +211,16 @@ internal static unsafe class D3DUtils
                 return ThrowHelper.ThrowArgumentException<uint>("Invalid present mode");
         }
     }
+}
+
+unsafe partial class Kernel32
+{
+    [LibraryImport("kernel32")]
+    public static partial void InitializeSRWLock(void* SRWLock);
+
+    [LibraryImport("kernel32")]
+    public static partial void AcquireSRWLockExclusive(void* SRWLock);
+
+    [LibraryImport("kernel32")]
+    public static partial void ReleaseSRWLockExclusive(void* SRWLock);
 }

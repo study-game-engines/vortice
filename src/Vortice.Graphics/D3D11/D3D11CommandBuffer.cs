@@ -1,10 +1,11 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using TerraFX.Interop.Windows;
-using static TerraFX.Interop.Windows.Windows;
-using static TerraFX.Interop.DirectX.DXGI;
-using TerraFX.Interop.DirectX;
+using Win32;
+using Win32.Graphics.Direct3D11;
+using Win32.Graphics.Dxgi;
+using static Win32.Apis;
+using static Win32.Graphics.Dxgi.Apis;
 
 namespace Vortice.Graphics.D3D11;
 
@@ -105,19 +106,19 @@ internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
         {
             D3D11SwapChain swapChain = _swapChains[i];
 
-            BOOL fullscreen = false;
+            Bool32 fullscreen = false;
             swapChain.Handle->GetFullscreenState(&fullscreen, null);
 
-            uint presentFlags = 0;
+            PresentFlags presentFlags = 0;
             if (swapChain.SyncInterval == 0 && !fullscreen)
             {
-                presentFlags = DXGI_PRESENT_ALLOW_TEARING;
+                presentFlags = PresentFlags.AllowTearing;
             }
 
-            HRESULT result = swapChain.Handle->Present(swapChain.SyncInterval, presentFlags);
+            HResult result = swapChain.Handle->Present(swapChain.SyncInterval, presentFlags);
 
             // If the device was reset we must completely reinitialize the renderer.
-            if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
+            if (result ==  DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
             {
 #if DEBUG
                 //Result logResult = (result == DXGI.ResultCode.DeviceRemoved) ? Device.d3d.DeviceRemovedReason : result;

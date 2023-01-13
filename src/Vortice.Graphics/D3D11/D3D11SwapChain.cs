@@ -1,10 +1,10 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using TerraFX.Interop.DirectX;
-using TerraFX.Interop.Windows;
 using Vortice.Graphics.D3DCommon;
-using static TerraFX.Interop.Windows.Windows;
+using Win32;
+using Win32.Graphics.Direct3D11;
+using static Win32.Apis;
 
 namespace Vortice.Graphics.D3D11;
 
@@ -49,7 +49,7 @@ internal unsafe class D3D11SwapChain : D3DSwapChainBase
             using ComPtr<ID3D11Texture2D> backbufferTexture = default;
             ThrowIfFailed(Handle->GetBuffer(0, __uuidof<ID3D11Texture2D>(), backbufferTexture.GetVoidAddressOf()));
 
-            D3D11_TEXTURE2D_DESC description;
+            Texture2DDescription description;
             backbufferTexture.Get()->GetDesc(&description);
             BackbufferTexture = new D3D11Texture(Device, backbufferTexture.Get(), description);
         }

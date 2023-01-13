@@ -22,10 +22,14 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 
     <PackageVersion Include="Vortice.Mathematics" Version="1.4.25" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Dxgi" Version="$(VorticeWin32Version)" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Direct3D11" Version="$(VorticeWin32Version)" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Direct3D12" Version="$(VorticeWin32Version)" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Direct3D.Dxc" Version="$(VorticeWin32Version)" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Direct3D.Fxc" Version="$(VorticeWin32Version)" />
     <PackageVersion Include="Vortice.Vulkan" Version="$(VorticeVulkanVersion)" />
-    <PackageVersion Include="ppy.SDL2-CS" Version="1.0.611-alpha" />
-    <PackageVersion Include="TerraFX.Interop.Windows" Version="10.0.20348.5" />
-    <PackageVersion Include="TerraFX.Interop.D3D12MemoryAllocator" Version="2.0.1.2" />
+
+    <PackageVersion Include="Alimer.Bindings.SDL" Version="1.0.3" />
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     
     <!-- Asset Pipeline -->

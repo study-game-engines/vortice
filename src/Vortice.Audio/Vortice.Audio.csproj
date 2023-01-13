@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
-    <PackageReference Include="TerraFX.Interop.Windows" />
   </ItemGroup>
 
 </Project>

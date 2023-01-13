@@ -14,23 +14,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Remove="System.Windows.Forms" />
-    
-    <Using Include="System.Runtime.InteropServices" />
-    <Using Include="System.Runtime.CompilerServices" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Vortice.Audio\Vortice.Audio.csproj" />
+    <!--<ProjectReference Include="..\Vortice.Audio\Vortice.Audio.csproj" />-->
     <ProjectReference Include="..\Vortice.Graphics\Vortice.Graphics.csproj" />
     
-    <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Vortice.Mathematics" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="ppy.SDL2-CS" />
+    <PackageReference Include="Alimer.Bindings.SDL" />
   </ItemGroup>
 
 </Project>

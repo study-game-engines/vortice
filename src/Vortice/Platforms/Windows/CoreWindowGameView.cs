@@ -12,6 +12,7 @@ namespace Vortice;
 internal class CoreWindowGameView : GameView, IFrameworkView
 {
     private readonly WindowsGamePlatform _platform;
+    private bool _minimized;
 
     public CoreWindowGameView(WindowsGamePlatform platform)
     {
@@ -19,6 +20,8 @@ internal class CoreWindowGameView : GameView, IFrameworkView
         IsVisible = true;
     }
 
+    /// <inheritdoc />
+    public override bool IsMinimized => _minimized;
     public override Size ClientSize => throw new NotImplementedException();
     public override SwapChainSurface Surface => throw new NotImplementedException();
     public bool IsVisible { get; private set; }
