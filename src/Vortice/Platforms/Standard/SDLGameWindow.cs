@@ -1,6 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Drawing;
 using Vortice.Graphics;
 using Vortice.Mathematics;
 using static SDL2.SDL;
@@ -64,7 +65,7 @@ internal class SDLGameWindow : GameView
     public IntPtr Handle { get; }
 
     /// <inheritdoc />
-    public override SizeI ClientSize
+    public override Size ClientSize
     {
         get
         {

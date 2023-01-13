@@ -1,6 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Drawing;
 using Vortice.Graphics;
 using Vortice.Mathematics;
 using Windows.ApplicationModel.Core;
@@ -18,7 +19,7 @@ internal class CoreWindowGameView : GameView, IFrameworkView
         IsVisible = true;
     }
 
-    public override SizeI ClientSize => throw new NotImplementedException();
+    public override Size ClientSize => throw new NotImplementedException();
     public override SwapChainSurface Surface => throw new NotImplementedException();
     public bool IsVisible { get; private set; }
 

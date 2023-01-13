@@ -1,7 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Vortice.Mathematics;
+using System.Drawing;
 
 namespace Vortice.Graphics;
 
@@ -20,7 +20,7 @@ public abstract class SwapChain : GraphicsResource
     public PresentMode PresentMode { get; }
 
     public bool AutoResizeDrawable { get; set; } = true;
-    public SizeI DrawableSize { get; set; }
+    public Size DrawableSize { get; set; }
 
     protected abstract void ResizeBackBuffer(int width, int height);
 }

@@ -1,8 +1,6 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Vortice.Mathematics;
-
 namespace Vortice.Graphics;
 
 public abstract class Texture : GraphicsResource
@@ -50,7 +48,7 @@ public abstract class Texture : GraphicsResource
     /// <returns></returns>
     public int GetWidth(int mipLevel = 0)
     {
-        return (mipLevel == 0) || (mipLevel < MipLevels) ? MathHelper.Max(1, Width >> mipLevel) : 0;
+        return (mipLevel == 0) || (mipLevel < MipLevels) ? Math.Max(1, Width >> mipLevel) : 0;
     }
 
     // <summary>
@@ -60,7 +58,7 @@ public abstract class Texture : GraphicsResource
     /// <returns></returns>
     public int GetHeight(int mipLevel = 0)
     {
-        return (mipLevel == 0) || (mipLevel < MipLevels) ? MathHelper.Max(1, Height >> mipLevel) : 0;
+        return (mipLevel == 0) || (mipLevel < MipLevels) ? Math.Max(1, Height >> mipLevel) : 0;
     }
 
     // <summary>
@@ -75,7 +73,7 @@ public abstract class Texture : GraphicsResource
             return 1;
         }
 
-        return (mipLevel == 0) || (mipLevel < MipLevels) ? MathHelper.Max(1, DepthOrArraySize >> mipLevel) : 0;
+        return (mipLevel == 0) || (mipLevel < MipLevels) ? Math.Max(1, DepthOrArraySize >> mipLevel) : 0;
     }
 
     public int CalculateSubresource(int mipSlice, int arraySlice, int planeSlice = 0)
