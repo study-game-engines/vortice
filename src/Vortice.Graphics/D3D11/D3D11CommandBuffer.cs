@@ -15,6 +15,7 @@ internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
     private readonly ComPtr<ID3DUserDefinedAnnotation> _userDefinedAnnotation = default;
     private readonly ComPtr<ID3D11CommandList> _commandList;
     private readonly List<D3D11SwapChain> _swapChains = new();
+    private D3D11ComputePassEncoder? _computePass;
 
     public D3D11CommandBuffer(D3D11GraphicsDevice device)
         : base(device)
@@ -100,6 +101,21 @@ internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
         return d3dSwapChain.BackbufferTexture;
     }
 
+    public override ComputePassEncoder BeginComputePass()
+    {
+        if (_computePass == default)
+        {
+            _computePass = new D3D11ComputePassEncoder(((D3D11GraphicsDevice)Device), this);
+        }
+
+        return _computePass!;
+    }
+
+    public void EndComputePass()
+    {
+        _computePass = default;
+    }
+
     public void PresentSwapChains()
     {
         for (int i = 0; i < _swapChains.Count; ++i)
@@ -118,7 +134,7 @@ internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
             HResult result = swapChain.Handle->Present(swapChain.SyncInterval, presentFlags);
 
             // If the device was reset we must completely reinitialize the renderer.
-            if (result ==  DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
+            if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
             {
 #if DEBUG
                 //Result logResult = (result == DXGI.ResultCode.DeviceRemoved) ? Device.d3d.DeviceRemovedReason : result;

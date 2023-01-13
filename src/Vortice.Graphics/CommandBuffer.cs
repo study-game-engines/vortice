@@ -29,6 +29,8 @@ public abstract class CommandBuffer
         return new ScopedDebugGroup(this);
     }
 
+    public abstract ComputePassEncoder BeginComputePass();
+
     public abstract Texture? AcquireSwapchainTexture(SwapChain swapChain);
 
     //public void BeginRenderPass(in Texture texture, in Color4 clearColor)

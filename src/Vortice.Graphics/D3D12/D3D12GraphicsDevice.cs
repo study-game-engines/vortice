@@ -8,12 +8,6 @@ namespace Vortice.Graphics.D3D12;
 
 internal class D3D12GraphicsDevice : GraphicsDevice
 {
-    public const uint D3D11_REQ_TEXTURE1D_U_DIMENSION = 16384u;
-    public const uint D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION = 16384u;
-    public const uint D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION = 2048u;
-    public const uint D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION = 2048u;
-    public const uint D3D11_REQ_IMMEDIATE_CONSTANT_BUFFER_ELEMENT_COUNT = 4096u;
-
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
     private static readonly FeatureLevel[] s_featureLevels = new[]

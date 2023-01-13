@@ -59,6 +59,9 @@ public sealed class DrawTriangleGame : Game
             //commandBuffer.EndRenderPass();
         }
 
+        ComputePassEncoder computePass = commandBuffer.BeginComputePass();
+        computePass.End();
+
         GraphicsDevice.Submit(commandBuffer);
     }
 
