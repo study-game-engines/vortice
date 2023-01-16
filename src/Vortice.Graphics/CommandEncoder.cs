@@ -7,17 +7,10 @@ namespace Vortice.Graphics;
 
 public abstract class CommandEncoder
 {
-    protected CommandEncoder(CommandBuffer commandBuffer)
-    {
-        Guard.IsNotNull(commandBuffer, nameof(commandBuffer));
-
-        CommandBuffer = commandBuffer;
-    }
-
     /// <summary>
     /// Get the <see cref="Graphics.CommandBuffer"/> object that created the command encoder.
     /// </summary>
-    public CommandBuffer CommandBuffer { get; }
+    public abstract CommandBuffer CommandBuffer { get; }
 
     public abstract void End();
 

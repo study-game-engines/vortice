@@ -8,7 +8,7 @@ namespace Vortice.Graphics;
 /// </summary>
 public enum TextureFormat
 {
-    Invalid = 0,
+    Undefined = 0,
     // 8-bit formats
     R8Unorm,
     R8Snorm,

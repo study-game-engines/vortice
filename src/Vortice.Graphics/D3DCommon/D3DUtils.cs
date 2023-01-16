@@ -12,7 +12,7 @@ namespace Vortice.Graphics.D3DCommon;
 internal static unsafe class D3DUtils
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Format ToDXGISwapChainFormat(TextureFormat format)
+    public static Format ToDxgiSwapChainFormat(this TextureFormat format)
     {
         // FLIP_DISCARD and FLIP_SEQEUNTIAL swapchain buffers only support these formats
         switch (format)
@@ -20,7 +20,7 @@ internal static unsafe class D3DUtils
             case TextureFormat.Rgba16Float:
                 return Format.R16G16B16A16Float;
 
-            case TextureFormat.Bgra8Unorm :
+            case TextureFormat.Bgra8Unorm:
             case TextureFormat.Bgra8UnormSrgb:
                 return Format.B8G8R8A8Unorm;
 
@@ -120,13 +120,97 @@ internal static unsafe class D3DUtils
         }
     }
 
+    public static TextureFormat FromDxgiFormat(this Format format)
+    {
+        switch (format)
+        {
+            // 8-bit formats
+            case Format.R8Unorm: return TextureFormat.R8Unorm;
+            case Format.R8Snorm: return TextureFormat.R8Snorm;
+            case Format.R8Uint: return TextureFormat.R8Uint;
+            case Format.R8Sint: return TextureFormat.R8Sint;
+            // 16-bit formats
+            case Format.R16Unorm: return TextureFormat.R16Unorm;
+            case Format.R16Snorm: return TextureFormat.R16Snorm;
+            case Format.R16Uint: return TextureFormat.R16Uint;
+            case Format.R16Sint: return TextureFormat.R16Sint;
+            case Format.R16Float: return TextureFormat.R16Float;
+            case Format.R8G8Unorm: return TextureFormat.Rg8Unorm;
+            case Format.R8G8Snorm: return TextureFormat.Rg8Snorm;
+            case Format.R8G8Uint: return TextureFormat.Rg8Uint;
+            case Format.R8G8Sint: return TextureFormat.Rg8Sint;
+            // Packed 16-Bit Pixel Formats
+            case Format.B4G4R4A4Unorm: return TextureFormat.Bgra4Unorm;
+            case Format.B5G6R5Unorm: return TextureFormat.B5G6R5Unorm;
+            case Format.B5G5R5A1Unorm: return TextureFormat.Bgr5A1Unorm;
+            // 32-bit formats
+            case Format.R32Uint: return TextureFormat.R32Uint;
+            case Format.R32Sint: return TextureFormat.R32Sint;
+            case Format.R32Float: return TextureFormat.R32Float;
+            case Format.R16G16Unorm: return TextureFormat.Rg16Unorm;
+            case Format.R16G16Snorm: return TextureFormat.Rg16Snorm;
+            case Format.R16G16Uint: return TextureFormat.Rg16Uint;
+            case Format.R16G16Sint: return TextureFormat.Rg16Sint;
+            case Format.R16G16Float: return TextureFormat.Rg16Float;
+            case Format.R8G8B8A8Unorm: return TextureFormat.Rgba8Unorm;
+            case Format.R8G8B8A8UnormSrgb: return TextureFormat.Rgba8UnormSrgb;
+            case Format.R8G8B8A8Snorm: return TextureFormat.Rgba8Snorm;
+            case Format.R8G8B8A8Uint: return TextureFormat.Rgba8Uint;
+            case Format.R8G8B8A8Sint: return TextureFormat.Rgba8Sint;
+            case Format.B8G8R8A8Unorm: return TextureFormat.Bgra8Unorm;
+            case Format.B8G8R8A8UnormSrgb: return TextureFormat.Bgra8UnormSrgb;
+            // Packed 32-Bit formats
+            case Format.R9G9B9E5SharedExp: return TextureFormat.Rgb9e5Ufloat;
+            case Format.R10G10B10A2Unorm: return TextureFormat.Rgb10a2Unorm;
+            case Format.R10G10B10A2Uint: return TextureFormat.Rgb10a2Uint;
+            case Format.R11G11B10Float: return TextureFormat.Rg11b10Float;
+            // 64-Bit formats
+            case Format.R32G32Uint: return TextureFormat.Rg32Uint;
+            case Format.R32G32Sint: return TextureFormat.Rg32Sint;
+            case Format.R32G32Float: return TextureFormat.Rg32Float;
+            case Format.R16G16B16A16Unorm: return TextureFormat.Rgba16Unorm;
+            case Format.R16G16B16A16Snorm: return TextureFormat.Rgba16Snorm;
+            case Format.R16G16B16A16Uint: return TextureFormat.Rgba16Uint;
+            case Format.R16G16B16A16Sint: return TextureFormat.Rgba16Sint;
+            case Format.R16G16B16A16Float: return TextureFormat.Rgba16Float;
+            // 128-Bit formats
+            case Format.R32G32B32A32Uint: return TextureFormat.Rgba32Uint;
+            case Format.R32G32B32A32Sint: return TextureFormat.Rgba32Sint;
+            case Format.R32G32B32A32Float: return TextureFormat.Rgba32Float;
+            // Depth-stencil formats
+            case Format.D16Unorm: return TextureFormat.Depth16Unorm;
+            case Format.D32Float: return TextureFormat.Depth32Float;
+            //case Format.D24UnormS8Uint: return TextureFormat.Stencil8;
+            case Format.D24UnormS8Uint: return TextureFormat.Depth24UnormStencil8;
+            case Format.D32FloatS8X24Uint: return TextureFormat.Depth32FloatStencil8;
+            // Compressed BC formats
+            case Format.BC1Unorm: return TextureFormat.Bc1RgbaUnorm;
+            case Format.BC1UnormSrgb: return TextureFormat.Bc1RgbaUnormSrgb;
+            case Format.BC2Unorm: return TextureFormat.Bc2RgbaUnorm;
+            case Format.BC2UnormSrgb: return TextureFormat.Bc2RgbaUnormSrgb;
+            case Format.BC3Unorm: return TextureFormat.Bc3RgbaUnorm;
+            case Format.BC3UnormSrgb: return TextureFormat.Bc3RgbaUnormSrgb;
+            case Format.BC4Unorm: return TextureFormat.Bc4RSnorm;
+            case Format.BC4Snorm: return TextureFormat.Bc4RUnorm;
+            case Format.BC5Unorm: return TextureFormat.Bc5RgUnorm;
+            case Format.BC5Snorm: return TextureFormat.Bc5RgSnorm;
+            case Format.BC6HSF16: return TextureFormat.Bc6hRgbSfloat;
+            case Format.BC6HUF16: return TextureFormat.Bc6hRgbUfloat;
+            case Format.BC7Unorm: return TextureFormat.Bc7RgbaUnorm;
+            case Format.BC7UnormSrgb: return TextureFormat.Bc7RgbaUnormSrgb;
+
+            default:
+                return TextureFormat.Undefined;
+        }
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Format GetTypelessFormatFromDepthFormat(this TextureFormat format)
     {
         switch (format)
         {
             case TextureFormat.Depth16Unorm:
-                return Format.R16Typeless ;
+                return Format.R16Typeless;
             case TextureFormat.Depth32Float:
                 return Format.R32Typeless;
             case TextureFormat.Depth24UnormStencil8:

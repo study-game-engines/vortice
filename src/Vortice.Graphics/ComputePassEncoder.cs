@@ -5,8 +5,7 @@ namespace Vortice.Graphics;
 
 public abstract class ComputePassEncoder : CommandEncoder
 {
-    protected ComputePassEncoder(CommandBuffer commandBuffer)
-        : base(commandBuffer)
+    protected ComputePassEncoder()
     {
     }
 

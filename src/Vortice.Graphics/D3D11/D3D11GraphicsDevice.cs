@@ -248,10 +248,10 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             AdapterDescription1 adapterDesc;
             ThrowIfFailed(dxgiAdapter.Get()->GetDesc1(&adapterDesc));
 
-            FeatureDataArchitectureInfo architectureInfo = default; //_device.Get()->CheckFeatureSupport<FeatureDataArchitectureInfo>(D3DFeature.ArchitectureInfo);
-            FeatureDataD3D11Options options = default; //NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS>(D3D11_FEATURE_D3D11_OPTIONS);
-            FeatureDataD3D11Options1 options1 = default; //NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS1>(D3D11_FEATURE_D3D11_OPTIONS1);
-            FeatureDataD3D11Options2 options2 = default; // NativeDevice->CheckFeatureSupport<D3D11_FEATURE_DATA_D3D11_OPTIONS2>(D3D11_FEATURE_D3D11_OPTIONS2);
+            FeatureDataArchitectureInfo architectureInfo = _device.Get()->CheckFeatureSupport<FeatureDataArchitectureInfo>(D3DFeature.ArchitectureInfo);
+            FeatureDataD3D11Options options = _device.Get()->CheckFeatureSupport<FeatureDataD3D11Options>(D3DFeature.Options);
+            FeatureDataD3D11Options1 options1 = _device.Get()->CheckFeatureSupport<FeatureDataD3D11Options1>(D3DFeature.Options1);
+            FeatureDataD3D11Options2 options2 = _device.Get()->CheckFeatureSupport<FeatureDataD3D11Options2>(D3DFeature.Options2);
 
             // Detect adapter type.
             GpuAdapterType adapterType = GpuAdapterType.Other;

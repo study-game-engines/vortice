@@ -20,7 +20,7 @@ internal abstract unsafe class D3DSwapChainBase : SwapChain
         {
             Width = (uint)description.Width,
             Height = (uint)description.Height,
-            Format = ToDXGISwapChainFormat(description.Format),
+            Format = description.Format.ToDxgiSwapChainFormat(),
             Stereo = false,
             SampleDesc = new(1, 0),
             BufferUsage = Usage.RenderTargetOutput,

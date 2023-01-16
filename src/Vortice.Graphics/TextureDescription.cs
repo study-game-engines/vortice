@@ -1,6 +1,9 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
+
 namespace Vortice.Graphics;
 
 /// <summary>
@@ -8,24 +11,30 @@ namespace Vortice.Graphics;
 /// </summary>
 public record struct TextureDescription
 {
+    [SetsRequiredMembers]
     public TextureDescription(
         TextureDimension dimension,
         TextureFormat format,
         int width,
         int height,
-        int depthOrArraySize,
+        int depthOrArrayLayers,
         int mipLevels = 1,
         TextureUsage usage = TextureUsage.ShaderRead,
         TextureSampleCount sampleCount = TextureSampleCount.Count1,
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
+        Guard.IsTrue(format != TextureFormat.Undefined);
+        Guard.IsGreaterThanOrEqualTo(width, 1);
+        Guard.IsGreaterThanOrEqualTo(height, 1);
+        Guard.IsGreaterThanOrEqualTo(depthOrArrayLayers, 1);
+
         Dimension = dimension;
         Format = format;
         Width = width;
         Height = height;
-        DepthOrArraySize = depthOrArraySize;
-        MipLevels = mipLevels == 0 ? CountMipLevels(width, height, dimension == TextureDimension.Texture3D ? depthOrArraySize : 1) : mipLevels;
+        DepthOrArrayLayers = depthOrArrayLayers;
+        MipLevels = mipLevels == 0 ? CountMipLevels(width, height, dimension == TextureDimension.Texture3D ? depthOrArrayLayers : 1) : mipLevels;
         SampleCount = sampleCount;
         Usage = usage;
         CpuAccess = access;
@@ -102,23 +111,49 @@ public record struct TextureDescription
     }
 
     /// <summary>
-    /// Dimension of <see cref="Texture"/>.
+    /// Gets the dimension of <see cref="Texture"/>
     /// </summary>
-    public TextureDimension Dimension { get; init; }
+    public required TextureDimension Dimension { get; init; }
 
-    public TextureFormat Format { get; init; }
+    /// <summary>
+    /// Gets the pixel format of <see cref="Texture"/>
+    /// </summary>
+    public required TextureFormat Format { get; init; }
 
-    public int Width { get; init; }
-    public int Height { get; init; }
-    public int DepthOrArraySize { get; init; }
-    public int MipLevels { get; init; }
-    public TextureUsage Usage { get; init; }
-    public TextureSampleCount SampleCount { get; init; }
+    /// <summary>
+    /// Gets the width of <see cref="Texture"/>
+    /// </summary>
+    public required int Width { get; init; }
+
+    /// <summary>
+    /// Gets the height of <see cref="Texture"/>
+    /// </summary>
+    public required int Height { get; init; }
+
+    /// <summary>
+    /// Gets the depth of <see cref="Texture"/>, if it is 3D, or the array layers if it is an array of 1D or 2D resources.
+    /// </summary>
+    public required int DepthOrArrayLayers { get; init; }
+
+    /// <summary>
+    /// Gets the number of MIP levels in the <see cref="Texture"/>
+    /// </summary>
+    public required int MipLevels { get; init; }
+
+    /// <summary>
+    /// Gets the <see cref="TextureUsage"/> of <see cref="Texture"/>.
+    /// </summary>
+    public TextureUsage Usage { get; init; } = TextureUsage.ShaderRead;
+
+    /// <summary>
+    /// Gets the texture sample count.
+    /// </summary>
+    public TextureSampleCount SampleCount { get; init; } = TextureSampleCount.Count1;
 
     /// <summary>
     /// CPU access of the <see cref="Texture"/>.
     /// </summary>
-    public CpuAccessMode CpuAccess { get; init; }
+    public CpuAccessMode CpuAccess { get; init; } = CpuAccessMode.None;
 
     // <summary>
     /// Gets or sets the label of <see cref="Texture"/>.

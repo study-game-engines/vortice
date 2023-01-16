@@ -13,6 +13,8 @@ internal unsafe class D3D11Texture : Texture
 {
     private readonly ComPtr<ID3D11Resource> _handle;
 
+    public ID3D11Resource* Handle => _handle;
+
     public D3D11Texture(D3D11GraphicsDevice device, in TextureDescription description)
         : base(device, description)
     {
@@ -82,7 +84,7 @@ internal unsafe class D3D11Texture : Texture
                 Width = (uint)description.Width,
                 Height = (uint)description.Height,
                 MipLevels = (uint)description.MipLevels,
-                ArraySize = (uint)description.DepthOrArraySize,
+                ArraySize = (uint)description.DepthOrArrayLayers,
                 Format = format,
                 SampleDesc = new(ToSampleCount(description.SampleCount), 0),
                 Usage = usage,
@@ -92,7 +94,7 @@ internal unsafe class D3D11Texture : Texture
             };
 
             if (description.SampleCount == TextureSampleCount.Count1 &&
-                desc.Width == desc.Height && (description.DepthOrArraySize % 6 == 0))
+                desc.Width == desc.Height && (description.DepthOrArrayLayers % 6 == 0))
             {
                 desc.MiscFlags |= ResourceMiscFlags.TextureCube;
             }
@@ -125,14 +127,17 @@ internal unsafe class D3D11Texture : Texture
     {
         if (disposing)
         {
+            base.Dispose(disposing);
+
             _handle.Dispose();
         }
     }
 
-    public ID3D11Resource* Handle => _handle;
-
+    /// <inheritdoc />
     protected override void OnLabelChanged(string newLabel)
     {
-        //Handle.DebugName = newLabel;
+        _handle.Get()->SetDebugName(newLabel);
     }
+
+    protected override TextureView CreateView(in TextureViewDescription description) => new D3D11TextureView(this, description);
 }

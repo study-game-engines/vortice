@@ -7,17 +7,24 @@ namespace Vortice.Graphics.D3D11;
 
 internal unsafe class D3D11ComputePassEncoder : ComputePassEncoder
 {
-    private readonly D3D11GraphicsDevice _device;
+    private readonly D3D11CommandBuffer _commandBuffer;
     private readonly ID3D11DeviceContext1* _handle;
 
-    public D3D11ComputePassEncoder(D3D11GraphicsDevice device, D3D11CommandBuffer commandBuffer)
-        : base(commandBuffer)
+    public D3D11ComputePassEncoder(D3D11CommandBuffer commandBuffer)
     {
-        _device = device;
+        _commandBuffer = commandBuffer;
         _handle = commandBuffer.Handle;
     }
 
-    public override void End() => ((D3D11CommandBuffer)CommandBuffer).EndComputePass();
+    /// <inheritdoc />
+    public override CommandBuffer CommandBuffer => _commandBuffer;
+
+    public void Begin()
+    {
+
+    }
+
+    public override void End() => _commandBuffer.EndEncoder();
 
     public override void Dispatch(int groupCountX, int groupCountY, int groupCountZ)
     {

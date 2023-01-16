@@ -95,7 +95,7 @@ public abstract class GraphicsDevice : DisposableObject
     {
         Guard.IsGreaterThanOrEqualTo(description.Width, 1, nameof(TextureDescription.Width));
         Guard.IsGreaterThanOrEqualTo(description.Height, 1, nameof(TextureDescription.Height));
-        Guard.IsGreaterThanOrEqualTo(description.DepthOrArraySize, 1, nameof(TextureDescription.DepthOrArraySize));
+        Guard.IsGreaterThanOrEqualTo(description.DepthOrArrayLayers, 1, nameof(TextureDescription.DepthOrArrayLayers));
 
         return CreateTextureCore(description);
     }

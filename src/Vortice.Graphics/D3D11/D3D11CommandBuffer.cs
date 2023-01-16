@@ -15,13 +15,18 @@ internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
     private readonly ComPtr<ID3DUserDefinedAnnotation> _userDefinedAnnotation = default;
     private readonly ComPtr<ID3D11CommandList> _commandList;
     private readonly List<D3D11SwapChain> _swapChains = new();
-    private D3D11ComputePassEncoder? _computePass;
+    private bool _activeEncoder = false;
+    private readonly D3D11RenderPassEncoder _renderPass;
+    private readonly D3D11ComputePassEncoder _computePass;
 
     public D3D11CommandBuffer(D3D11GraphicsDevice device)
         : base(device)
     {
         ThrowIfFailed(device.NativeDevice->CreateDeferredContext1(0u, _handle.GetAddressOf()));
         _handle.CopyTo(_userDefinedAnnotation.GetAddressOf());
+
+        _renderPass = new D3D11RenderPassEncoder(this);
+        _computePass = new D3D11ComputePassEncoder(this);
     }
 
     public ID3D11DeviceContext1* Handle => _handle;
@@ -52,12 +57,17 @@ internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
     public void Reset()
     {
         _commandList.Dispose();
-
         _swapChains.Clear();
+        _activeEncoder = false;
     }
 
     public void End()
     {
+        if (_activeEncoder)
+        {
+            throw new InvalidOperationException("Cannot submit with active command encoders");
+        }
+
         // Serialize the commands into a command list 
         ThrowIfFailed(_handle.Get()->FinishCommandList(false, _commandList.GetAddressOf()));
     }
@@ -101,19 +111,23 @@ internal unsafe class D3D11CommandBuffer : CommandBuffer, IDisposable
         return d3dSwapChain.BackbufferTexture;
     }
 
-    public override ComputePassEncoder BeginComputePass()
+    public override RenderPassEncoder BeginRenderPass(in RenderPassDescription renderPass)
     {
-        if (_computePass == default)
-        {
-            _computePass = new D3D11ComputePassEncoder(((D3D11GraphicsDevice)Device), this);
-        }
-
-        return _computePass!;
+        _renderPass.Begin(renderPass);
+        _activeEncoder = true;
+        return _renderPass;
     }
 
-    public void EndComputePass()
+    public override ComputePassEncoder BeginComputePass()
     {
-        _computePass = default;
+        _computePass.Begin();
+        _activeEncoder = true;
+        return _computePass;
+    }
+
+    public void EndEncoder()
+    {
+        _activeEncoder = false;
     }
 
     public void PresentSwapChains()

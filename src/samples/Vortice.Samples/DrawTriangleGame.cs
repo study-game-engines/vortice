@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Numerics;
+using System.Reflection.Emit;
 using Microsoft.Extensions.DependencyInjection;
 using Vortice.Engine;
 using Vortice.Graphics;
@@ -19,12 +20,6 @@ public sealed class DrawTriangleGame : Game
     /// <inheritdoc />
     protected override void ConfigureServices(IServiceCollection services)
     {
-        // Audio
-        //if (XAudio2Device.IsSupported())
-        //{
-        //    services.AddSingleton<AudioDevice>(new XAudio2Device());
-        //}
-
         base.ConfigureServices(services);
     }
 
@@ -52,15 +47,28 @@ public sealed class DrawTriangleGame : Game
         base.Draw(gameTime);
 
         CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer("Frame");
+
+        {
+            ComputePassEncoder computePass = commandBuffer.BeginComputePass();
+            computePass.End();
+        }
+
         Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(View.SwapChain!);
         if (swapChainTexture != null)
         {
-            //commandBuffer.BeginRenderPass(swapChainTexture!, Colors.CornflowerBlue);
-            //commandBuffer.EndRenderPass();
-        }
+            RenderPassColorAttachment colorAttachment = new(swapChainTexture.GetView())
+            {
+                ClearColor = Colors.CornflowerBlue,
+            };
 
-        ComputePassEncoder computePass = commandBuffer.BeginComputePass();
-        computePass.End();
+            RenderPassDescription renderPassDesc = new(colorAttachment)
+            {
+                Label = "Frame"
+            };
+
+            RenderPassEncoder renderPass = commandBuffer.BeginRenderPass(renderPassDesc);
+            renderPass.End();
+        }
 
         GraphicsDevice.Submit(commandBuffer);
     }

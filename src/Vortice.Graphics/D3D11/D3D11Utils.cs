@@ -59,16 +59,23 @@ internal static unsafe class D3D11Utils
 
     public static TextureDescription FromD3D11(in Texture2DDescription description)
     {
-        return new TextureDescription()
-        {
-            Dimension = TextureDimension.Texture2D,
-            //Format = FromDXGIFormat(description.Format),
-            Width = (int)description.Width,
-            Height = (int)description.Height,
-            DepthOrArraySize = (int)description.ArraySize,
-            MipLevels = (int)description.MipLevels,
-            Usage = FromD3D11(description.BindFlags),
-            SampleCount = FromSampleCount(description.SampleDesc.Count)
-        };
+        return TextureDescription.Texture2D(
+            description.Format.FromDxgiFormat(),
+            (int)description.Width,
+            (int)description.Height,
+            (int)description.MipLevels,
+            (int)description.ArraySize,
+            FromD3D11(description.BindFlags),
+            FromSampleCount(description.SampleDesc.Count),
+            CpuAccessMode.None
+        );
+    }
+
+    public static unsafe TFeature CheckFeatureSupport<TFeature>(this ref ID3D11Device1 self, Win32.Graphics.Direct3D11.Feature feature)
+        where TFeature : unmanaged
+    {
+        TFeature featureData = default;
+        ThrowIfFailed(self.CheckFeatureSupport(feature, &featureData, sizeof(TFeature)));
+        return featureData;
     }
 }
