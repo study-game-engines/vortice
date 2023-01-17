@@ -13,6 +13,7 @@ internal unsafe class D3D11Texture : Texture
 {
     private readonly ComPtr<ID3D11Resource> _handle;
 
+    public Format DxgiFormat { get; }
     public ID3D11Resource* Handle => _handle;
 
     public D3D11Texture(D3D11GraphicsDevice device, in TextureDescription description)
@@ -21,7 +22,7 @@ internal unsafe class D3D11Texture : Texture
         Usage usage = (description.CpuAccess == CpuAccessMode.None) ? Win32.Graphics.Direct3D11.Usage.Default : Win32.Graphics.Direct3D11.Usage.Staging;
         BindFlags bindFlags = 0;
         CpuAccessFlags cpuAccessFlags = 0u;
-        Format format = description.Format.ToDxgiFormat();
+        DxgiFormat = description.Format.ToDxgiFormat();
         ResourceMiscFlags miscFlags = 0;
 
         bool isDepthStencil = description.Format.IsDepthStencilFormat();
@@ -50,7 +51,7 @@ internal unsafe class D3D11Texture : Texture
             // If ShaderRead and depth format, set to typeless.
             if (isDepthStencil && description.Usage.HasFlag(TextureUsage.ShaderRead))
             {
-                format = description.Format.GetTypelessFormatFromDepthFormat();
+                DxgiFormat = description.Format.GetTypelessFormatFromDepthFormat();
             }
 
             // Mutually exclusive.
@@ -74,7 +75,7 @@ internal unsafe class D3D11Texture : Texture
         if (description.Dimension == TextureDimension.Texture1D)
         {
             Texture1DDescription desc = new(
-                format,
+                DxgiFormat,
                 (uint)description.Width,
                 (uint)description.DepthOrArrayLayers,
                 (uint)description.MipLevels,
@@ -92,28 +93,43 @@ internal unsafe class D3D11Texture : Texture
         }
         else if (description.Dimension == TextureDimension.Texture3D)
         {
+            Texture3DDescription desc = new(
+                DxgiFormat,
+                (uint)description.Width,
+                (uint)description.Height,
+                (uint)description.DepthOrArrayLayers,
+                (uint)description.MipLevels,
+                bindFlags,
+                usage,
+                cpuAccessFlags,
+                miscFlags);
+
+            HResult hr = device.NativeDevice->CreateTexture3D(&desc, null, (ID3D11Texture3D**)_handle.GetAddressOf());
+            if (hr.Failure)
+            {
+                //LOGE("D3D11: Failed to create 1D texture");
+                return;
+            }
         }
         else
         {
-            Texture2DDescription desc = new()
-            {
-                Width = (uint)description.Width,
-                Height = (uint)description.Height,
-                MipLevels = (uint)description.MipLevels,
-                ArraySize = (uint)description.DepthOrArrayLayers,
-                Format = format,
-                SampleDesc = new(ToSampleCount(description.SampleCount), 0),
-                Usage = usage,
-                BindFlags = bindFlags,
-                CPUAccessFlags = cpuAccessFlags,
-                MiscFlags = miscFlags
-            };
-
             if (description.Width == description.Height &&
                 description.DepthOrArrayLayers >= 6)
             {
-                desc.MiscFlags |= ResourceMiscFlags.TextureCube;
+                miscFlags |= ResourceMiscFlags.TextureCube;
             }
+
+            Texture2DDescription desc = new(
+               DxgiFormat,
+               (uint)description.Width,
+               (uint)description.Height,
+               (uint)description.DepthOrArrayLayers,
+               (uint)description.MipLevels,
+               bindFlags,
+               usage,
+               cpuAccessFlags,
+               ToSampleCount(description.SampleCount), 0,
+               miscFlags);
 
             HResult hr = device.NativeDevice->CreateTexture2D(&desc, null, (ID3D11Texture2D**)_handle.GetAddressOf());
             if (hr.Failure)
@@ -124,8 +140,8 @@ internal unsafe class D3D11Texture : Texture
         }
     }
 
-    public D3D11Texture(GraphicsDevice device, ID3D11Texture2D* existingTexture, in Texture2DDescription desc)
-        : base(device, FromD3D11(desc))
+    public D3D11Texture(GraphicsDevice device, ID3D11Texture2D* existingTexture, in TextureDescription description)
+        : base(device, description)
     {
         // Keep reference to texture.
         _handle.Attach((ID3D11Resource*)existingTexture);

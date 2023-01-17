@@ -19,10 +19,10 @@ public record struct TextureViewDescription
 
     public PixelFormat Format { get; init; } = PixelFormat.Undefined;
 
-    public uint BaseMipLevel { get; init; }
-    public uint MipLevelCount { get; init; }
-    public uint BaseArrayLayer { get; init; }
-    public uint ArrayLayerCount { get; init; }
+    public int BaseMipLevel { get; init; }
+    public int MipLevelCount { get; init; }
+    public int BaseArrayLayer { get; init; }
+    public int ArrayLayerCount { get; init; }
 
     // <summary>
     /// Gets or sets the label of <see cref="Texture"/>.

@@ -31,45 +31,45 @@ internal static unsafe class D3D11Utils
         return hr.Success;
     }
 
-    public static TextureUsage FromD3D11(in BindFlags flags)
-    {
-        TextureUsage usage = TextureUsage.None;
-        if ((flags & BindFlags.ShaderResource) != 0u)
-        {
-            usage |= TextureUsage.ShaderRead;
-        }
+    //public static TextureUsage FromD3D11(in BindFlags flags)
+    //{
+    //    TextureUsage usage = TextureUsage.None;
+    //    if ((flags & BindFlags.ShaderResource) != 0u)
+    //    {
+    //        usage |= TextureUsage.ShaderRead;
+    //    }
 
-        if ((flags & BindFlags.UnorderedAccess) != 0u)
-        {
-            usage |= TextureUsage.ShaderWrite;
-        }
+    //    if ((flags & BindFlags.UnorderedAccess) != 0u)
+    //    {
+    //        usage |= TextureUsage.ShaderWrite;
+    //    }
 
-        if ((flags & BindFlags.RenderTarget) != 0u)
-        {
-            usage |= TextureUsage.RenderTarget;
-        }
+    //    if ((flags & BindFlags.RenderTarget) != 0u)
+    //    {
+    //        usage |= TextureUsage.RenderTarget;
+    //    }
 
-        if ((flags & BindFlags.DepthStencil) != 0u)
-        {
-            usage |= TextureUsage.RenderTarget;
-        }
+    //    if ((flags & BindFlags.DepthStencil) != 0u)
+    //    {
+    //        usage |= TextureUsage.RenderTarget;
+    //    }
 
-        return usage;
-    }
+    //    return usage;
+    //}
 
-    public static TextureDescription FromD3D11(in Texture2DDescription description)
-    {
-        return TextureDescription.Texture2D(
-            description.Format.FromDxgiFormat(),
-            (int)description.Width,
-            (int)description.Height,
-            (int)description.MipLevels,
-            (int)description.ArraySize,
-            FromD3D11(description.BindFlags),
-            FromSampleCount(description.SampleDesc.Count),
-            CpuAccessMode.None
-        );
-    }
+    //public static TextureDescription FromD3D11(in Texture2DDescription description)
+    //{
+    //    return TextureDescription.Texture2D(
+    //        description.Format.FromDxgiFormat(),
+    //        (int)description.Width,
+    //        (int)description.Height,
+    //        (int)description.MipLevels,
+    //        (int)description.ArraySize,
+    //        FromD3D11(description.BindFlags),
+    //        FromSampleCount(description.SampleDesc.Count),
+    //        CpuAccessMode.None
+    //    );
+    //}
 
     public static unsafe TFeature CheckFeatureSupport<TFeature>(this ref ID3D11Device1 self, Win32.Graphics.Direct3D11.Feature feature)
         where TFeature : unmanaged

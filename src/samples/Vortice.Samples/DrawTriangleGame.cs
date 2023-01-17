@@ -35,9 +35,7 @@ public sealed class DrawTriangleGame : Game
             new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
         };
 
-        //using GraphicsBuffer vertexBuffer = GraphicsBuffer.Create(GraphicsDevice, triangleVertices, BufferUsage.Vertex);
-        //
-        using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(PixelFormat.Rgba8Unorm, 256, 256)))
+        using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(PixelFormat.Rgba8Unorm, 256, 256, 1, 6)))
         {
         }
     }
@@ -58,6 +56,7 @@ public sealed class DrawTriangleGame : Game
         {
             RenderPassColorAttachment colorAttachment = new(swapChainTexture.GetView())
             {
+                LoadAction = LoadAction.Clear,
                 ClearColor = Colors.CornflowerBlue,
             };
 

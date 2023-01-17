@@ -23,12 +23,12 @@ public readonly record struct RenderPassColorAttachment
     /// <summary>
     /// The action performed by this attachment at the start of a rendering pass.
     /// </summary>
-    public LoadAction LoadAction { get; init; }
+    public LoadAction LoadAction { get; init; } = LoadAction.Load;
 
     /// <summary>
     /// The action performed by this attachment at the end of a rendering pass
     /// </summary>
-    public StoreAction StoreAction { get; init; }
+    public StoreAction StoreAction { get; init; } = StoreAction.Store;
 
     /// <summary>
     /// The color to use when clearing the color attachment.

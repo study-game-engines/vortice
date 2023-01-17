@@ -73,7 +73,7 @@ public abstract class TextureView : GraphicsResource
                 case TextureViewDimension.View1DArray:
                 case TextureViewDimension.View2DArray:
                 case TextureViewDimension.ViewCubeArray:
-                    ArrayLayerCount = (uint)texture.DepthOrArrayLayers - description.BaseArrayLayer;
+                    ArrayLayerCount = texture.DepthOrArrayLayers - description.BaseArrayLayer;
                     break;
                 default:
                     break;
@@ -82,7 +82,12 @@ public abstract class TextureView : GraphicsResource
 
         if (MipLevelCount == 0)
         {
-            MipLevelCount = (uint)texture.MipLevels - description.BaseMipLevel;
+            MipLevelCount = texture.MipLevels - description.BaseMipLevel;
+        }
+
+        if (ArrayLayerCount == 0)
+        {
+            ArrayLayerCount = texture.DepthOrArrayLayers - description.BaseArrayLayer;
         }
     }
 
@@ -95,8 +100,8 @@ public abstract class TextureView : GraphicsResource
 
     public PixelFormat Format { get; }
 
-    public uint BaseMipLevel { get; }
-    public uint MipLevelCount { get; }
-    public uint BaseArrayLayer { get; }
-    public uint ArrayLayerCount { get; }
+    public int BaseMipLevel { get; }
+    public int MipLevelCount { get; }
+    public int BaseArrayLayer { get; }
+    public int ArrayLayerCount { get; }
 }
