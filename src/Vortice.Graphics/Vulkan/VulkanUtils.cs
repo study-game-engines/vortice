@@ -1,0 +1,124 @@
+// Copyright © Amer Koleci and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+
+using System.Runtime.CompilerServices;
+using Vortice.Vulkan;
+
+namespace Vortice.Graphics.Vulkan;
+
+internal static unsafe class VulkanUtils
+{
+    private static readonly VkImageType[] s_vkImageTypeMap = new VkImageType[(int)TextureDimension.Count] {
+        VkImageType.Image1D,
+        VkImageType.Image2D,
+        VkImageType.Image3D,
+    };
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static VkFormat ToVkFormat(this PixelFormat format)
+    {
+        switch (format)
+        {
+            // 8-bit formats
+            case PixelFormat.R8Unorm: return VkFormat.R8Unorm;
+            case PixelFormat.R8Snorm: return VkFormat.R8Snorm;
+            case PixelFormat.R8Uint: return VkFormat.R8Uint;
+            case PixelFormat.R8Sint: return VkFormat.R8Sint;
+            // 16-bit formats
+            case PixelFormat.R16Unorm: return VkFormat.R16Unorm;
+            case PixelFormat.R16Snorm: return VkFormat.R16Snorm;
+            case PixelFormat.R16Uint: return VkFormat.R16Uint;
+            case PixelFormat.R16Sint: return VkFormat.R16Sint;
+            case PixelFormat.R16Float: return VkFormat.R16Sfloat;
+            case PixelFormat.Rg8Unorm: return VkFormat.R8G8Unorm;
+            case PixelFormat.Rg8Snorm: return VkFormat.R8G8Snorm;
+            case PixelFormat.Rg8Uint: return VkFormat.R8G8Uint;
+            case PixelFormat.Rg8Sint: return VkFormat.R8G8Sint;
+            // Packed 16-Bit Pixel Formats
+            case PixelFormat.Bgra4Unorm: return VkFormat.B4G4R4A4UnormPack16;
+            case PixelFormat.B5G6R5Unorm: return VkFormat.B5G6R5UnormPack16;
+            case PixelFormat.Bgr5A1Unorm: return VkFormat.B5G5R5A1UnormPack16;
+            // 32-bit formats
+            case PixelFormat.R32Uint: return VkFormat.R32Uint;
+            case PixelFormat.R32Sint: return VkFormat.R32Sint;
+            case PixelFormat.R32Float: return VkFormat.R32Sfloat;
+            case PixelFormat.Rg16Unorm: return VkFormat.R16G16Unorm;
+            case PixelFormat.Rg16Snorm: return VkFormat.R16G16Snorm;
+            case PixelFormat.Rg16Uint: return VkFormat.R16G16Uint;
+            case PixelFormat.Rg16Sint: return VkFormat.R16G16Sint;
+            case PixelFormat.Rg16Float: return VkFormat.R16G16Sfloat;
+            case PixelFormat.Rgba8Unorm: return VkFormat.R8G8B8A8Unorm;
+            case PixelFormat.Rgba8UnormSrgb: return VkFormat.R8G8B8A8Srgb;
+            case PixelFormat.Rgba8Snorm: return VkFormat.R8G8B8A8Snorm;
+            case PixelFormat.Rgba8Uint: return VkFormat.R8G8B8A8Uint;
+            case PixelFormat.Rgba8Sint: return VkFormat.R8G8B8A8Sint;
+            case PixelFormat.Bgra8Unorm: return VkFormat.B8G8R8A8Unorm;
+            case PixelFormat.Bgra8UnormSrgb: return VkFormat.B8G8R8A8Srgb;
+            // Packed 32-Bit formats
+            case PixelFormat.Rgb9e5Ufloat: return VkFormat.E5B9G9R9UfloatPack32;
+            case PixelFormat.Rgb10a2Unorm: return VkFormat.A2B10G10R10UnormPack32;
+            case PixelFormat.Rgb10a2Uint: return VkFormat.A2B10G10R10UintPack32;
+            case PixelFormat.Rg11b10Float: return VkFormat.B10G11R11UfloatPack32;
+            // 64-Bit formats
+            case PixelFormat.Rg32Uint: return VkFormat.R32G32Uint;
+            case PixelFormat.Rg32Sint: return VkFormat.R32G32Sint;
+            case PixelFormat.Rg32Float: return VkFormat.R32G32Sfloat;
+            case PixelFormat.Rgba16Unorm: return VkFormat.R16G16B16A16Unorm;
+            case PixelFormat.Rgba16Snorm: return VkFormat.R16G16B16A16Snorm;
+            case PixelFormat.Rgba16Uint: return VkFormat.R16G16B16A16Uint;
+            case PixelFormat.Rgba16Sint: return VkFormat.R16G16B16A16Sint;
+            case PixelFormat.Rgba16Float: return VkFormat.R16G16B16A16Sfloat;
+            // 128-Bit formats
+            case PixelFormat.Rgba32Uint: return VkFormat.R32G32B32A32Uint;
+            case PixelFormat.Rgba32Sint: return VkFormat.R32G32B32A32Sint;
+            case PixelFormat.Rgba32Float: return VkFormat.R32G32B32A32Sfloat;
+            // Depth-stencil formats
+            case PixelFormat.Depth16Unorm: return VkFormat.D16Unorm;
+            case PixelFormat.Depth32Float: return VkFormat.D32Sfloat;
+            case PixelFormat.Stencil8: return VkFormat.D24UnormS8Uint;
+            case PixelFormat.Depth24UnormStencil8: return VkFormat.D24UnormS8Uint;
+            case PixelFormat.Depth32FloatStencil8: return VkFormat.D32SfloatS8Uint;
+            // Compressed BC formats
+            case PixelFormat.Bc1RgbaUnorm: return VkFormat.Bc1RgbaUnormBlock;
+            case PixelFormat.Bc1RgbaUnormSrgb: return VkFormat.Bc1RgbaSrgbBlock;
+            case PixelFormat.Bc2RgbaUnorm: return VkFormat.Bc2UnormBlock;
+            case PixelFormat.Bc2RgbaUnormSrgb: return VkFormat.Bc2SrgbBlock;
+            case PixelFormat.Bc3RgbaUnorm: return VkFormat.Bc3UnormBlock;
+            case PixelFormat.Bc3RgbaUnormSrgb: return VkFormat.Bc3SrgbBlock;
+            case PixelFormat.Bc4RSnorm: return VkFormat.Bc4UnormBlock;
+            case PixelFormat.Bc4RUnorm: return VkFormat.Bc4SnormBlock;
+            case PixelFormat.Bc5RgUnorm: return VkFormat.Bc5UnormBlock;
+            case PixelFormat.Bc5RgSnorm: return VkFormat.Bc5SnormBlock;
+            case PixelFormat.Bc6hRgbSfloat: return VkFormat.Bc6hSfloatBlock;
+            case PixelFormat.Bc6hRgbUfloat: return VkFormat.Bc6hUfloatBlock;
+            case PixelFormat.Bc7RgbaUnorm: return VkFormat.Bc7UnormBlock;
+            case PixelFormat.Bc7RgbaUnormSrgb: return VkFormat.Bc7SrgbBlock;
+
+            default:
+                return VkFormat.Undefined;
+        }
+    }
+
+    public static VkSampleCountFlags ToVkSampleCount(this TextureSampleCount sampleCount)
+    {
+        switch (sampleCount)
+        {
+            case TextureSampleCount.Count2:
+                return VkSampleCountFlags.Count2;
+            case TextureSampleCount.Count4:
+                return VkSampleCountFlags.Count4;
+            case TextureSampleCount.Count8:
+                return VkSampleCountFlags.Count8;
+            case TextureSampleCount.Count16:
+                return VkSampleCountFlags.Count16;
+            case TextureSampleCount.Count32:
+                return VkSampleCountFlags.Count32;
+            default:
+                return VkSampleCountFlags.Count1;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static VkImageType ToVk(this TextureDimension value) => s_vkImageTypeMap[(uint)value];
+
+}

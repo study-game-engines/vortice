@@ -11,16 +11,18 @@ public abstract class SwapChain : GraphicsResource
         : base(device, description.Label)
     {
         Surface = surface;
+        ColorFormat = description.Format;
+        PresentMode = description.PresentMode;
         DrawableSize = new(description.Width, description.Height);
     }
 
     public SwapChainSurface Surface { get; }
 
-    public TextureFormat ColorFormat { get; }
+    public PixelFormat ColorFormat { get; protected set; }
     public PresentMode PresentMode { get; }
 
     public bool AutoResizeDrawable { get; set; } = true;
-    public Size DrawableSize { get; set; }
+    public Size DrawableSize { get; protected set; }
 
     protected abstract void ResizeBackBuffer(int width, int height);
 }

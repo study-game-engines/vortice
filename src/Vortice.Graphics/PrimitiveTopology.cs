@@ -3,11 +3,14 @@
 
 namespace Vortice.Graphics;
 
-public enum TextureDimension
+public enum PrimitiveTopology
 {
-    Texture1D,
-    Texture2D,
-    Texture3D,
+    PointList,
+    LineList,
+    LineStrip,
+    TriangleList,
+    TriangleStrip,
+    //PatchList,
 
     Count
 }

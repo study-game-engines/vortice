@@ -37,7 +37,7 @@ public sealed class DrawTriangleGame : Game
 
         //using GraphicsBuffer vertexBuffer = GraphicsBuffer.Create(GraphicsDevice, triangleVertices, BufferUsage.Vertex);
         //
-        using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(TextureFormat.Rgba8Unorm, 256, 256)))
+        using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(PixelFormat.Rgba8Unorm, 256, 256)))
         {
         }
     }

@@ -6,7 +6,7 @@ namespace Vortice.Graphics;
 /// <summary>
 /// Structure that describes the <see cref="GraphicsDevice"/>.
 /// </summary>
-public record struct GraphicsDeviceDescription
+public readonly record struct GraphicsDeviceDescription
 {
     public GraphicsDeviceDescription()
     {
@@ -18,6 +18,11 @@ public record struct GraphicsDeviceDescription
         PowerPreference = powerPreference;
         Label = label;
     }
+
+    /// <summary>
+    /// Gets or sets the preferred backend to creates.
+    /// </summary>
+    public GraphicsBackend PreferredBackend { get; init; } = GraphicsBackend.Count;
 
     /// <summary>
     /// Gets the <see cref="GraphicsDevice"/> validation mode.

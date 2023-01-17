@@ -27,7 +27,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     public static bool IsSupported() => s_isSupported.Value;
 
     private readonly ComPtr<IDXGIFactory2> _dxgiFactory;
-    private readonly ComPtr<ID3D11Device1> _device;
+    private readonly ComPtr<ID3D11Device1> _device = default;
     private readonly ComPtr<ID3D11DeviceContext1> _immediateContext;
 
     private readonly GraphicsAdapterInfo _adapterInfo;
@@ -40,7 +40,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     private readonly List<D3D11CommandBuffer> _commandBuffersPool = new();
     private readonly Queue<D3D11CommandBuffer> _availableCommandBuffers = new();
 
-    public D3D11GraphicsDevice(ValidationMode validationMode, GpuPowerPreference powerPreference)
+    public D3D11GraphicsDevice(in GraphicsDeviceDescription description)
         : base(GraphicsBackend.Direct3D11)
     {
         Guard.IsTrue(IsSupported(), nameof(D3D11GraphicsDevice), "Direct3D11 is not supported");
@@ -52,7 +52,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
         Kernel32.InitializeSRWLock(_contextLock);
 
         uint dxgiDebugFlags = 0u;
-        if (validationMode != ValidationMode.Disabled)
+        if (description.ValidationMode != ValidationMode.Disabled)
         {
 #if DEBUG
             using ComPtr<IDXGIInfoQueue> dxgiInfoQueue = default;
@@ -100,7 +100,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             {
                 for (uint adapterIndex = 0;
                     dxgiFactory6.Get()->EnumAdapterByGpuPreference(adapterIndex,
-                        powerPreference.ToDxgi(),
+                        description.PowerPreference.ToDxgi(),
                         __uuidof<IDXGIAdapter1>(), (void**)dxgiAdapter.ReleaseAndGetAddressOf()
                         ).Success;
                     adapterIndex++)
@@ -145,7 +145,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             }
 
             CreateDeviceFlags creationFlags = CreateDeviceFlags.BgraSupport;
-            if (validationMode != ValidationMode.Disabled && SdkLayersAvailable())
+            if (description.ValidationMode != ValidationMode.Disabled && SdkLayersAvailable())
             {
                 creationFlags |= CreateDeviceFlags.Debug;
             }
@@ -194,7 +194,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
             ThrowIfFailed(hr);
 
             // Configure debug device (if active).
-            if (validationMode != ValidationMode.Disabled)
+            if (description.ValidationMode != ValidationMode.Disabled)
             {
                 using ComPtr<ID3D11Debug> d3d11Debug = default;
                 if (tempDevice.CopyTo(d3d11Debug.GetAddressOf()).Success)
@@ -215,7 +215,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                         enabledSeverities[2] = MessageSeverity.Warning;
                         enabledSeverities[3] = MessageSeverity.Message;
 
-                        if (validationMode == ValidationMode.Verbose)
+                        if (description.ValidationMode == ValidationMode.Verbose)
                         {
                             // Verbose only filters
                             enabledSeverities[4] = MessageSeverity.Info;

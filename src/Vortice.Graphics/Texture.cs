@@ -15,7 +15,7 @@ public abstract class Texture : GraphicsResource
     /// <summary>
     /// Gets the texture format.
     /// </summary>
-    public TextureFormat Format { get; }
+    public PixelFormat Format { get; }
 
     /// <summary>
     /// Gets the texture width, in texels.

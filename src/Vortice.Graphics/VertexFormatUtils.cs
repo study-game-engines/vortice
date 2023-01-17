@@ -20,7 +20,7 @@ public readonly record struct VertexFormatInfo(
     VertexFormatBaseType BaseType
 );
 
-public static class VertexFormatExtensions
+public static class VertexFormatUtils
 {
     private static readonly VertexFormatInfo[] s_vertexFormatInfos = new VertexFormatInfo[]
    {

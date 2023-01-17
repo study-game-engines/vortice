@@ -14,7 +14,7 @@ public record struct TextureDescription
     [SetsRequiredMembers]
     public TextureDescription(
         TextureDimension dimension,
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int height,
         int depthOrArrayLayers,
@@ -24,7 +24,7 @@ public record struct TextureDescription
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        Guard.IsTrue(format != TextureFormat.Undefined);
+        Guard.IsTrue(format != PixelFormat.Undefined);
         Guard.IsGreaterThanOrEqualTo(width, 1);
         Guard.IsGreaterThanOrEqualTo(height, 1);
         Guard.IsGreaterThanOrEqualTo(depthOrArrayLayers, 1);
@@ -42,7 +42,7 @@ public record struct TextureDescription
     }
 
     public static TextureDescription Texture1D(
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int mipLevels = 1,
         int arrayLayers = 1,
@@ -64,7 +64,7 @@ public record struct TextureDescription
     }
 
     public static TextureDescription Texture2D(
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int height,
         int mipLevels = 1,
@@ -88,7 +88,7 @@ public record struct TextureDescription
     }
 
     public static TextureDescription Texture3D(
-        TextureFormat format,
+        PixelFormat format,
         int width,
         int height,
         int depth = 1,
@@ -118,7 +118,7 @@ public record struct TextureDescription
     /// <summary>
     /// Gets the pixel format of <see cref="Texture"/>
     /// </summary>
-    public required TextureFormat Format { get; init; }
+    public required PixelFormat Format { get; init; }
 
     /// <summary>
     /// Gets the width of <see cref="Texture"/>

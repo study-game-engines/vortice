@@ -73,6 +73,22 @@ internal unsafe class D3D11Texture : Texture
 
         if (description.Dimension == TextureDimension.Texture1D)
         {
+            Texture1DDescription desc = new(
+                format,
+                (uint)description.Width,
+                (uint)description.DepthOrArrayLayers,
+                (uint)description.MipLevels,
+                bindFlags,
+                usage,
+                cpuAccessFlags,
+                miscFlags);
+
+            HResult hr = device.NativeDevice->CreateTexture1D(&desc, null, (ID3D11Texture1D**)_handle.GetAddressOf());
+            if (hr.Failure)
+            {
+                //LOGE("D3D11: Failed to create 1D texture");
+                return;
+            }
         }
         else if (description.Dimension == TextureDimension.Texture3D)
         {
@@ -93,8 +109,8 @@ internal unsafe class D3D11Texture : Texture
                 MiscFlags = miscFlags
             };
 
-            if (description.SampleCount == TextureSampleCount.Count1 &&
-                desc.Width == desc.Height && (description.DepthOrArrayLayers % 6 == 0))
+            if (description.Width == description.Height &&
+                description.DepthOrArrayLayers >= 6)
             {
                 desc.MiscFlags |= ResourceMiscFlags.TextureCube;
             }

@@ -69,17 +69,30 @@ public abstract class GraphicsDevice : DisposableObject
         }
     }
 
-    public static GraphicsDevice CreateDefault(ValidationMode validationMode = ValidationMode.Disabled)
+    public static GraphicsDevice CreateDefault(GraphicsDeviceDescription? description = default)
     {
+        description ??= new GraphicsDeviceDescription();
+
+        GraphicsBackend backend = description.Value.PreferredBackend;
+
+        if (backend == GraphicsBackend.Count)
+        {
 #if !EXCLUDE_D3D11_BACKEND
-        return new D3D11.D3D11GraphicsDevice(validationMode, GpuPowerPreference.HighPerformance);
+            if (D3D11.D3D11GraphicsDevice.IsSupported())
+            {
+                return new D3D11.D3D11GraphicsDevice(description.Value);
+            }
 #endif
 
-#if WINDOWS || WINDOWS_UWP
-        //return new D3D12.D3D12GraphicsDevice(validationMode);
+#if !EXCLUDE_VULKAN_BACKEND
+            if (Vulkan.VulkanGraphicsDevice.IsSupported())
+            {
+                return new Vulkan.VulkanGraphicsDevice(description.Value);
+            }
 #else
-        //return new Vulkan.VulkanGraphicsDevice(validationMode);
+            //return new Vulkan.VulkanGraphicsDevice(validationMode);
 #endif
+        }
 
         throw new PlatformNotSupportedException("No graphics backend is supported on current OS");
     }

@@ -53,7 +53,7 @@ public abstract class TextureView : GraphicsResource
             }
         }
 
-        if (Format == TextureFormat.Undefined)
+        if (Format == PixelFormat.Undefined)
         {
             Format = texture.Format;
         }
@@ -93,7 +93,7 @@ public abstract class TextureView : GraphicsResource
 
     public TextureViewDimension Dimension { get; }
 
-    public TextureFormat Format { get; }
+    public PixelFormat Format { get; }
 
     public uint BaseMipLevel { get; }
     public uint MipLevelCount { get; }

@@ -17,7 +17,7 @@ public record struct TextureViewDescription
     /// </summary>
     public TextureViewDimension Dimension { get; init; } = TextureViewDimension.Undefined;
 
-    public TextureFormat Format { get; init; } = TextureFormat.Undefined;
+    public PixelFormat Format { get; init; } = PixelFormat.Undefined;
 
     public uint BaseMipLevel { get; init; }
     public uint MipLevelCount { get; init; }

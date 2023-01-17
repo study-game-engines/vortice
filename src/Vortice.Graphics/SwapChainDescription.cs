@@ -7,10 +7,15 @@ namespace Vortice.Graphics;
 
 public readonly record struct SwapChainDescription
 {
+    public SwapChainDescription()
+    {
+
+    }
+
     public SwapChainDescription(
         int width,
         int height,
-        TextureFormat colorFormat = TextureFormat.Bgra8UnormSrgb,
+        PixelFormat colorFormat = PixelFormat.Bgra8UnormSrgb,
         PresentMode presentMode = PresentMode.Fifo)
     {
         Guard.IsTrue(width >= 0, nameof(width));
@@ -24,7 +29,7 @@ public readonly record struct SwapChainDescription
 
     public int Width { get; init; }
     public int Height { get; init; }
-    public TextureFormat Format { get; init; } = TextureFormat.Bgra8UnormSrgb;
+    public PixelFormat Format { get; init; } = PixelFormat.Bgra8UnormSrgb;
     public PresentMode PresentMode { get; init; } = PresentMode.Fifo;
     public bool IsFullscreen { get; init; } = false;
 

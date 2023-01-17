@@ -4,9 +4,9 @@
 namespace Vortice.Graphics;
 
 /// <summary>
-/// Define a <see cref="Texture"/> format.
+/// Define a pixel format.
 /// </summary>
-public enum TextureFormat
+public enum PixelFormat
 {
     Undefined = 0,
     // 8-bit formats
@@ -68,7 +68,7 @@ public enum TextureFormat
     Stencil8,
     Depth24UnormStencil8,
     Depth32FloatStencil8,
-    // BC compressed formats
+    // Bc compressed formats
     Bc1RgbaUnorm,
     Bc1RgbaUnormSrgb,
     Bc2RgbaUnorm,
@@ -83,7 +83,7 @@ public enum TextureFormat
     Bc6hRgbSfloat,
     Bc7RgbaUnorm,
     Bc7RgbaUnormSrgb,
-    // ETC2/EAC compressed formats
+    // Etc2/Eac compressed formats
     Etc2Rgb8Unorm,
     Etc2Rgb8UnormSrgb,
     Etc2Rgb8A1Unorm,
@@ -94,7 +94,7 @@ public enum TextureFormat
     EacR11Snorm,
     EacRg11Unorm,
     EacRg11Snorm,
-    // ASTC compressed formats
+    // Astc compressed formats
     Astc4x4Unorm,
     Astc4x4UnormSrgb,
     Astc5x4Unorm,
