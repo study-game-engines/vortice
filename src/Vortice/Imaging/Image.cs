@@ -7,7 +7,7 @@ using static Vortice.NativeApi;
 
 namespace Vortice.Imaging;
 
-public sealed class Image : DisposableObject
+public sealed class Image : GraphicsObject
 {
     public int Width { get; }
 

@@ -1,11 +1,12 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.InteropServices;
 using CommunityToolkit.Diagnostics;
 
 namespace Vortice.Graphics;
 
-public abstract class GraphicsDevice : DisposableObject
+public abstract class GraphicsDevice : GraphicsObject
 {
     private readonly Dictionary<IntPtr, CommandBuffer> _commandBuffers = new();
     private ulong _frameCount;
@@ -104,13 +105,63 @@ public abstract class GraphicsDevice : DisposableObject
     /// </summary>
     public abstract void WaitIdle();
 
-    public Texture CreateTexture(in TextureDescription description)
+    public unsafe GraphicsBuffer CreateBuffer(in BufferDescription description)
+    {
+        return CreateBuffer(description, null);
+    }
+
+    public unsafe GraphicsBuffer CreateBuffer(in BufferDescription description, IntPtr initialData)
+    {
+        return CreateBuffer(description, initialData.ToPointer());
+    }
+
+    public unsafe GraphicsBuffer CreateBuffer(in BufferDescription description, void* initialData)
+    {
+        Guard.IsGreaterThanOrEqualTo(description.Size, 4, nameof(BufferDescription.Size));
+
+        return CreateBufferCore(description, initialData);
+    }
+
+    public unsafe GraphicsBuffer CreateBuffer<T>(in BufferDescription description, ref T initialData) where T : unmanaged
+    {
+        Guard.IsGreaterThanOrEqualTo(description.Size, 4, nameof(BufferDescription.Size));
+
+        fixed (void* initialDataPtr = &initialData)
+        {
+            return CreateBuffer(description, initialDataPtr);
+        }
+    }
+
+    public GraphicsBuffer CreateBuffer<T>(T[] initialData,
+        BufferUsage usage = BufferUsage.ShaderReadWrite,
+        CpuAccessMode cpuAccess = CpuAccessMode.None)
+        where T : unmanaged
+    {
+        ReadOnlySpan<T> dataSpan = initialData.AsSpan();
+
+        return CreateBuffer(dataSpan, usage, cpuAccess);
+    }
+
+    public unsafe GraphicsBuffer CreateBuffer<T>(ReadOnlySpan<T> initialData,
+        BufferUsage usage = BufferUsage.ShaderReadWrite,
+        CpuAccessMode cpuAccess = CpuAccessMode.None,
+        string? label = default)
+        where T : unmanaged
+    {
+        int typeSize = sizeof(T);
+        Guard.IsTrue(initialData.Length > 0, nameof(initialData));
+
+        BufferDescription description = new((uint)(initialData.Length * typeSize), usage, cpuAccess, label);
+        return CreateBuffer(description, ref MemoryMarshal.GetReference(initialData));
+    }
+
+    public unsafe Texture CreateTexture(in TextureDescription description)
     {
         Guard.IsGreaterThanOrEqualTo(description.Width, 1, nameof(TextureDescription.Width));
         Guard.IsGreaterThanOrEqualTo(description.Height, 1, nameof(TextureDescription.Height));
         Guard.IsGreaterThanOrEqualTo(description.DepthOrArrayLayers, 1, nameof(TextureDescription.DepthOrArrayLayers));
 
-        return CreateTextureCore(description);
+        return CreateTextureCore(description, default);
     }
 
     public SwapChain CreateSwapChain(SwapChainSurface surface, in SwapChainDescription description)
@@ -143,7 +194,8 @@ public abstract class GraphicsDevice : DisposableObject
         SubmitCommandBuffers(commandBuffers, commandBuffers.Length);
     }
 
-    protected abstract Texture CreateTextureCore(in TextureDescription description);
+    protected abstract unsafe GraphicsBuffer CreateBufferCore(in BufferDescription description, void* initialData);
+    protected abstract unsafe Texture CreateTextureCore(in TextureDescription description, void* initialData);
 
     protected abstract SwapChain CreateSwapChainCore(SwapChainSurface surface, in SwapChainDescription description);
     protected abstract void SubmitCommandBuffers(CommandBuffer[] commandBuffers, int count);

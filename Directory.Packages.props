@@ -11,14 +11,13 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <VorticeWin32Version>1.9.13</VorticeWin32Version>
+    <VorticeWin32Version>1.9.14</VorticeWin32Version>
     <VorticeVulkanVersion>1.5.28</VorticeVulkanVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.1.0-preview3" />
+    <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.1.0" />
 
-    <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 
     <PackageVersion Include="Vortice.Mathematics" Version="1.4.25" />

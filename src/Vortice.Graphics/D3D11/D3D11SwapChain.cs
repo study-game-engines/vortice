@@ -58,8 +58,7 @@ internal unsafe class D3D11SwapChain : D3DSwapChainBase
                 (int)description.Height,
                 (int)description.MipLevels,
                 (int)description.ArraySize,
-                TextureUsage.RenderTarget,
-                TextureSampleCount.Count1);
+                TextureUsage.RenderTarget);
 
             BackbufferTexture = new D3D11Texture(Device, backbufferTexture.Get(), textureDesc);
         }

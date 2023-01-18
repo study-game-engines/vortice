@@ -16,7 +16,7 @@ internal unsafe class D3D11Texture : Texture
     public Format DxgiFormat { get; }
     public ID3D11Resource* Handle => _handle;
 
-    public D3D11Texture(D3D11GraphicsDevice device, in TextureDescription description)
+    public D3D11Texture(D3D11GraphicsDevice device, in TextureDescription description, void* initialData)
         : base(device, description)
     {
         Usage usage = (description.CpuAccess == CpuAccessMode.None) ? Win32.Graphics.Direct3D11.Usage.Default : Win32.Graphics.Direct3D11.Usage.Staging;
@@ -72,6 +72,15 @@ internal unsafe class D3D11Texture : Texture
                 cpuAccessFlags = CpuAccessFlags.Write;
         }
 
+        SubresourceData* pInitialData = default;
+        SubresourceData subresourceData = default;
+        if (initialData != null)
+        {
+            subresourceData.pSysMem = initialData;
+            subresourceData.SysMemPitch = (uint)(description.Width * description.Format.GetFormatBytesPerBlock());
+            pInitialData = &subresourceData;
+        }
+
         if (description.Dimension == TextureDimension.Texture1D)
         {
             Texture1DDescription desc = new(
@@ -84,7 +93,7 @@ internal unsafe class D3D11Texture : Texture
                 cpuAccessFlags,
                 miscFlags);
 
-            HResult hr = device.NativeDevice->CreateTexture1D(&desc, null, (ID3D11Texture1D**)_handle.GetAddressOf());
+            HResult hr = device.NativeDevice->CreateTexture1D(&desc, pInitialData, (ID3D11Texture1D**)_handle.GetAddressOf());
             if (hr.Failure)
             {
                 //LOGE("D3D11: Failed to create 1D texture");
@@ -104,7 +113,7 @@ internal unsafe class D3D11Texture : Texture
                 cpuAccessFlags,
                 miscFlags);
 
-            HResult hr = device.NativeDevice->CreateTexture3D(&desc, null, (ID3D11Texture3D**)_handle.GetAddressOf());
+            HResult hr = device.NativeDevice->CreateTexture3D(&desc, pInitialData, (ID3D11Texture3D**)_handle.GetAddressOf());
             if (hr.Failure)
             {
                 //LOGE("D3D11: Failed to create 1D texture");
@@ -131,7 +140,7 @@ internal unsafe class D3D11Texture : Texture
                ToSampleCount(description.SampleCount), 0,
                miscFlags);
 
-            HResult hr = device.NativeDevice->CreateTexture2D(&desc, null, (ID3D11Texture2D**)_handle.GetAddressOf());
+            HResult hr = device.NativeDevice->CreateTexture2D(&desc, pInitialData, (ID3D11Texture2D**)_handle.GetAddressOf());
             if (hr.Failure)
             {
                 //LOGE("D3D11: Failed to create 2D texture");

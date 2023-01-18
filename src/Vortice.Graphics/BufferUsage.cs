@@ -19,9 +19,9 @@ public enum BufferUsage
     /// </summary>
     Index = 1 << 1,
     /// <summary>
-    /// Supports uniform buffer access.
+    /// Supports constant buffer access.
     /// </summary>
-    Uniform = 1 << 2,
+    Constant = 1 << 2,
     /// <summary>
     /// Supports shader read access.
     /// </summary>

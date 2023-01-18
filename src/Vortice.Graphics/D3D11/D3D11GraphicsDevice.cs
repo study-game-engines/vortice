@@ -101,7 +101,7 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
                 for (uint adapterIndex = 0;
                     dxgiFactory6.Get()->EnumAdapterByGpuPreference(adapterIndex,
                         description.PowerPreference.ToDxgi(),
-                        __uuidof<IDXGIAdapter1>(), (void**)dxgiAdapter.ReleaseAndGetAddressOf()
+                        __uuidof<IDXGIAdapter1>(), dxgiAdapter.ReleaseAndGetVoidAddressOf()
                         ).Success;
                     adapterIndex++)
                 {
@@ -480,9 +480,15 @@ internal unsafe class D3D11GraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    protected override Texture CreateTextureCore(in TextureDescription description)
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescription description, void* initialData)
     {
-        return new D3D11Texture(this, description);
+        return new D3D11Buffer(this, description, initialData);
+    }
+
+    /// <inheritdoc />
+    protected override Texture CreateTextureCore(in TextureDescription description, void* initialData)
+    {
+        return new D3D11Texture(this, description, initialData);
     }
 
     /// <inheritdoc />

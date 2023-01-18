@@ -5,37 +5,18 @@ using CommunityToolkit.Diagnostics;
 
 namespace Vortice.Graphics;
 
-public abstract class GraphicsResource : DisposableObject
+public abstract class GraphicsResource : GraphicsObject
 {
-    protected string? _label;
-
     protected GraphicsResource(GraphicsDevice device, string? label = default)
+        : base(label)
     {
         Guard.IsNotNull(device, nameof(device));
 
         Device = device;
-        _label = label;
     }
 
     /// <summary>
     /// Get the <see cref="GraphicsDevice"/> object that created the resource.
     /// </summary>
     public GraphicsDevice Device { get; }
-
-    /// <summary>
-    /// Gets or set the label that identifies the resource.
-    /// </summary>
-    public string? Label
-    {
-        get => _label;
-        set
-        {
-            _label = value;
-            OnLabelChanged(value ?? string.Empty);
-        }
-    }
-
-    protected virtual void OnLabelChanged(string newLabel)
-    {
-    }
 }

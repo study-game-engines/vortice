@@ -129,8 +129,8 @@ internal unsafe class D3D11RenderPassEncoder : RenderPassEncoder
             _handle->OMSetRenderTargets(numRTVs, RTVS, DSV);
         }
 
-        _handle->RSSetViewport( 0.0f, 0.0f, (float)renderArea.Width, (float)renderArea.Height, 0.0f, 1.0f);
-        _handle->RSSetScissorRect(0, 0, renderArea.Width, renderArea.Height);
+        _handle->RSSetViewport(0.0f, 0.0f, (float)renderArea.Width, (float)renderArea.Height, 0.0f, 1.0f);
+        _handle->RSSetScissorRect(renderArea.Width, renderArea.Height);
 
         _currentRenderPass = renderPass;
     }

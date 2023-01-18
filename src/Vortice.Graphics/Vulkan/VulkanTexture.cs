@@ -13,7 +13,7 @@ internal unsafe class VulkanTexture : Texture
     public VkFormat VkFormat { get; }
     public VkImage Handle => _handle;
 
-    public VulkanTexture(VulkanGraphicsDevice device, in TextureDescription description)
+    public VulkanTexture(VulkanGraphicsDevice device, in TextureDescription description, void* initialData)
         : base(device, description)
     {
         VkFormat = description.Format.ToVkFormat();

@@ -298,9 +298,15 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    protected override Texture CreateTextureCore(in TextureDescription description)
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescription description, void* initialData)
     {
         throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    protected override Texture CreateTextureCore(in TextureDescription description, void* initialData)
+    {
+        return new VulkanTexture(this, description, initialData);
     }
 
     /// <inheritdoc />

@@ -9,7 +9,7 @@ using Vortice.Input;
 
 namespace Vortice;
 
-public abstract class Game : DisposableObject, IGame
+public abstract class Game : GraphicsObject, IGame
 {
     private readonly GamePlatform _platform;
     private readonly ServiceProvider _serviceProvider;
