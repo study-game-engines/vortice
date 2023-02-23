@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4205B2
 		LICENSE = LICENSE
 		NuGet.config = NuGet.config
 		README.md = README.md
-		version.json = version.json
 		src\Vortice.MultiTargeting.targets = src\Vortice.MultiTargeting.targets
 	EndProjectSection
 EndProject
@@ -32,6 +31,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Tests", "src\tests\Vortice.Tests\Vortice.Tests.csproj", "{0944344B-D7A6-4495-A6D4-08B5C5EEF0B4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Audio", "src\Vortice.Audio\Vortice.Audio.csproj", "{FCFD3606-A0BF-4AA7-8F03-6505D5D81BF6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Physics", "src\Vortice.Physics\Vortice.Physics.csproj", "{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +116,18 @@ Global
 		{FCFD3606-A0BF-4AA7-8F03-6505D5D81BF6}.Release|ARM64.Build.0 = Release|Any CPU
 		{FCFD3606-A0BF-4AA7-8F03-6505D5D81BF6}.Release|x64.ActiveCfg = Release|Any CPU
 		{FCFD3606-A0BF-4AA7-8F03-6505D5D81BF6}.Release|x64.Build.0 = Release|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|x64.Build.0 = Debug|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Release|ARM64.Build.0 = Release|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Release|x64.ActiveCfg = Release|Any CPU
+		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

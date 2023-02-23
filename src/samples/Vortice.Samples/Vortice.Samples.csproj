@@ -14,6 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Vortice.Physics\Vortice.Physics.csproj" />
     <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
   </ItemGroup>
 

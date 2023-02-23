@@ -11,11 +11,17 @@ namespace Vortice;
 
 public static class Log
 {
-    private const int STD_OUTPUT_HANDLE = -11;
-    private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
-
-    private static readonly StringBuilder log;
-    private static readonly LogAttribute[] logAttributes;
+    private static readonly StringBuilder s_log = new StringBuilder();
+    private static readonly string[] s_logColors = new[]
+    {
+        LogColor.Cyan,
+        LogColor.Magenta,
+        LogColor.Red,
+        LogColor.Yellow,
+        LogColor.Green,
+        LogColor.Cyan,
+        LogColor.White
+    };
     private static readonly bool colorEnabled;
 
     public static LogLevel Verbosity = LogLevel.Trace;
@@ -23,24 +29,12 @@ public static class Log
 
     static Log()
     {
-        log = new StringBuilder();
-        logAttributes = new[]
-        {
-            new LogAttribute { Name = "SYSTEM", Color = LogColor.Cyan },
-            new LogAttribute { Name = "ASSERT", Color = LogColor.Magenta },
-            new LogAttribute { Name = "ERROR ", Color = LogColor.Red },
-            new LogAttribute { Name = "WARN  ", Color = LogColor.Yellow },
-            new LogAttribute { Name = "INFO  ", Color = LogColor.Green },
-            new LogAttribute { Name = "DEBUG ", Color = LogColor.Cyan },
-            new LogAttribute { Name = "TRACE ", Color = LogColor.White }
-        };
-
         if (OperatingSystem.IsWindows())
         {
-            nint stdOut = Kernel32.GetStdHandle(STD_OUTPUT_HANDLE);
+            nint stdOut = Kernel32.GetStdHandle(Kernel32.STD_OUTPUT_HANDLE);
 
-            colorEnabled = Kernel32.GetConsoleMode(stdOut, out var outConsoleMode) &&
-                           Kernel32.SetConsoleMode(stdOut, outConsoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+            colorEnabled = Kernel32.GetConsoleMode(stdOut, out uint outConsoleMode) &&
+                           Kernel32.SetConsoleMode(stdOut, outConsoleMode | Kernel32.ENABLE_VIRTUAL_TERMINAL_PROCESSING);
         }
         else
         {
@@ -70,18 +64,19 @@ public static class Log
             return;
         }
 
-        var logAttribute = logAttributes[(int)logLevel];
-        var callsite = $"{Path.GetFileName(callerFilePath)}:{callerLineNumber.ToString()}";
+        string logLevelName = logLevel.ToString().ToUpperInvariant();
+        string logColor = s_logColors[(int)logLevel];
+        string callSite = $"{Path.GetFileName(callerFilePath)}:{callerLineNumber}";
 
         if (PrintToConsole)
         {
             Console.WriteLine(
                 colorEnabled
-                    ? $"\u001b[{LogColor.Gray}m{DateTime.Now.ToString("HH:mm:ss")} \u001b[{logAttribute.Color}m{logAttribute.Name}\u001b[{LogColor.Gray}m {callsite,-32} \u001b[{LogColor.White}m{message}\u001b[0m"
-                    : $"{DateTime.Now.ToString("HH:mm:ss")} {logAttribute.Name} {callsite,-32} {message}");
+                    ? $"\u001b[{LogColor.Gray}m{DateTime.Now:HH:mm:ss} \u001b[{logColor}m{logLevelName}\u001b[{LogColor.Gray}m {callSite,-32} \u001b[{LogColor.White}m{message}\u001b[0m"
+                    : $"{DateTime.Now:HH:mm:ss} {logLevelName} {callSite,-32} {message}");
         }
 
-        log.Append($"{DateTime.Now.ToString("HH:mm:ss")} {logAttribute.Name} {callsite,-32} {message}");
+        s_log.Append($"{DateTime.Now.ToString("HH:mm:ss")} {logLevelName} {callSite,-32} {message}");
 
         if ((logLevel == LogLevel.Error) || (logLevel == LogLevel.Assert))
         {
@@ -247,7 +242,7 @@ public static class Log
             Directory.CreateDirectory(directory);
         }
 
-        File.WriteAllText(file, log.ToString());
+        File.WriteAllText(file, s_log.ToString());
     }
 
     public enum LogLevel
@@ -284,16 +279,25 @@ public static class Log
     private record struct LogAttribute(string Name, string Color);
 }
 
-partial class Kernel32
+internal partial class Kernel32
 {
-    [LibraryImport("kernel32")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool GetConsoleMode(nint hConsoleHandle, out uint lpMode);
+    private const string LibraryName = "kernel32.dll";
 
-    [LibraryImport("kernel32")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool SetConsoleMode(nint hConsoleHandle, uint dwMode);
+    internal const int ENABLE_PROCESSED_INPUT = 0x0001;
+    internal const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
+    internal const int STD_OUTPUT_HANDLE = -11;
 
-    [LibraryImport("kernel32", SetLastError = true)]
-    public static partial nint GetStdHandle(int nStdHandle);
+    [LibraryImport(LibraryName)]
+#if !NO_SUPPRESS_GC_TRANSITION
+    [SuppressGCTransition]
+#endif
+    internal static partial nint GetStdHandle(int nStdHandle);
+
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool GetConsoleMode(nint handle, out uint mode);
+
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool SetConsoleMode(nint handle, uint mode);
 }

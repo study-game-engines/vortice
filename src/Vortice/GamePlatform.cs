@@ -29,9 +29,9 @@ public abstract class GamePlatform
     {
 #if WINDOWS_CLASSIC
         return new WinFormsGamePlatform();
-#elif WINDOWS
-        return new WindowsGamePlatform();
-#elif NET6_0_OR_GREATER
+//#elif WINDOWS
+//        return new WindowsGamePlatform();
+#else
         return new SDLGamePlatform();
 #endif
     }

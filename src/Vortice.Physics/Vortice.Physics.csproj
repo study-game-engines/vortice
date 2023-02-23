@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vortice\Vortice.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JoltPhysicsSharp" />
+  </ItemGroup>
+
+</Project>

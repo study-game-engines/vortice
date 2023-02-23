@@ -17,7 +17,18 @@ public abstract class EntitySystem : IGameSystem
         MainComponentType = mainComponentType;
     }
 
+    protected EntitySystem(Type? mainComponentType, params Type[] requiredComponentTypes)
+    {
+        MainComponentType = mainComponentType;
+
+        foreach (Type type in requiredComponentTypes)
+        {
+            RequiredComponentTypes.Add(type);
+        }
+    }
+
     public Type? MainComponentType { get; }
+    public IList<Type> RequiredComponentTypes { get; } = new List<Type>();
 
     public virtual void Update(GameTime gameTime)
     {
@@ -42,4 +53,10 @@ public abstract class EntitySystem<TComponent> : EntitySystem where TComponent :
         : base(typeof(TComponent))
     {
     }
+
+    protected EntitySystem(params Type[] requiredComponentTypes)
+        : base(typeof(TComponent), requiredComponentTypes)
+    {
+    }
+
 }
