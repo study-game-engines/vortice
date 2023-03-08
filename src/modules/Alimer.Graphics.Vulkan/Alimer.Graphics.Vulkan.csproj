@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Alimer\Alimer.csproj" />
+
+    <PackageReference Include="Vortice.Vulkan" />
+  </ItemGroup>
+
+</Project>

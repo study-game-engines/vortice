@@ -6,12 +6,13 @@ using CommunityToolkit.Diagnostics;
 
 namespace Alimer.Graphics;
 
-public abstract class GraphicsDevice : GraphicsObject
+public abstract class GraphicsDevice : AppModule
 {
     private readonly Dictionary<IntPtr, CommandBuffer> _commandBuffers = new();
     private ulong _frameCount;
 
     public GraphicsDevice(GraphicsBackend backend)
+        : base(200)
     {
         Backend = backend;
     }

@@ -4,7 +4,7 @@
 using System.Runtime.CompilerServices;
 using Vortice.Vulkan;
 
-namespace Vortice.Graphics.Vulkan;
+namespace Alimer.Graphics.Vulkan;
 
 internal static unsafe class VulkanUtils
 {

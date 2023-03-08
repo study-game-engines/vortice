@@ -7,7 +7,7 @@ using CommunityToolkit.Diagnostics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Vortice.Graphics.Vulkan;
+namespace Alimer.Graphics.Vulkan;
 
 internal unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
@@ -24,6 +24,10 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
     private readonly GraphicsAdapterInfo _adapterInfo;
     //private readonly GraphicsDeviceFeatures _features;
     private readonly GraphicsDeviceLimits _limits;
+
+    public override string ApiName => "Vulkan";
+
+    public override Version ApiVersion { get; }
 
     public bool DebugUtils => _debugUtils;
     public VkInstance Instance => _instance;
@@ -47,6 +51,7 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
     {
         Guard.IsTrue(IsSupported(), nameof(VulkanGraphicsDevice), "Vulkan is not supported");
 
+        ApiVersion = new Version(1, 3, 0);
         VkResult result = VkResult.Success;
 
         // Create instance first.

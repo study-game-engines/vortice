@@ -4,7 +4,7 @@
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Vortice.Graphics.Vulkan;
+namespace Alimer.Graphics.Vulkan;
 
 internal unsafe class VulkanTexture : Texture
 {
