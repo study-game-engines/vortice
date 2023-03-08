@@ -15,7 +15,7 @@ public abstract class AppPlatform : AppModule
     public event EventHandler? TickRequested;
 
     /// <summary>
-    /// Gets whether the platform supports multiple windows.
+    /// Gets whether the multiple windows are supported.
     /// </summary>
     public abstract bool SupportsMultipleWindows { get; }
 
@@ -45,7 +45,7 @@ public abstract class AppPlatform : AppModule
 
     protected internal override void Startup()
     {
-        Log.Info($"{ApiName} {ApiVersion}");
+        Log.Info($"{ApiName} v{ApiVersion}");
     }
 
     /// <summary>

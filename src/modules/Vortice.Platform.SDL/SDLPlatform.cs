@@ -4,8 +4,8 @@
 using System.Runtime.InteropServices;
 using Vortice.Input;
 using static SDL2.SDL;
-using static SDL2.SDL.SDL_EventType;
 using static SDL2.SDL.SDL_LogPriority;
+using static SDL2.SDL.SDL_EventType;
 
 namespace Vortice.Platform.SDL;
 
@@ -24,11 +24,20 @@ internal unsafe class SDLPlatform : AppPlatform
     private const string SDL_HINT_WINDOWS_DPI_SCALING = "SDL_WINDOWS_DPI_SCALING";
 
     private const int _eventsPerPeep = 64;
-    private unsafe readonly SDL_Event* _events = (SDL_Event*)NativeMemory.Alloc(_eventsPerPeep, (nuint)sizeof(SDL_Event));
+    private readonly SDL_Event[] _events = new SDL_Event[_eventsPerPeep];
+    //private readonly SDL_Event* _events = (SDL_Event*)NativeMemory.Alloc(_eventsPerPeep, (nuint)sizeof(SDL_Event));
+
+    private readonly SDLInput _input;
+    private readonly SDLWindow _window;
+    private Dictionary<uint, SDLWindow> _idLookup = new();
+    private bool _exitRequested;
 
     public override string ApiName { get; }
 
     public override Version ApiVersion { get; }
+
+    // <inheritdoc />
+    public override InputManager Input => _input;
 
     // <inheritdoc />
     public override bool SupportsMultipleWindows => true;
@@ -36,18 +45,14 @@ internal unsafe class SDLPlatform : AppPlatform
     // <inheritdoc />
     public override Window MainWindow { get; }
 
-    // <inheritdoc />
-    public override InputManager Input => throw new NotImplementedException();
-
     public SDLPlatform()
     {
-        ApiName = "SDL2";
+        ApiName = "SDL";
 
         SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
         //SDL_LogSetOutputFunction(&OnLog, IntPtr.Zero);
 
         SDL_GetVersion(out SDL_version version);
-        Log.Info($"SDL v{version.major}.{version.minor}.{version.patch}");
         ApiVersion = new Version(version.major, version.minor, version.patch);
 
         // DPI aware on Windows
@@ -60,6 +65,10 @@ internal unsafe class SDLPlatform : AppPlatform
             Log.Error($"Unable to initialize SDL: {SDL_GetError()}");
             throw new Exception("");
         }
+
+        _input = new SDLInput(this);
+        MainWindow = (_window = new SDLWindow(this));
+        _idLookup.Add(_window.Id, _window);
     }
 
     /// <summary>
@@ -79,7 +88,60 @@ internal unsafe class SDLPlatform : AppPlatform
     /// <inheritdoc />
     public override void RunMainLoop(Action init)
     {
+        init();
 
+        _window.Show();
+
+        while (!_exitRequested)
+        {
+            PollEvents();
+            OnTick();
+        }
+
+        SDL_Quit();
+    }
+
+    private void PollEvents()
+    {
+        SDL_PumpEvents();
+        int eventsRead;
+
+        do
+        {
+            eventsRead = SDL_PeepEvents(_events, _eventsPerPeep, SDL_eventaction.SDL_GETEVENT, SDL_EventType.SDL_FIRSTEVENT, SDL_EventType.SDL_LASTEVENT);
+            for (int i = 0; i < eventsRead; i++)
+            {
+                HandleSDLEvent(_events[i]);
+            }
+        } while (eventsRead == _eventsPerPeep);
+    }
+
+    private void HandleSDLEvent(SDL_Event evt)
+    {
+        switch (evt.type)
+        {
+            case SDL_QUIT:
+            case SDL_APP_TERMINATING:
+                _exitRequested = true;
+                break;
+
+            case SDL_WINDOWEVENT:
+                HandleWindowEvent(evt);
+                break;
+        }
+    }
+
+    private void HandleWindowEvent(in SDL_Event evt)
+    {
+        if (_idLookup.TryGetValue(evt.window.windowID, out SDLWindow? window))
+        {
+            window.HandleEvent(evt);
+        }
+    }
+
+    internal void WindowClosed(uint windowID)
+    {
+        _idLookup.Remove(windowID);
     }
 
     //[UnmanagedCallersOnly]

@@ -74,7 +74,6 @@ internal unsafe class XAudio2Module : AudioModule
             };
             _xaudio2.Get()->SetDebugConfiguration(&debug);
             Debug.WriteLine("INFO: XAudio 2.9 debugging enabled");
-
         }
 #endif
 

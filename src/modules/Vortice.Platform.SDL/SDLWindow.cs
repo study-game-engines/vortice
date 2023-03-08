@@ -3,31 +3,39 @@
 
 using System.Drawing;
 using Vortice.Graphics;
-using Alimer.Bindings.SDL;
-using static Alimer.Bindings.SDL.SDL;
-using static Alimer.Bindings.SDL.SDL.SDL_WindowEventID;
-using static Alimer.Bindings.SDL.SDL.SDL_WindowFlags;
-using Vortice.Platform;
+using static SDL2.SDL;
+using static SDL2.SDL.SDL_WindowEventID;
+using static SDL2.SDL.SDL_WindowFlags;
 
-namespace Vortice;
+namespace Vortice.Platform.SDL;
 
-internal unsafe class SDLGameWindow : Window
+internal unsafe class SDLWindow : Window
 {
-    private static Dictionary<uint, SDLGameWindow> _idLookup = new();
-
-    public readonly SDL_Window Handle;
-    public readonly uint Id;
+    private readonly SDLPlatform _platform;
     private Size _clientSize;
     private bool _minimized;
     private bool _isFullscreen;
 
-    public SDLGameWindow()
+    public readonly nint Handle;
+    public readonly uint Id;
+
+    /// <inheritdoc />
+    public override bool IsMinimized => _minimized;
+
+    /// <inheritdoc />
+    public override Size ClientSize => _clientSize;
+
+    /// <inheritdoc />
+    public override SwapChainSurface Surface { get; }
+
+    public SDLWindow(SDLPlatform platform)
     {
+        _platform = platform;
+
         SDL_WindowFlags flags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
 
         Handle = SDL_CreateWindow("Vortice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 800, flags);
         Id = SDL_GetWindowID(Handle);
-        _idLookup.Add(Id, this);
 
         // Native handle
         var wmInfo = new SDL_SysWMinfo();
@@ -42,7 +50,7 @@ internal unsafe class SDLGameWindow : Window
                 break;
 
             case SDL_SYSWM_TYPE.SDL_SYSWM_WINRT:
-                //Surface = GraphicsSurface.CreateCoreWindow(wmInfo.info.winrt.window);
+                //Surface = SwapChainSurface.CreateCoreWindow(wmInfo.info.winrt.window);
                 break;
 
             case SDL_SYSWM_TYPE.SDL_SYSWM_X11:
@@ -70,14 +78,10 @@ internal unsafe class SDLGameWindow : Window
         }
     }
 
-    /// <inheritdoc />
-    public override bool IsMinimized => _minimized;
-
-    /// <inheritdoc />
-    public override Size ClientSize => _clientSize;
-
-    /// <inheritdoc />
-    public override SwapChainSurface Surface { get; }
+    public void Destroy()
+    {
+        SDL_DestroyWindow(Handle);
+    }
 
     public void Show()
     {
@@ -115,14 +119,9 @@ internal unsafe class SDLGameWindow : Window
 
             case SDL_WINDOWEVENT_CLOSE:
                 //DestroySurface(window);
-                _idLookup.Remove(evt.window.windowID);
+                _platform.WindowClosed(evt.window.windowID);
                 SDL_DestroyWindow(Handle);
                 break;
         }
-    }
-
-    internal static SDLGameWindow Get(uint windowID)
-    {
-        return _idLookup[windowID];
     }
 }
