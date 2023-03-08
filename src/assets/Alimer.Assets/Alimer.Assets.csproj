@@ -10,7 +10,7 @@
     <PackageReference Include="SkiaSharp" />
     <PackageReference Include="HarfBuzzSharp" />
     
-    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
+    <ProjectReference Include="..\..\Alimer\Alimer.csproj" />
   </ItemGroup>
 
 </Project>

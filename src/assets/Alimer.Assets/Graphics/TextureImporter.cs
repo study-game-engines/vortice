@@ -4,7 +4,7 @@
 using SkiaSharp;
 using Vortice.Graphics;
 
-namespace Vortice.Assets.Graphics;
+namespace Alimer.Assets.Graphics;
 
 /// <summary>
 /// Defines a <see cref="Texture"/> asset importer.
