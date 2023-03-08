@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
-    <!--<TargetFrameworks>net7.0;$(VorticePlatforms)</TargetFrameworks>-->
   </PropertyGroup>
 
-  <Import Project="$(RepoRootPath)src/Vortice.MultiTargeting.targets" />
+  <ItemGroup>
+    <Compile Remove="Platforms\**\*.cs" />
+    <None Include="Platforms\**\*.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="build\**" PackagePath="build" Pack="true" />
@@ -14,12 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--<ProjectReference Include="..\Vortice.Audio\Vortice.Audio.csproj" />-->
     <ProjectReference Include="..\Vortice.Graphics\Vortice.Graphics.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="Alimer.Bindings.SDL" />
   </ItemGroup>
 
 </Project>

@@ -175,7 +175,7 @@ public sealed class ModuleList : IEnumerable<Module>
 
     internal void ApplicationStarted()
     {
-        // create Application Modules
+        // Create Application Modules.
         List<Type> toRemove = new();
         foreach (KeyValuePair<Type, Func<Module>> pair in registered)
         {

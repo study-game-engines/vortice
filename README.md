@@ -1,7 +1,10 @@
-[![Build status](https://github.com/amerkoleci/vortice/workflows/Build/badge.svg)](https://github.com/amerkoleci/vortice/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/amerkoleci/vortice/blob/main/LICENSE)
+# Vortice
 
-**Vortice** is a modern cross-platform .NET 7.0 game engine.
+[![Build status](https://github.com/amerkoleci/vortice/workflows/Build/badge.svg)](https://github.com/amerkoleci/vortice/actions)
+
+**Vortice** is a modern cross-platform .NET 7.0 game engine and distributed under [MIT license](https://github.com/amerkoleci/vortice/blob/main/LICENSE).
+
+Note that **Vortice** is undergoing active developement. Please report all spotted bugs in the [issue tracker](https://github.com/amerkoleci/vortice/issues).
 
 ## Features
 
@@ -17,6 +20,8 @@ Uses the following open-source and third-party libraries:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan): Cross platform .NET bindings for Vulkan
 - [terrafx.interop.windows](https://github.com/terrafx/terrafx.interop.windows): Interop bindings for Windows.
+
+**Alimer** is greatly inspired **Urho3D**, [Hazel](https://github.com/TheCherno/Hazel), [ArcGameEngine](https://github.com/MohitSethi99/ArcGameEngine)
 
 ## License
 
