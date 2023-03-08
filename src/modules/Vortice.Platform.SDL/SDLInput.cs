@@ -1,10 +1,10 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Vortice.Input;
+using Alimer.Input;
 using static SDL2.SDL;
 
-namespace Vortice.Platform.SDL;
+namespace Alimer.Platform.SDL;
 
 internal unsafe class SDLInput : InputManager
 {

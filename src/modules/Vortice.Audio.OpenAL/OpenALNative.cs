@@ -4,7 +4,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace Vortice.Audio.OpenAL;
+namespace Alimer.Audio.OpenAL;
 
 internal static unsafe partial class OpenALNative
 {

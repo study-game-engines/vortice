@@ -11,7 +11,7 @@ using static TerraFX.Interop.Windows.AUDIO_STREAM_CATEGORY;
 //using static TerraFX.Interop.DirectX.X3DAUDIO;
 using System.Runtime.InteropServices;
 
-namespace Vortice.Audio.XAudio2;
+namespace Alimer.Audio.XAudio2;
 
 public static class XAudio2ModuleExtensions
 {

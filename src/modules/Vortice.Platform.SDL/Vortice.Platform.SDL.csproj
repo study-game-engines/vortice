@@ -5,7 +5,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
+    <ProjectReference Include="..\..\Alimer\Alimer.csproj" />
 
     <PackageReference Include="ppy.SDL2-CS" />
   </ItemGroup>

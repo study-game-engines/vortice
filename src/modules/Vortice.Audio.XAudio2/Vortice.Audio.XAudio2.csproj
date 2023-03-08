@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;$(VorticePlatforms)</TargetFrameworks>
+    <TargetFrameworks>net7.0;$(AlimerPlatforms)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
+    <ProjectReference Include="..\..\Alimer\Alimer.csproj" />
   </ItemGroup>
 
   <Import Project="..\..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />

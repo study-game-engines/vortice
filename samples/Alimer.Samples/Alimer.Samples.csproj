@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net7.0;$(VorticePlatforms)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Alimer.Samples</RootNamespace>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
+    <UseWinUI>true</UseWinUI>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Alimer.Engine\Alimer.Engine.csproj" />
+    <ProjectReference Include="..\..\src\modules\Vortice.Audio.XAudio2\Vortice.Audio.XAudio2.csproj" />
+    <ProjectReference Include="..\..\src\modules\Vortice.Platform.SDL\Vortice.Platform.SDL.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,21 +2,12 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.InteropServices;
-using Vortice.Input;
+using Alimer.Input;
 using static SDL2.SDL;
 using static SDL2.SDL.SDL_LogPriority;
 using static SDL2.SDL.SDL_EventType;
 
-namespace Vortice.Platform.SDL;
-
-public static class SDLPlatformExtensions
-{
-    public static ModuleList UseSDL(this ModuleList builder)
-    {
-        builder.Register<SDLPlatform>();
-        return builder;
-    }
-}
+namespace Alimer.Platform.SDL;
 
 internal unsafe class SDLPlatform : AppPlatform
 {

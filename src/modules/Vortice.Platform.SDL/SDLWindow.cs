@@ -7,7 +7,7 @@ using static SDL2.SDL;
 using static SDL2.SDL.SDL_WindowEventID;
 using static SDL2.SDL.SDL_WindowFlags;
 
-namespace Vortice.Platform.SDL;
+namespace Alimer.Platform.SDL;
 
 internal unsafe class SDLWindow : Window
 {

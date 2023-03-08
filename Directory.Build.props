@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/amerkoleci/vortice</RepositoryUrl>
+    <RepositoryUrl>https://github.com/amerkoleci/alimer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
@@ -36,7 +36,7 @@
   <PropertyGroup>
     <Authors>Amer Koleci and Contributors</Authors>
     <Copyright>Copyright © Amer Koleci and Contributors</Copyright>
-    <Product>Vortice</Product>
+    <Product>Alimer</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
@@ -55,9 +55,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <_VorticeTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_VorticeTargetPlatformIdentifier>
-    <_VorticeTargetPlatformIsWindows>false</_VorticeTargetPlatformIsWindows>
-    <_VorticeTargetPlatformIsWindows Condition="$(_AlimerTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_VorticeTargetPlatformIsWindows>
+    <_AlimerTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_AlimerTargetPlatformIdentifier>
+    <_AlimerTargetPlatformIsWindows>false</_AlimerTargetPlatformIsWindows>
+    <_AlimerTargetPlatformIsWindows Condition="$(_AlimerTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_AlimerTargetPlatformIsWindows>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -65,9 +65,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VorticeWindowsPlatforms Condition="'$(VorticeWindowsPlatforms)' == ''">net7-windows10.0.19041;net7-windows10.0.20348</VorticeWindowsPlatforms>
+    <AlimerWindowsPlatforms Condition="'$(AlimerWindowsPlatforms)' == ''">net7-windows10.0.19041;net7-windows10.0.20348</AlimerWindowsPlatforms>
 
-    <VorticePlatforms Condition="'$(IncludeWindowsTargetFrameworks)' == 'true'">$(VorticeWindowsPlatforms);$(VorticePlatforms)</VorticePlatforms>
+    <AlimerPlatforms Condition="'$(IncludeWindowsTargetFrameworks)' == 'true'">$(AlimerWindowsPlatforms);$(AlimerPlatforms)</AlimerPlatforms>
   </PropertyGroup>
 
 </Project>

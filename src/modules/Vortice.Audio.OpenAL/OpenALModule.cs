@@ -1,9 +1,9 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using static Vortice.Audio.OpenAL.OpenALNative;
+using static Alimer.Audio.OpenAL.OpenALNative;
 
-namespace Vortice.Audio.OpenAL;
+namespace Alimer.Audio.OpenAL;
 
 public static class OpenALModuleExtensions
 {
