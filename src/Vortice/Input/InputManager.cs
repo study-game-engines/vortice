@@ -3,9 +3,10 @@
 
 namespace Vortice.Input;
 
-public class InputManager : GameSystem
+public class InputManager : Module
 {
     public InputManager()
+        : base(10)
     {
     }
 }

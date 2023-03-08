@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.InteropServices;
+using Vortice.Platform;
 using static Alimer.Bindings.SDL.SDL;
 using static Alimer.Bindings.SDL.SDL.SDL_EventType;
 using static Alimer.Bindings.SDL.SDL.SDL_LogPriority;
@@ -36,11 +37,11 @@ internal unsafe class SDLGamePlatform : GamePlatform
             throw new Exception("");
         }
 
-        View = (_window = new SDLGameWindow());
+        MainWindow = (_window = new SDLGameWindow());
     }
 
     // <inheritdoc />
-    public override GameView View { get; }
+    public override Window MainWindow { get; }
 
     public override void RunMainLoop(Action init)
     {

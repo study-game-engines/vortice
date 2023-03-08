@@ -7,10 +7,11 @@ using Alimer.Bindings.SDL;
 using static Alimer.Bindings.SDL.SDL;
 using static Alimer.Bindings.SDL.SDL.SDL_WindowEventID;
 using static Alimer.Bindings.SDL.SDL.SDL_WindowFlags;
+using Vortice.Platform;
 
 namespace Vortice;
 
-internal unsafe class SDLGameWindow : GameView
+internal unsafe class SDLGameWindow : Window
 {
     private static Dictionary<uint, SDLGameWindow> _idLookup = new();
 

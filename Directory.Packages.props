@@ -11,13 +11,10 @@
 
   <PropertyGroup>
     <VorticeWin32Version>1.9.14</VorticeWin32Version>
-    <VorticeVulkanVersion>1.5.28</VorticeVulkanVersion>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.1.0" />
-
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 
     <PackageVersion Include="Vortice.Mathematics" Version="1.4.26" />
     <PackageVersion Include="Vortice.Win32.Graphics.Dxgi" Version="$(VorticeWin32Version)" />
@@ -25,13 +22,13 @@
     <PackageVersion Include="Vortice.Win32.Graphics.Direct3D12" Version="$(VorticeWin32Version)" />
     <PackageVersion Include="Vortice.Win32.Graphics.Direct3D.Dxc" Version="$(VorticeWin32Version)" />
     <PackageVersion Include="Vortice.Win32.Graphics.Direct3D.Fxc" Version="$(VorticeWin32Version)" />
-    <PackageVersion Include="Vortice.Vulkan" Version="$(VorticeVulkanVersion)" />
+    <PackageVersion Include="Vortice.Vulkan" Version="1.6.0" />
 
     <PackageVersion Include="Alimer.Bindings.SDL" Version="1.0.3" />
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.3.230228005-preview1" />
 
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageVersion Include="JoltPhysicsSharp" Version="1.3.2" />
+    <PackageVersion Include="JoltPhysicsSharp" Version="1.4.0" />
 
     <!-- Asset Pipeline -->
     <PackageVersion Include="SkiaSharp" Version="2.88.3" />

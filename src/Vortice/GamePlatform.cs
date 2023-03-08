@@ -1,7 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Microsoft.Extensions.DependencyInjection;
+using Vortice.Platform;
 
 namespace Vortice;
 
@@ -10,11 +10,11 @@ public abstract class GamePlatform
     public event EventHandler? TickRequested;
 
     /// <summary>
-    /// Gets the main view.
+    /// Gets the main window.
     /// </summary>
-    public abstract GameView View { get; }
+    public abstract Window MainWindow { get; }
 
-    public virtual void ConfigureServices(IServiceCollection services)
+    public virtual void ConfigureModules(ModuleList modules)
     {
     }
 

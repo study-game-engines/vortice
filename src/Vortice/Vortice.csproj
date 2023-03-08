@@ -16,8 +16,6 @@
   <ItemGroup>
     <!--<ProjectReference Include="..\Vortice.Audio\Vortice.Audio.csproj" />-->
     <ProjectReference Include="..\Vortice.Graphics\Vortice.Graphics.csproj" />
-    
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">

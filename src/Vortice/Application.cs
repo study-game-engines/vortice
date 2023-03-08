@@ -2,40 +2,64 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using Microsoft.Extensions.DependencyInjection;
 using Vortice.Graphics;
 using Vortice.Input;
+using Vortice.Platform;
 
 namespace Vortice;
 
 public abstract class Application : DisposableObject, IGame
 {
     private readonly GamePlatform _platform;
-    private readonly ServiceProvider _serviceProvider;
     private readonly object _tickLock = new();
     private readonly Stopwatch _stopwatch = new();
     private bool _isExiting;
+
+    public event EventHandler<EventArgs>? Activated;
+    public event EventHandler<EventArgs>? Deactivated;
+
+    /// <summary>
+    /// Gets the Application name.
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    /// Gets the Application Version.
+    /// </summary>
+    public virtual Version Version { get; } = new Version(0, 1, 0);
+
+    public bool IsRunning { get; private set; }
+    public bool IsExiting { get; private set; }
+    public bool IsActive { get; private set; }
+
+    /// <summary>
+    /// A list of all registered modules.
+    /// </summary>
+    public ModuleList Modules { get; } = new ModuleList();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Game" /> class.
     /// </summary>
     /// <param name="platform">The optional <see cref="GamePlatform"/> to handle platform logic..</param>
-    protected Application(GamePlatform? platform = null)
+    protected Application(string? name = default, GamePlatform ? platform = null)
     {
+        Name = name ?? GetType().Name;
+        Version? assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        if (assemblyVersion is not null)
+        {
+            Version = assemblyVersion;
+        }
+
         _platform = platform ?? GamePlatform.CreateDefault();
 
+        Log.Info($"Version: {Version}");
         Log.Info($"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
         Log.Info($"Framework: {RuntimeInformation.FrameworkDescription}");
 
-        ServiceCollection services = new();
-        _platform.ConfigureServices(services);
-        ConfigureServices(services);
-
-        _serviceProvider = services.BuildServiceProvider();
-
-        // Get required services.
-        Input = _serviceProvider.GetRequiredService<InputManager>();
+        _platform.ConfigureModules(Modules);
+        ConfigureModules();
 
         GraphicsDeviceDescription deviceDescription = new()
         {
@@ -51,22 +75,11 @@ public abstract class Application : DisposableObject, IGame
         //AudioDevice = audioDevice ?? AudioDevice.CreateDefault();
     }
 
-    public event EventHandler<EventArgs>? Activated;
-    public event EventHandler<EventArgs>? Deactivated;
-
-    public event EventHandler<EventArgs>? Disposed;
-
-    public IServiceProvider Services => _serviceProvider;
-
-    public bool IsActive { get; private set; }
-
-    public bool IsRunning { get; private set; }
-
     public GameTime Time { get; } = new GameTime();
 
-    public GameView View => _platform.View;
+    public Window MainWindow => _platform.MainWindow;
 
-    public InputManager Input { get; }
+    public InputManager Input => Modules.Get<InputManager>();
 
     public GraphicsDevice GraphicsDevice { get; }
 
@@ -80,21 +93,19 @@ public abstract class Application : DisposableObject, IGame
         if (isDisposing)
         {
             GraphicsDevice.WaitIdle();
-            View.SwapChain?.Dispose();
+            MainWindow.SwapChain?.Dispose();
             GraphicsDevice.Dispose();
 
             //AudioDevice?.Dispose();
-
-            Disposed?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    protected virtual void ConfigureServices(IServiceCollection services)
+    protected virtual void ConfigureModules()
     {
-        services.AddSingleton<IGame>(this);
+        //services.AddSingleton<IGame>(this);
         //services.AddSingleton<IContentManager, ContentManager>();
 
-        services.AddSingleton<InputManager>();
+        Modules.Register<InputManager>();
     }
 
     public void Run()
@@ -116,7 +127,7 @@ public abstract class Application : DisposableObject, IGame
 
     private void InitializeBeforeRun()
     {
-        View.CreateSwapChain(GraphicsDevice);
+        MainWindow.CreateSwapChain(GraphicsDevice);
 
         Initialize();
 

@@ -5,8 +5,6 @@ namespace Vortice;
 
 public interface IGame : IGameSystem
 {
-    IServiceProvider Services { get; }
-
     IList<IGameSystem> GameSystems { get; }
 
     bool IsRunning { get; }

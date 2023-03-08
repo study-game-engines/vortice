@@ -4,9 +4,12 @@
 using System.Drawing;
 using Vortice.Graphics;
 
-namespace Vortice;
+namespace Vortice.Platform;
 
-public abstract class GameView
+/// <summary>
+/// Defines an OS window.
+/// </summary>
+public abstract class Window
 {
     public event EventHandler? SizeChanged;
 

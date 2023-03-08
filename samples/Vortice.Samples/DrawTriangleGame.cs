@@ -2,7 +2,6 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Numerics;
-using Microsoft.Extensions.DependencyInjection;
 using Vortice.Engine;
 using Vortice.Graphics;
 using Vortice.Mathematics;
@@ -17,9 +16,9 @@ public sealed class DrawTriangleGame : Game
     }
 
     /// <inheritdoc />
-    protected override void ConfigureServices(IServiceCollection services)
+    protected override void ConfigureModules()
     {
-        base.ConfigureServices(services);
+        base.ConfigureModules();
     }
 
     /// <inheritdoc />
@@ -50,7 +49,7 @@ public sealed class DrawTriangleGame : Game
             computePass.End();
         }
 
-        Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(View.SwapChain!);
+        Texture? swapChainTexture = commandBuffer.AcquireSwapchainTexture(MainWindow.SwapChain!);
         if (swapChainTexture != null)
         {
             RenderPassColorAttachment colorAttachment = new(swapChainTexture.GetView())
