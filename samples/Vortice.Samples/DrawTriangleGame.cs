@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
+using Vortice.Engine;
 using Vortice.Graphics;
 using Vortice.Mathematics;
 

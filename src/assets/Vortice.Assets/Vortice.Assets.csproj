@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="HarfBuzzSharp" />
+    
+    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
+  </ItemGroup>
+
+</Project>

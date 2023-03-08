@@ -11,7 +11,7 @@ namespace Vortice;
 
 public static class Log
 {
-    private static readonly StringBuilder s_log = new StringBuilder();
+    private static readonly StringBuilder s_log = new();
     private static readonly string[] s_logColors = new[]
     {
         LogColor.Cyan,

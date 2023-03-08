@@ -13,8 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Vortice\Vortice.csproj" />
-    <ProjectReference Include="..\..\src\Vortice.Physics\Vortice.Physics.csproj" />
+    <ProjectReference Include="..\..\src\Vortice.Engine\Vortice.Engine.csproj" />
   </ItemGroup>
 
 </Project>
