@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net7.0;$(VorticePlatforms)</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />
+
+</Project>

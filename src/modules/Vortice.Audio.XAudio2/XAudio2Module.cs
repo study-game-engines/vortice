@@ -1,4 +1,3 @@
-#if TODO
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
@@ -8,13 +7,13 @@ using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.Windows;
 using static TerraFX.Interop.DirectX.DirectX;
 using static TerraFX.Interop.Windows.AUDIO_STREAM_CATEGORY;
-using static TerraFX.Interop.DirectX.XAUDIO2;
-using static TerraFX.Interop.DirectX.X3DAUDIO;
+//using static TerraFX.Interop.DirectX.XAUDIO2;
+//using static TerraFX.Interop.DirectX.X3DAUDIO;
 using System.Runtime.InteropServices;
 
 namespace Vortice.Audio.XAudio2;
 
-internal unsafe class XAudio2Device : AudioDevice
+public unsafe class XAudio2Module : AudioModule
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
@@ -30,11 +29,17 @@ internal unsafe class XAudio2Device : AudioDevice
     private readonly uint _masterRate;
     private byte* _X3DAudio;
 
+    public override string ApiName { get; }
+
+    public override Version ApiVersion { get; }
+
     public static bool IsSupported() => s_isSupported.Value;
 
-    public XAudio2Device()
-        : base(AudioBackend.XAudio2)
+    public XAudio2Module()
     {
+        ApiName = "XAudio2";
+        ApiVersion = new Version(2, 9, 0);
+
         HRESULT hr = XAudio2Create(_xaudio2.GetAddressOf());
         ThrowIfFailed(hr);
 
@@ -113,23 +118,27 @@ internal unsafe class XAudio2Device : AudioDevice
             //_volumeLimiter.Reset();
             _xaudio2.Dispose();
         }
-
     }
 
     /// <inheritdoc />
-    protected override void OnDispose()
+    protected override void Dispose(bool disposing)
     {
-        if (_reverbVoice != null)
-        {
-            _reverbVoice->DestroyVoice();
-            _reverbVoice = default;
-        }
+        base.Dispose(disposing);
 
-        _masterVoice->DestroyVoice();
-        _masterVoice = default;
-        _xaudio2.Dispose();
-        XAudio2EngineCallback.Free(_engineCallback);
-        NativeMemory.Free(_X3DAudio);
+        if (disposing)
+        {
+            if (_reverbVoice != null)
+            {
+                _reverbVoice->DestroyVoice();
+                _reverbVoice = default;
+            }
+
+            _masterVoice->DestroyVoice();
+            _masterVoice = default;
+            _xaudio2.Dispose();
+            XAudio2EngineCallback.Free(_engineCallback);
+            NativeMemory.Free(_X3DAudio);
+        }
     }
 
     /// <inheritdoc />
@@ -148,5 +157,3 @@ internal unsafe class XAudio2Device : AudioDevice
         return OperatingSystem.IsWindows();
     }
 }
-
-#endif

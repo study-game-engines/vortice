@@ -1,5 +1,4 @@
-#if TODO
-// Copyright © Amer Koleci and Contributors.
+﻿// Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.CompilerServices;
@@ -59,5 +58,3 @@ internal unsafe struct XAudio2EngineCallback
     {
     }
 }
-
-#endif

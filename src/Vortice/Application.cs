@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Vortice.Graphics;
 using Vortice.Input;
+using Vortice.Audio;
 using Vortice.Platform;
 
 namespace Vortice;
@@ -38,6 +39,11 @@ public abstract class Application : DisposableObject, IGame
     /// A list of all registered modules.
     /// </summary>
     public ModuleList Modules { get; } = new ModuleList();
+
+    /// <summary>
+    /// Gets the Audio module.
+    /// </summary>
+    public AudioModule Audio => Modules.Get<AudioModule>();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Game" /> class.
