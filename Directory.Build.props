@@ -2,7 +2,10 @@
 <Project>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <RepositoryRootDirectory>$(MSBuildThisFileDirectory)</RepositoryRootDirectory>
+    <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <RepositoryUrl>https://github.com/amerkoleci/vortice</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
@@ -24,8 +27,6 @@
     <AnalysisLevel>preview</AnalysisLevel>
     <RestoreConfigFile>$(MSBuildThisFileDirectory)NuGet.config</RestoreConfigFile>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
-    <ContinuousIntegrationBuild Condition="'$(GITHUB_RUN_ID)' != ''">true</ContinuousIntegrationBuild>
-    <UseSharedCompilation>true</UseSharedCompilation>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -34,13 +35,14 @@
 
   <PropertyGroup>
     <Authors>Amer Koleci and Contributors</Authors>
-    <Company>Vortice</Company>
-    <Product>Vortice</Product>
     <Copyright>Copyright © Amer Koleci and Contributors</Copyright>
+    <Product>Vortice</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts/</PackageOutputPath>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_RUN_ID)' != ''">true</ContinuousIntegrationBuild>
+    <UseSharedCompilation>true</UseSharedCompilation>
   </PropertyGroup>
 
   <!-- https://github.com/dotnet/sourcelink -->
@@ -50,6 +52,22 @@
     <IncludeSymbols Condition=" '$(DebugType)' != 'embedded' ">true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_VorticeTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_VorticeTargetPlatformIdentifier>
+    <_VorticeTargetPlatformIsWindows>false</_VorticeTargetPlatformIsWindows>
+    <_VorticeTargetPlatformIsWindows Condition="$(_AlimerTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_VorticeTargetPlatformIsWindows>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeWindowsTargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(Packing)' == 'true'">true</IncludeWindowsTargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <VorticeWindowsPlatforms Condition="'$(VorticeWindowsPlatforms)' == ''">net7-windows10.0.19041;net7-windows10.0.20348</VorticeWindowsPlatforms>
+
+    <VorticePlatforms Condition="'$(IncludeWindowsTargetFrameworks)' == 'true'">$(VorticeWindowsPlatforms);$(VorticePlatforms)</VorticePlatforms>
   </PropertyGroup>
 
 </Project>

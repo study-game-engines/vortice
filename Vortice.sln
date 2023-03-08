@@ -16,23 +16,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4205B2
 		src\Vortice.MultiTargeting.targets = src\Vortice.MultiTargeting.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{D8EC0278-B4F9-4EF5-A4BE-FE2284C6ECED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{861A4A67-56CA-41A3-B395-270AEC746B3D}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice", "src\Vortice\Vortice.csproj", "{EA44EF00-245A-440C-A5E0-A820E6666626}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Assets", "src\Vortice.Assets\Vortice.Assets.csproj", "{F6A4373B-0A3F-45F1-BA64-7AD30BB7F04C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D8EC0278-B4F9-4EF5-A4BE-FE2284C6ECED}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Samples", "src\samples\Vortice.Samples\Vortice.Samples.csproj", "{0DB41C96-7D02-41EE-8E7B-F2B1024A8659}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics", "src\Vortice.Graphics\Vortice.Graphics.csproj", "{7F3DB9A3-DB97-428A-92C2-0DFE9AE98B86}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{861A4A67-56CA-41A3-B395-270AEC746B3D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Tests", "src\tests\Vortice.Tests\Vortice.Tests.csproj", "{0944344B-D7A6-4495-A6D4-08B5C5EEF0B4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Audio", "src\Vortice.Audio\Vortice.Audio.csproj", "{FCFD3606-A0BF-4AA7-8F03-6505D5D81BF6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Physics", "src\Vortice.Physics\Vortice.Physics.csproj", "{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Tests", "tests\Vortice.Tests\Vortice.Tests.csproj", "{0944344B-D7A6-4495-A6D4-08B5C5EEF0B4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Samples", "samples\Vortice.Samples\Vortice.Samples.csproj", "{0DB41C96-7D02-41EE-8E7B-F2B1024A8659}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

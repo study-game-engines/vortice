@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
+    <ProjectReference Include="..\..\src\Vortice\Vortice.csproj" />
   </ItemGroup>
 
 </Project>

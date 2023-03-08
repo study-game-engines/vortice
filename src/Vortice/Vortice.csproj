@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
-    <!--<TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net7.0-windows10.0.19041;</TargetFrameworks>-->
+    <!--<TargetFrameworks>net7.0;$(VorticePlatforms)</TargetFrameworks>-->
   </PropertyGroup>
 
-  <Import Project="$(RepositoryRootDirectory)src/Vortice.MultiTargeting.targets" />
+  <Import Project="$(RepoRootPath)src/Vortice.MultiTargeting.targets" />
 
   <ItemGroup>
     <Content Include="build\**" PackagePath="build" Pack="true" />
