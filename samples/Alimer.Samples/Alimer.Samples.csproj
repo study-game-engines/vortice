@@ -13,9 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Alimer.Engine\Alimer.Engine.csproj" />
-    <ProjectReference Include="..\..\src\modules\Vortice.Audio.XAudio2\Vortice.Audio.XAudio2.csproj" />
-    <ProjectReference Include="..\..\src\modules\Vortice.Platform.SDL\Vortice.Platform.SDL.csproj" />
+    <ProjectReference Include="..\..\src\Alimer.Physics\Alimer.Physics.csproj" />
+    <ProjectReference Include="..\..\src\modules\Alimer.Audio.XAudio2\Alimer.Audio.XAudio2.csproj" />
+    <ProjectReference Include="..\..\src\modules\Alimer.Platform.SDL\Alimer.Platform.SDL.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Vortice.Engine\Vortice.Engine.csproj" />
+    <ProjectReference Include="..\Alimer.Engine\Alimer.Engine.csproj" />
     
     <PackageReference Include="JoltPhysicsSharp" />
   </ItemGroup>

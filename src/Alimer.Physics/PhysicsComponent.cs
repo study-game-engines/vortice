@@ -4,9 +4,9 @@
 using System.Numerics;
 using System.Runtime.Serialization;
 using JoltPhysicsSharp;
-using Vortice.Engine;
+using Alimer.Engine;
 
-namespace Vortice.Physics;
+namespace Alimer.Physics;
 
 [DefaultEntitySystem(typeof(PhysicsSystem))]
 public abstract class PhysicsComponent : EntityComponent
