@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using Alimer.Audio;
 using Alimer.Input;
 using Alimer.Platform;
-using Vortice.Graphics;
+using Alimer.Graphics;
 
 namespace Alimer;
 
@@ -84,7 +84,7 @@ public abstract class Application : DisposableObject, IGame
             ValidationMode = ValidationMode.Enabled,
 #endif
         };
-        GraphicsDevice = GraphicsDevice.CreateDefault(deviceDescription);
+        //GraphicsDevice = GraphicsDevice.CreateDefault(deviceDescription);
     }
 
     public GameTime Time { get; } = new GameTime();

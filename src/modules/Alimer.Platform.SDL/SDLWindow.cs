@@ -2,7 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Drawing;
-using Vortice.Graphics;
+using Alimer.Graphics;
 using static SDL2.SDL;
 using static SDL2.SDL.SDL_WindowEventID;
 using static SDL2.SDL.SDL_WindowFlags;

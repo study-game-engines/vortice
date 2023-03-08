@@ -1,14 +1,15 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Alimer.Graphics;
-
-namespace Alimer.Assets.Graphics;
+namespace Alimer.Graphics;
 
 /// <summary>
-/// Defines a <see cref="Texture"/> asset.
+/// Defines a <see cref="SwapChainSurface"/> type.
 /// </summary>
-public class TextureAsset : AssetWithSource
+public enum SwapChainSurfaceType
 {
-    
+    Unknown,
+    Win32,
+    CoreWindow,
+    SwapChainPanel
 }

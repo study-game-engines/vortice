@@ -2,7 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Drawing;
-using Vortice.Graphics;
+using Alimer.Graphics;
 
 namespace Alimer.Platform;
 

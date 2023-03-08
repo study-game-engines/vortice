@@ -4,7 +4,7 @@
 using System.Numerics;
 using Alimer.Audio.XAudio2;
 using Alimer.Engine;
-using Vortice.Graphics;
+using Alimer.Graphics;
 using Vortice.Mathematics;
 using Alimer.Platform;
 
