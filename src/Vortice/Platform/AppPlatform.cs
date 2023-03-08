@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.InteropServices;
+using Vortice.Input;
 using Vortice.Platform;
 
 namespace Vortice;
@@ -22,6 +23,11 @@ public abstract class AppPlatform : AppModule
     /// Gets the main window.
     /// </summary>
     public abstract Window MainWindow { get; }
+
+    /// <summary>
+    /// Gets the input manager.
+    /// </summary>
+    public abstract InputManager Input { get; }
 
     protected AppPlatform()
         : base(100)

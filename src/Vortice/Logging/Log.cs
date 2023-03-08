@@ -72,11 +72,11 @@ public static class Log
         {
             Console.WriteLine(
                 colorEnabled
-                    ? $"\u001b[{LogColor.Gray}m{DateTime.Now:HH:mm:ss} \u001b[{logColor}m{logLevelName}\u001b[{LogColor.Gray}m {callSite,-32} \u001b[{LogColor.White}m{message}\u001b[0m"
+                    ? $"\u001b[{LogColor.Gray}m{DateTime.Now:HH:mm:ss} \u001b[{logColor}m[{logLevelName}]\u001b[{LogColor.Gray}m {callSite,-32} \u001b[{LogColor.White}m{message}\u001b[0m"
                     : $"{DateTime.Now:HH:mm:ss} {logLevelName} {callSite,-32} {message}");
         }
 
-        s_log.Append($"{DateTime.Now.ToString("HH:mm:ss")} {logLevelName} {callSite,-32} {message}");
+        s_log.Append($"{DateTime.Now.ToString("HH:mm:ss")} [{logLevelName}] {callSite,-32} {message}");
 
         if ((logLevel == LogLevel.Error) || (logLevel == LogLevel.Assert))
         {

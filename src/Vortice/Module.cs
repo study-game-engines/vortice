@@ -1,5 +1,8 @@
 ﻿// Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+// Code based on Foster implementation: https://github.com/NoelFB/Foster/blob/master/LICENSE.txt
+
+using Vortice.Platform;
 
 namespace Vortice;
 
@@ -87,12 +90,16 @@ public abstract class Module : DisposableObject
     /// <summary>
     /// Called when a Window is being rendered to, before the Window.OnRender callback
     /// </summary>
-    //protected internal virtual void BeforeRenderWindow(Window window) { }
+    protected internal virtual void BeforeRenderWindow(Window window)
+    {
+    }
 
     /// <summary>
     /// Called when a Window is being rendered to, after the Window.OnRender callback
     /// </summary>
-    //protected internal virtual void AfterRenderWindow(Window window) { }
+    protected internal virtual void AfterRenderWindow(Window window)
+    {
+    }
 
     /// <summary>
     /// Called after all rendering

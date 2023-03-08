@@ -13,6 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\modules\Vortice.Audio.XAudio2\Vortice.Audio.XAudio2.csproj" />
+    <ProjectReference Include="..\..\src\modules\Vortice.Platform.SDL\Vortice.Platform.SDL.csproj" />
     <ProjectReference Include="..\..\src\Vortice.Engine\Vortice.Engine.csproj" />
   </ItemGroup>
 

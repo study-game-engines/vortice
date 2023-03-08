@@ -5,7 +5,16 @@ using static Vortice.Audio.OpenAL.OpenALNative;
 
 namespace Vortice.Audio.OpenAL;
 
-public sealed class OpenALModule : AudioModule
+public static class OpenALModuleExtensions
+{
+    public static ModuleList UseOpenAL(this ModuleList builder)
+    {
+        builder.Register<OpenALModule>();
+        return builder;
+    }
+}
+
+internal class OpenALModule : AudioModule
 {
     private readonly nint _device;
 

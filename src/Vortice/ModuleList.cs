@@ -1,7 +1,9 @@
 ﻿// Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+// Code based on Foster implementation: https://github.com/NoelFB/Foster/blob/master/LICENSE.txt
 
 using System.Collections;
+using Vortice.Platform;
 
 namespace Vortice;
 
@@ -10,9 +12,9 @@ namespace Vortice;
 /// </summary>
 public sealed class ModuleList : IEnumerable<Module>
 {
-    private readonly Dictionary<Type, Func<Module>> registered = new();
-    private readonly List<Module?> modules = new();
-    private readonly Dictionary<Type, Module> modulesByType = new();
+    private readonly Dictionary<Type, Func<Module>> _registeredFactories = new();
+    private readonly List<Module?> _modules = new();
+    private readonly Dictionary<Type, Module> _modulesByType = new();
     private bool immediateInit;
     private bool immediateStart;
 
@@ -38,7 +40,7 @@ public sealed class ModuleList : IEnumerable<Module>
         }
         else
         {
-            registered.Add(type, factory);
+            _registeredFactories.Add(type, factory);
         }
     }
 
@@ -52,8 +54,8 @@ public sealed class ModuleList : IEnumerable<Module>
         // add Module to lookup
         while (type != typeof(Module) && type != typeof(AppModule))
         {
-            if (!modulesByType.ContainsKey(type))
-                modulesByType[type] = module;
+            if (!_modulesByType.ContainsKey(type))
+                _modulesByType[type] = module;
 
             if (type.BaseType == null)
                 break;
@@ -62,12 +64,12 @@ public sealed class ModuleList : IEnumerable<Module>
         }
 
         // insert in order
-        var insert = 0;
-        while (insert < modules.Count && (modules[insert]?.Priority ?? int.MinValue) <= module.Priority)
+        int insert = 0;
+        while (insert < _modules.Count && (_modules[insert]?.Priority ?? int.MinValue) <= module.Priority)
         {
             insert++;
         }
-        modules.Insert(insert, module);
+        _modules.Insert(insert, module);
 
         // registered
         module.IsRegistered = true;
@@ -87,14 +89,14 @@ public sealed class ModuleList : IEnumerable<Module>
         module.Shutdown();
         module.Disposed();
 
-        var index = modules.IndexOf(module);
-        modules[index] = null;
+        var index = _modules.IndexOf(module);
+        _modules[index] = null;
 
         var type = module.GetType();
         while (type != typeof(Module))
         {
-            if (modulesByType[type] == module)
-                modulesByType.Remove(type);
+            if (_modulesByType[type] == module)
+                _modulesByType.Remove(type);
 
             if (type.BaseType == null)
                 break;
@@ -106,11 +108,11 @@ public sealed class ModuleList : IEnumerable<Module>
     }
 
     /// <summary>
-    /// Tries to get the First Module of the given type
+    /// Tries to get the first <see cref="Module"/> of the given type.
     /// </summary>
     public bool TryGet<T>(out T? module) where T : Module
     {
-        if (modulesByType.TryGetValue(typeof(T), out var m))
+        if (_modulesByType.TryGetValue(typeof(T), out Module? m))
         {
             module = (T)m;
             return true;
@@ -125,7 +127,7 @@ public sealed class ModuleList : IEnumerable<Module>
     /// </summary>
     public bool TryGet(Type type, out Module? module)
     {
-        if (modulesByType.TryGetValue(type, out var m))
+        if (_modulesByType.TryGetValue(type, out var m))
         {
             module = m;
             return true;
@@ -140,7 +142,7 @@ public sealed class ModuleList : IEnumerable<Module>
     /// </summary>
     public T Get<T>() where T : Module
     {
-        if (!modulesByType.TryGetValue(typeof(T), out var module))
+        if (!_modulesByType.TryGetValue(typeof(T), out var module))
             throw new Exception($"App is does not have a {typeof(T).Name} Module registered");
 
         return (T)module;
@@ -151,7 +153,7 @@ public sealed class ModuleList : IEnumerable<Module>
     /// </summary>
     public Module Get(Type type)
     {
-        if (!modulesByType.TryGetValue(type, out var module))
+        if (!_modulesByType.TryGetValue(type, out var module))
             throw new Exception($"App is does not have a {type.Name} Module registered");
 
         return module;
@@ -162,7 +164,7 @@ public sealed class ModuleList : IEnumerable<Module>
     /// </summary>
     public bool Has<T>() where T : Module
     {
-        return modulesByType.ContainsKey(typeof(T));
+        return _modulesByType.ContainsKey(typeof(T));
     }
 
     /// <summary>
@@ -170,14 +172,14 @@ public sealed class ModuleList : IEnumerable<Module>
     /// </summary>
     public bool Has(Type type)
     {
-        return modulesByType.ContainsKey(type);
+        return _modulesByType.ContainsKey(type);
     }
 
     internal void ApplicationStarted()
     {
         // Create Application Modules.
         List<Type> toRemove = new();
-        foreach (KeyValuePair<Type, Func<Module>> pair in registered)
+        foreach (KeyValuePair<Type, Func<Module>> pair in _registeredFactories)
         {
             if (typeof(AppModule).IsAssignableFrom(pair.Key))
             {
@@ -188,22 +190,24 @@ public sealed class ModuleList : IEnumerable<Module>
 
         foreach (Type type in toRemove)
         {
-            registered.Remove(type);
+            _registeredFactories.Remove(type);
         }
 
-        for (int i = 0; i < modules.Count; i++)
+        for (int i = 0; i < _modules.Count; i++)
         {
-            if (modules[i] is AppModule module)
+            if (_modules[i] is AppModule module)
                 module.ApplicationStarted();
         }
     }
 
     internal void FirstWindowCreated()
     {
-        for (int i = 0; i < modules.Count; i++)
+        for (int i = 0; i < _modules.Count; i++)
         {
-            if (modules[i] is AppModule module)
+            if (_modules[i] is AppModule module)
+            {
                 module.FirstWindowCreated();
+            }
         }
     }
 
@@ -214,11 +218,13 @@ public sealed class ModuleList : IEnumerable<Module>
         // Thus it has to iterate over modules and call Startup twice
 
         // run startup on on App Modules
-        for (int i = 0; i < modules.Count; i++)
-            StartupModule(modules[i], false);
+        for (int i = 0; i < _modules.Count; i++)
+        {
+            StartupModule(_modules[i], false);
+        }
 
         // Instantiate remaining modules that are registered
-        foreach (KeyValuePair<Type, Func<Module>> pair in registered)
+        foreach (KeyValuePair<Type, Func<Module>> pair in _registeredFactories)
         {
             Instantiate(pair.Key, pair.Value);
         }
@@ -227,8 +233,10 @@ public sealed class ModuleList : IEnumerable<Module>
         immediateInit = true;
 
         // call started on all modules
-        for (int i = 0; i < modules.Count; i++)
-            StartupModule(modules[i], true);
+        for (int i = 0; i < _modules.Count; i++)
+        {
+            StartupModule(_modules[i], true);
+        }
 
         // further modules will have Startup called immediately
         immediateStart = true;
@@ -252,86 +260,86 @@ public sealed class ModuleList : IEnumerable<Module>
 
     internal void Shutdown()
     {
-        for (int i = modules.Count - 1; i >= 0; i--)
-            modules[i]?.Shutdown();
+        for (int i = _modules.Count - 1; i >= 0; i--)
+            _modules[i]?.Shutdown();
 
-        for (int i = modules.Count - 1; i >= 0; i--)
-            modules[i]?.Disposed();
+        for (int i = _modules.Count - 1; i >= 0; i--)
+            _modules[i]?.Disposed();
 
-        registered.Clear();
-        modules.Clear();
-        modulesByType.Clear();
+        _registeredFactories.Clear();
+        _modules.Clear();
+        _modules.Clear();
     }
 
     internal void FrameStart()
     {
         // remove null module entries
         int toRemove;
-        while ((toRemove = modules.IndexOf(null)) >= 0)
-            modules.RemoveAt(toRemove);
+        while ((toRemove = _modules.IndexOf(null)) >= 0)
+            _modules.RemoveAt(toRemove);
 
-        for (int i = 0; i < modules.Count; i++)
-            modules[i]?.FrameStart();
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.FrameStart();
     }
 
     internal void FixedUpdate()
     {
-        for (int i = 0; i < modules.Count; i++)
-            modules[i]?.FixedUpdate();
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.FixedUpdate();
     }
 
     internal void Update()
     {
-        for (int i = 0; i < modules.Count; i++)
-            modules[i]?.Update();
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.Update();
     }
 
     internal void FrameEnd()
     {
-        for (int i = 0; i < modules.Count; i++)
-            modules[i]?.FrameEnd();
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.FrameEnd();
     }
 
     internal void BeforeRender()
     {
-        for (int i = 0; i < modules.Count; i++)
-            modules[i]?.BeforeRender();
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.BeforeRender();
     }
 
     internal void AfterRender()
     {
-        for (int i = 0; i < modules.Count; i++)
-            modules[i]?.AfterRender();
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.AfterRender();
     }
 
-    //internal void BeforeRenderWindow(Window window)
-    //{
-    //    for (int i = 0; i < modules.Count; i++)
-    //        modules[i]?.BeforeRenderWindow(window);
-    //}
-    //
-    //internal void AfterRenderWindow(Window window)
-    //{
-    //    for (int i = 0; i < modules.Count; i++)
-    //        modules[i]?.AfterRenderWindow(window);
-    //}
+    internal void BeforeRenderWindow(Window window)
+    {
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.BeforeRenderWindow(window);
+    }
+    
+    internal void AfterRenderWindow(Window window)
+    {
+        for (int i = 0; i < _modules.Count; i++)
+            _modules[i]?.AfterRenderWindow(window);
+    }
 
     public IEnumerator<Module> GetEnumerator()
     {
-        for (int i = 0; i < modules.Count; i++)
+        for (int i = 0; i < _modules.Count; i++)
         {
-            var module = modules[i];
-            if (module != null)
+            Module? module = _modules[i];
+            if (module is not null)
                 yield return module;
         }
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        for (int i = 0; i < modules.Count; i++)
+        for (int i = 0; i < _modules.Count; i++)
         {
-            var module = modules[i];
-            if (module != null)
+            Module? module = _modules[i];
+            if (module is not null)
                 yield return module;
         }
     }

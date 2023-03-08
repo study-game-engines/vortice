@@ -13,7 +13,26 @@ using System.Runtime.InteropServices;
 
 namespace Vortice.Audio.XAudio2;
 
-public unsafe class XAudio2Module : AudioModule
+public static class XAudio2ModuleExtensions
+{
+#if DEBUG
+    public static ModuleList UseXAudio2(this ModuleList builder, bool enableValidation = true)
+#else
+    public static ModuleList UseXAudio2(this ModuleList builder, bool enableValidation = false)
+#endif
+    {
+        if (XAudio2Module.IsSupported())
+        {
+            XAudio2Module.EnableValidation = enableValidation;
+
+            builder.Register<XAudio2Module>();
+        }
+
+        return builder;
+    }
+}
+
+internal unsafe class XAudio2Module : AudioModule
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
@@ -28,6 +47,8 @@ public unsafe class XAudio2Module : AudioModule
     private readonly uint _masterChannels;
     private readonly uint _masterRate;
     private byte* _X3DAudio;
+
+    public static bool EnableValidation { get; set; }
 
     public override string ApiName { get; }
 
@@ -44,7 +65,7 @@ public unsafe class XAudio2Module : AudioModule
         ThrowIfFailed(hr);
 
 #if DEBUG
-        //if (mEngineFlags & AudioEngine_Debug)
+        if (EnableValidation)
         {
             XAUDIO2_DEBUG_CONFIGURATION debug = new()
             {

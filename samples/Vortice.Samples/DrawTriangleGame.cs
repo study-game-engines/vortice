@@ -2,16 +2,18 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Numerics;
+using Vortice.Audio.XAudio2;
 using Vortice.Engine;
 using Vortice.Graphics;
 using Vortice.Mathematics;
+using Vortice.Platform.SDL;
 
 namespace Vortice.Samples;
 
 public sealed class DrawTriangleGame : Game
 {
-    public DrawTriangleGame(GamePlatform? platform = null)
-        : base(platform)
+    public DrawTriangleGame()
+        : base("Draw Triangle")
     {
     }
 
@@ -19,6 +21,10 @@ public sealed class DrawTriangleGame : Game
     protected override void ConfigureModules()
     {
         base.ConfigureModules();
+
+        Modules
+            .UseSDL()
+            .UseXAudio2();
     }
 
     /// <inheritdoc />

@@ -39,14 +39,20 @@ public abstract class Application : DisposableObject, IGame
     /// </summary>
     public AppPlatform Platform => Modules.Get<AppPlatform>();
 
+    /// <summary>
+    /// Gets the main window, automatically created by the <see cref="AppPlatform"/> module.
+    /// </summary>
     public Window MainWindow => Platform.MainWindow;
 
-    public InputManager Input => Modules.Get<InputManager>();
+    /// <summary>
+    /// Gets the system input, crated by the <see cref="AppPlatform"/> module.
+    /// </summary>
+    public InputManager Input => Platform.Input;
 
     /// <summary>
-    /// Gets the Audio module.
+    /// Gets the <see cref="AudioModule"/> instance.
     /// </summary>
-    public AudioModule Audio => Modules.Get<AudioModule>();
+    public AudioModule? Audio { get; private set; }
 
     public bool IsRunning { get; private set; }
     public bool IsExiting { get; private set; }
@@ -79,10 +85,6 @@ public abstract class Application : DisposableObject, IGame
 #endif
         };
         GraphicsDevice = GraphicsDevice.CreateDefault(deviceDescription);
-
-        // Get optional services.
-        //AudioDevice? audioDevice = _serviceProvider.GetService<AudioDevice>();
-        //AudioDevice = audioDevice ?? AudioDevice.CreateDefault();
     }
 
     public GameTime Time { get; } = new GameTime();
@@ -90,7 +92,6 @@ public abstract class Application : DisposableObject, IGame
 
     public GraphicsDevice GraphicsDevice { get; }
 
-    //public AudioDevice AudioDevice { get; }
 
     public IList<IGameSystem> GameSystems { get; } = new List<IGameSystem>();
 
@@ -111,8 +112,6 @@ public abstract class Application : DisposableObject, IGame
     {
         //services.AddSingleton<IGame>(this);
         //services.AddSingleton<IContentManager, ContentManager>();
-
-        Modules.Register<InputManager>();
     }
 
     public void Run(Action? callback = null)
@@ -153,19 +152,28 @@ public abstract class Application : DisposableObject, IGame
             // init modules
             Modules.ApplicationStarted();
 
-            //if (!Modules.Has<System>())
-            //    throw new Exception("App requires a System Module to be registered before it can Start");
+            if (!Modules.Has<AppPlatform>())
+            {
+                throw new Exception($"App requires a {nameof(AppPlatform)} Module to be registered before it can Start");
+            }
+
+
+            // Try to get optional modules.
+            if (Modules.TryGet(out AudioModule? audioModule))
+            {
+                Audio = audioModule;
+            }
 
             // Startup application
-            InitializeBeforeRun();
-            callback?.Invoke();
-            Run();
+            Platform.RunMainLoop(() =>
+            {
+                Platform.TickRequested += OnTickRequested;
+                InitializeBeforeRun();
+                callback?.Invoke();
+            });
         }
 
         IsRunning = true;
-
-        _platform.TickRequested += OnTickRequested;
-        _platform.RunMainLoop(InitializeBeforeRun);
     }
 
     protected virtual void Initialize()

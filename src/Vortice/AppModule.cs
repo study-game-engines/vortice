@@ -1,5 +1,6 @@
 ﻿// Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+// Code based on Foster implementation: https://github.com/NoelFB/Foster/blob/master/LICENSE.txt
 
 namespace Vortice;
 

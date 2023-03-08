@@ -3,10 +3,6 @@
 
 namespace Vortice.Input;
 
-public class InputManager : Module
+public class InputManager
 {
-    public InputManager()
-        : base(10)
-    {
-    }
 }

@@ -5,8 +5,8 @@ namespace Vortice.Engine;
 
 public abstract class Game : Application
 {
-    protected Game(GamePlatform? platform = null)
-        : base(default, platform)
+    protected Game(string? name = default)
+        : base(name)
     {
     }
 }
