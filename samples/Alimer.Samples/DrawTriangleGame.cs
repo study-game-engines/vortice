@@ -39,14 +39,17 @@ public sealed class DrawTriangleGame : Game
             new VertexPositionColor(new Vector3(-0.5f, -0.5f, 0.5f), Colors.Blue)
         };
 
-        using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(PixelFormat.Rgba8Unorm, 256, 256, 1, 6)))
-        {
-        }
+        //using (Texture texture = GraphicsDevice.CreateTexture(TextureDescription.Texture2D(PixelFormat.Rgba8Unorm, 256, 256, 1, 6)))
+        //{
+        //}
     }
 
     public override void Draw(GameTime gameTime)
     {
         base.Draw(gameTime);
+
+        // TODO:
+        return;
 
         CommandBuffer commandBuffer = GraphicsDevice.BeginCommandBuffer("Frame");
 

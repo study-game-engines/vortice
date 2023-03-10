@@ -3,11 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="runtimes\**" PackagePath="runtimes" Pack="true" />
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\Alimer\Alimer.csproj" />
 
-    <PackageReference Include="ppy.SDL2-CS" />
+    <PackageReference Include="Alimer.Bindings.SDL" />
   </ItemGroup>
 
 </Project>

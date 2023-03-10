@@ -1,22 +1,20 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Runtime.InteropServices;
 using Alimer.Input;
-using static SDL2.SDL;
-using static SDL2.SDL.SDL_LogPriority;
-using static SDL2.SDL.SDL_EventType;
+using Alimer.Bindings.SDL;
+using static Alimer.Bindings.SDL.SDL;
+using static Alimer.Bindings.SDL.SDL_InitFlags;
+using static Alimer.Bindings.SDL.SDL_EventType;
+using static Alimer.Bindings.SDL.SDL_LogPriority;
+using System.Runtime.InteropServices;
 
 namespace Alimer.Platform.SDL;
 
 internal unsafe class SDLPlatform : AppPlatform
 {
-    private const string SDL_HINT_WINDOWS_DPI_AWARENESS = "SDL_WINDOWS_DPI_AWARENESS";
-    private const string SDL_HINT_WINDOWS_DPI_SCALING = "SDL_WINDOWS_DPI_SCALING";
-
     private const int _eventsPerPeep = 64;
-    private readonly SDL_Event[] _events = new SDL_Event[_eventsPerPeep];
-    //private readonly SDL_Event* _events = (SDL_Event*)NativeMemory.Alloc(_eventsPerPeep, (nuint)sizeof(SDL_Event));
+    private readonly SDL_Event* _events = (SDL_Event*)NativeMemory.Alloc(_eventsPerPeep, (nuint)sizeof(SDL_Event));
 
     private readonly SDLInput _input;
     private readonly SDLWindow _window;
@@ -41,17 +39,13 @@ internal unsafe class SDLPlatform : AppPlatform
         ApiName = "SDL";
 
         SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-        //SDL_LogSetOutputFunction(&OnLog, IntPtr.Zero);
+        SDL_LogSetOutputFunction(OnLog);
 
         SDL_GetVersion(out SDL_version version);
         ApiVersion = new Version(version.major, version.minor, version.patch);
 
-        // DPI aware on Windows
-        SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
-        SDL_SetHint(SDL_HINT_WINDOWS_DPI_SCALING, "1");
-
         // Init SDL2
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMEPAD) != 0)
         {
             Log.Error($"Unable to initialize SDL: {SDL_GetError()}");
             throw new Exception("");
@@ -99,7 +93,7 @@ internal unsafe class SDLPlatform : AppPlatform
 
         do
         {
-            eventsRead = SDL_PeepEvents(_events, _eventsPerPeep, SDL_eventaction.SDL_GETEVENT, SDL_EventType.SDL_FIRSTEVENT, SDL_EventType.SDL_LASTEVENT);
+            eventsRead = SDL_PeepEvents(_events, _eventsPerPeep, SDL_eventaction.SDL_GETEVENT, SDL_FIRSTEVENT, SDL_EVENT_LAST);
             for (int i = 0; i < eventsRead; i++)
             {
                 HandleSDLEvent(_events[i]);
@@ -112,12 +106,15 @@ internal unsafe class SDLPlatform : AppPlatform
         switch (evt.type)
         {
             case SDL_QUIT:
-            case SDL_APP_TERMINATING:
+            case SDL_EVENT_TERMINATING:
                 _exitRequested = true;
                 break;
 
-            case SDL_WINDOWEVENT:
-                HandleWindowEvent(evt);
+            default:
+                if (evt.type >= SDL_EVENT_WINDOW_FIRST && evt.type <= SDL_EVENT_WINDOW_LAST)
+                {
+                    HandleWindowEvent(evt);
+                }
                 break;
         }
     }
@@ -135,10 +132,8 @@ internal unsafe class SDLPlatform : AppPlatform
         _idLookup.Remove(windowID);
     }
 
-    //[UnmanagedCallersOnly]
-    //private static unsafe void OnLog(nint userData, int category, SDL_LogPriority priority, sbyte* messagePtr)
-    //{
-    //    string message = new(messagePtr);
-    //    Log.Info($"SDL: {message}");
-    //}
+    private static void OnLog(SDL_LogCategory category, SDL_LogPriority priority, string message)
+    {
+        Log.Info($"SDL: {message}");
+    }
 }

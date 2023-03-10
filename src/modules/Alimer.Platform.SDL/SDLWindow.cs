@@ -3,9 +3,10 @@
 
 using System.Drawing;
 using Alimer.Graphics;
-using static SDL2.SDL;
-using static SDL2.SDL.SDL_WindowEventID;
-using static SDL2.SDL.SDL_WindowFlags;
+using Alimer.Bindings.SDL;
+using static Alimer.Bindings.SDL.SDL;
+using static Alimer.Bindings.SDL.SDL_EventType;
+using static Alimer.Bindings.SDL.SDL_WindowFlags;
 
 namespace Alimer.Platform.SDL;
 
@@ -32,14 +33,16 @@ internal unsafe class SDLWindow : Window
     {
         _platform = platform;
 
-        SDL_WindowFlags flags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
+        SDL_WindowFlags flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
 
-        Handle = SDL_CreateWindow("Vortice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 800, flags);
+        Handle = SDL_CreateWindow("Vortice", 1200, 800, flags);
+        SDL_SetWindowPosition(Handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        SDL_ShowWindow(Handle);
         Id = SDL_GetWindowID(Handle);
 
         // Native handle
-        var wmInfo = new SDL_SysWMinfo();
-        SDL_GetWindowWMInfo(Handle, ref wmInfo);
+        SDL_SysWMinfo wmInfo = default;
+        SDL_GetWindowWMInfo(Handle, &wmInfo);
 
         // Window handle is selected per subsystem as defined at:
         // https://wiki.libsdl.org/SDL_SysWMinfo
@@ -90,34 +93,34 @@ internal unsafe class SDLWindow : Window
 
     public void HandleEvent(in SDL_Event evt)
     {
-        switch (evt.window.windowEvent)
+        switch (evt.window.type)
         {
-            case SDL_WINDOWEVENT_MINIMIZED:
+            case SDL_EVENT_WINDOW_MINIMIZED:
                 _minimized = true;
                 _clientSize = new(evt.window.data1, evt.window.data2);
                 OnSizeChanged();
                 break;
 
-            case SDL_WINDOWEVENT_MAXIMIZED:
-            case SDL_WINDOWEVENT_RESTORED:
+            case SDL_EVENT_WINDOW_MAXIMIZED:
+            case SDL_EVENT_WINDOW_RESTORED:
                 _minimized = false;
                 _clientSize = new(evt.window.data1, evt.window.data2);
                 OnSizeChanged();
                 break;
 
-            case SDL_WINDOWEVENT_RESIZED:
+            case SDL_EVENT_WINDOW_RESIZED:
                 _minimized = false;
                 _clientSize = new(evt.window.data1, evt.window.data2);
                 OnSizeChanged();
                 break;
 
-            case SDL_WINDOWEVENT_SIZE_CHANGED:
-                _minimized = false;
-                _clientSize = new(evt.window.data1, evt.window.data2);
-                OnSizeChanged();
-                break;
+            //case SDL_EVENT_WINDOW_CHANGED:
+            //    _minimized = false;
+            //    _clientSize = new(evt.window.data1, evt.window.data2);
+            //    OnSizeChanged();
+            //    break;
 
-            case SDL_WINDOWEVENT_CLOSE:
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
                 //DestroySurface(window);
                 _platform.WindowClosed(evt.window.windowID);
                 SDL_DestroyWindow(Handle);

@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>Alimer.Samples</RootNamespace>
     <PublishAot>true</PublishAot>
+    <StripSymbols>true</StripSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">

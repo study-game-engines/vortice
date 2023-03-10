@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Alimer.Audio;
+using Alimer.Graphics;
 using Alimer.Input;
 using Alimer.Platform;
-using Alimer.Graphics;
 
 namespace Alimer;
 
@@ -100,9 +100,9 @@ public abstract class Application : DisposableObject, IGame
     {
         if (isDisposing)
         {
-            GraphicsDevice.WaitIdle();
-            MainWindow.SwapChain?.Dispose();
-            GraphicsDevice.Dispose();
+            //GraphicsDevice.WaitIdle();
+            //MainWindow.SwapChain?.Dispose();
+            //GraphicsDevice.Dispose();
 
             //AudioDevice?.Dispose();
         }
@@ -188,7 +188,7 @@ public abstract class Application : DisposableObject, IGame
 
         IsRunning = true;
         Modules.Startup();
-        MainWindow.CreateSwapChain(GraphicsDevice);
+        //MainWindow.CreateSwapChain(GraphicsDevice);
 
         Initialize();
 
@@ -273,7 +273,7 @@ public abstract class Application : DisposableObject, IGame
             system.EndDraw();
         }
 
-        GraphicsDevice.CommitFrame();
+        //GraphicsDevice.CommitFrame();
     }
 
     /// <summary>

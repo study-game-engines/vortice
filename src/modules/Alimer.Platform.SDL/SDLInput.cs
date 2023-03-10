@@ -2,7 +2,6 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using Alimer.Input;
-using static SDL2.SDL;
 
 namespace Alimer.Platform.SDL;
 
