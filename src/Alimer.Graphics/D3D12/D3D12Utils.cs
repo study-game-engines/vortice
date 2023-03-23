@@ -238,42 +238,43 @@ internal static unsafe class D3DUtils
     {
         switch (format)
         {
-            case VertexFormat.Uint8x2: return DXGI_FORMAT_R8G8_UINT;
-            case VertexFormat.Uint8x4: return DXGI_FORMAT_R8G8B8A8_UINT;
-            case VertexFormat.Sint8x2: return DXGI_FORMAT_R8G8_SINT;
-            case VertexFormat.Sint8x4: return DXGI_FORMAT_R8G8B8A8_SINT;
-            case VertexFormat.Unorm8x2: return DXGI_FORMAT_R8G8_UNORM;
-            case VertexFormat.Unorm8x4: return DXGI_FORMAT_R8G8B8A8_UNORM;
-            case VertexFormat.Snorm8x2: return DXGI_FORMAT_R8G8_SNORM;
-            case VertexFormat.Snorm8x4: return DXGI_FORMAT_R8G8B8A8_SNORM;
+            case VertexFormat.UByte2: return DXGI_FORMAT_R8G8_UINT;
+            case VertexFormat.UByte4: return DXGI_FORMAT_R8G8B8A8_UINT;
+            case VertexFormat.Byte2: return DXGI_FORMAT_R8G8_SINT;
+            case VertexFormat.Byte4: return DXGI_FORMAT_R8G8B8A8_SINT;
+            case VertexFormat.UByte2Normalized: return DXGI_FORMAT_R8G8_UNORM;
+            case VertexFormat.UByte4Normalized: return DXGI_FORMAT_R8G8B8A8_UNORM;
+            case VertexFormat.Byte2Normalized: return DXGI_FORMAT_R8G8_SNORM;
+            case VertexFormat.Byte4Normalized: return DXGI_FORMAT_R8G8B8A8_SNORM;
 
-            case VertexFormat.Uint16x2: return DXGI_FORMAT_R16G16_UINT;
-            case VertexFormat.Uint16x4: return DXGI_FORMAT_R16G16B16A16_UINT;
-            case VertexFormat.Sint16x2: return DXGI_FORMAT_R16G16_SINT;
-            case VertexFormat.Sint16x4: return DXGI_FORMAT_R16G16B16A16_SINT;
-            case VertexFormat.Unorm16x2: return DXGI_FORMAT_R16G16_UNORM;
-            case VertexFormat.Unorm16x4: return DXGI_FORMAT_R16G16B16A16_UNORM;
-            case VertexFormat.Snorm16x2: return DXGI_FORMAT_R16G16_SNORM;
-            case VertexFormat.Snorm16x4: return DXGI_FORMAT_R16G16B16A16_SNORM;
-            case VertexFormat.Float16x2: return DXGI_FORMAT_R16G16_FLOAT;
-            case VertexFormat.Float16x4: return DXGI_FORMAT_R16G16B16A16_FLOAT;
+            case VertexFormat.UShort2: return DXGI_FORMAT_R16G16_UINT;
+            case VertexFormat.UShort4: return DXGI_FORMAT_R16G16B16A16_UINT;
+            case VertexFormat.Short2: return DXGI_FORMAT_R16G16_SINT;
+            case VertexFormat.Short4: return DXGI_FORMAT_R16G16B16A16_SINT;
+            case VertexFormat.UShort2Normalized: return DXGI_FORMAT_R16G16_UNORM;
+            case VertexFormat.UShort4Normalized: return DXGI_FORMAT_R16G16B16A16_UNORM;
+            case VertexFormat.Short2Normalized: return DXGI_FORMAT_R16G16_SNORM;
+            case VertexFormat.Short4Normalized: return DXGI_FORMAT_R16G16B16A16_SNORM;
+            case VertexFormat.Half2: return DXGI_FORMAT_R16G16_FLOAT;
+            case VertexFormat.Half4: return DXGI_FORMAT_R16G16B16A16_FLOAT;
 
-            case VertexFormat.Float32: return DXGI_FORMAT_R32_FLOAT;
-            case VertexFormat.Float32x2: return DXGI_FORMAT_R32G32_FLOAT;
-            case VertexFormat.Float32x3: return DXGI_FORMAT_R32G32B32_FLOAT;
-            case VertexFormat.Float32x4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+            case VertexFormat.Float: return DXGI_FORMAT_R32_FLOAT;
+            case VertexFormat.Float2: return DXGI_FORMAT_R32G32_FLOAT;
+            case VertexFormat.Float3: return DXGI_FORMAT_R32G32B32_FLOAT;
+            case VertexFormat.Float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
 
             case VertexFormat.UInt: return DXGI_FORMAT_R32_UINT;
             case VertexFormat.UInt2: return DXGI_FORMAT_R32G32_UINT;
             case VertexFormat.UInt3: return DXGI_FORMAT_R32G32B32_UINT;
             case VertexFormat.UInt4: return DXGI_FORMAT_R32G32B32A32_UINT;
 
-            case VertexFormat.Sint32: return DXGI_FORMAT_R32_SINT;
-            case VertexFormat.Sint32x2: return DXGI_FORMAT_R32G32_SINT;
-            case VertexFormat.Sint32x3: return DXGI_FORMAT_R32G32B32_SINT;
-            case VertexFormat.Sint32x4: return DXGI_FORMAT_R32G32B32A32_SINT;
+            case VertexFormat.Int: return DXGI_FORMAT_R32_SINT;
+            case VertexFormat.Int2: return DXGI_FORMAT_R32G32_SINT;
+            case VertexFormat.Int3: return DXGI_FORMAT_R32G32B32_SINT;
+            case VertexFormat.Int4: return DXGI_FORMAT_R32G32B32A32_SINT;
 
-            case VertexFormat.RGB10A2Unorm: return DXGI_FORMAT_R10G10B10A2_UNORM;
+            case VertexFormat.Int1010102Normalized: return DXGI_FORMAT_R10G10B10A2_UNORM;
+            case VertexFormat.UInt1010102Normalized: return DXGI_FORMAT_R10G10B10A2_UINT;
 
             default:
                 return DXGI_FORMAT_UNKNOWN;

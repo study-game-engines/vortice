@@ -5,6 +5,8 @@
 
 using TerraFX.Interop.Windows;
 
+#pragma warning disable CS0649
+
 namespace TerraFX.Interop.DirectX;
 
 internal partial struct DXGI_SWAP_CHAIN_FULLSCREEN_DESC
@@ -15,6 +17,5 @@ internal partial struct DXGI_SWAP_CHAIN_FULLSCREEN_DESC
 
     public DXGI_MODE_SCALING Scaling;
 
-    /// <include file='DXGI_SWAP_CHAIN_FULLSCREEN_DESC.xml' path='doc/member[@name="DXGI_SWAP_CHAIN_FULLSCREEN_DESC.Windowed"]/*' />
     public BOOL Windowed;
 }

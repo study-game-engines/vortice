@@ -84,7 +84,7 @@ public abstract class Application : DisposableObject, IGame
             ValidationMode = ValidationMode.Enabled,
 #endif
         };
-        //GraphicsDevice = GraphicsDevice.CreateDefault(deviceDescription);
+        GraphicsDevice = GraphicsDevice.CreateDefault(deviceDescription);
     }
 
     public GameTime Time { get; } = new GameTime();
@@ -100,9 +100,9 @@ public abstract class Application : DisposableObject, IGame
     {
         if (isDisposing)
         {
-            //GraphicsDevice.WaitIdle();
+            GraphicsDevice.WaitIdle();
             //MainWindow.SwapChain?.Dispose();
-            //GraphicsDevice.Dispose();
+            GraphicsDevice.Dispose();
 
             //AudioDevice?.Dispose();
         }

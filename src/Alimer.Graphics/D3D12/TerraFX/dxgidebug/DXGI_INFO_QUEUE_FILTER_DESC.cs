@@ -3,6 +3,7 @@
 // Ported from um/dxgidebug.h in the Windows SDK for Windows 10.0.22621.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
+#if DEBUG
 using System.Runtime.Versioning;
 
 namespace TerraFX.Interop.DirectX;
@@ -22,4 +23,5 @@ internal unsafe partial struct DXGI_INFO_QUEUE_FILTER_DESC
 
     [NativeTypeName("DXGI_INFO_QUEUE_MESSAGE_ID *")]
     public int* pIDList;
-}
+} 
+#endif

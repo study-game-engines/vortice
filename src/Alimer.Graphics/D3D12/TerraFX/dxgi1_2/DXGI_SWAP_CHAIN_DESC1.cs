@@ -5,6 +5,8 @@
 
 using TerraFX.Interop.Windows;
 
+#pragma warning disable CS0649
+
 namespace TerraFX.Interop.DirectX;
 
 internal partial struct DXGI_SWAP_CHAIN_DESC1

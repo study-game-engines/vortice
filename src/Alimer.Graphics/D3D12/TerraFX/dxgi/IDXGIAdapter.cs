@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.IID;
 
+#pragma warning disable CS0649
+
 namespace TerraFX.Interop.DirectX;
 
 /// <include file='IDXGIAdapter.xml' path='doc/member[@name="IDXGIAdapter"]/*' />

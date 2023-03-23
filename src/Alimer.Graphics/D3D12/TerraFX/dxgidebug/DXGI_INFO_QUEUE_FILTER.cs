@@ -3,6 +3,7 @@
 // Ported from um/dxgidebug.h in the Windows SDK for Windows 10.0.22621.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
+#if DEBUG
 using System.Runtime.Versioning;
 
 namespace TerraFX.Interop.DirectX;
@@ -12,4 +13,5 @@ internal partial struct DXGI_INFO_QUEUE_FILTER
 {
     public DXGI_INFO_QUEUE_FILTER_DESC AllowList;
     public DXGI_INFO_QUEUE_FILTER_DESC DenyList;
-}
+} 
+#endif

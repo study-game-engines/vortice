@@ -3,6 +3,7 @@
 // Ported from um/dxgidebug.h in the Windows SDK for Windows 10.0.22621.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
+#if DEBUG
 using System.Runtime.Versioning;
 
 namespace TerraFX.Interop.DirectX;
@@ -21,4 +22,5 @@ internal enum DXGI_INFO_QUEUE_MESSAGE_CATEGORY
     DXGI_INFO_QUEUE_MESSAGE_CATEGORY_RESOURCE_MANIPULATION = (DXGI_INFO_QUEUE_MESSAGE_CATEGORY_STATE_GETTING + 1),
     DXGI_INFO_QUEUE_MESSAGE_CATEGORY_EXECUTION = (DXGI_INFO_QUEUE_MESSAGE_CATEGORY_RESOURCE_MANIPULATION + 1),
     DXGI_INFO_QUEUE_MESSAGE_CATEGORY_SHADER = (DXGI_INFO_QUEUE_MESSAGE_CATEGORY_EXECUTION + 1),
-}
+} 
+#endif

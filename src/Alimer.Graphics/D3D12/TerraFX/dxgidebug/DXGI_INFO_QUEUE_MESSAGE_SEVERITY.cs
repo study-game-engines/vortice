@@ -3,6 +3,7 @@
 // Ported from um/dxgidebug.h in the Windows SDK for Windows 10.0.22621.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
+#if DEBUG
 using System.Runtime.Versioning;
 
 namespace TerraFX.Interop.DirectX;
@@ -15,4 +16,5 @@ internal enum DXGI_INFO_QUEUE_MESSAGE_SEVERITY
     DXGI_INFO_QUEUE_MESSAGE_SEVERITY_WARNING = (DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR + 1),
     DXGI_INFO_QUEUE_MESSAGE_SEVERITY_INFO = (DXGI_INFO_QUEUE_MESSAGE_SEVERITY_WARNING + 1),
     DXGI_INFO_QUEUE_MESSAGE_SEVERITY_MESSAGE = (DXGI_INFO_QUEUE_MESSAGE_SEVERITY_INFO + 1),
-}
+} 
+#endif

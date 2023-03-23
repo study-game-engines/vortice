@@ -5,6 +5,8 @@
 
 using TerraFX.Interop.Windows;
 
+#pragma warning disable CS0649
+
 namespace TerraFX.Interop.DirectX;
 
 internal unsafe partial struct DXGI_OUTPUT_DESC

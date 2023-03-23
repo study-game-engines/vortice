@@ -1,9 +1,9 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-#if WINDOWS_UWP
+#if WINDOWS
+using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
 #endif
 
 namespace Alimer.Graphics;
@@ -20,7 +20,6 @@ public abstract class SwapChainSurface
 
     public abstract SwapChainSurfaceType Type { get; }
 
-#if !WINDOWS_UWP
     /// <summary>
     /// Creates a new <see cref="GraphicsSurface"/> for a Win32 window.
     /// </summary>
@@ -28,7 +27,8 @@ public abstract class SwapChainSurface
     /// <returns>A new <see cref="SwapChainSurface"/> which can be used to create a <see cref="SwapChain"/> for the given Win32 window.
     /// </returns>
     public static SwapChainSurface CreateWin32(IntPtr hwnd) => new Win32SwapChainSurface(hwnd);
-#else
+
+#if WINDOWS
     /// <summary>
     /// Creates a new <see cref="SwapChainSurface"/> for a <see cref="CoreWindow"/>.
     /// </summary>
@@ -47,8 +47,7 @@ public abstract class SwapChainSurface
 #endif
 }
 
-#if !WINDOWS_UWP
-internal class Win32SwapChainSurface : SwapChainSurface
+internal sealed class Win32SwapChainSurface : SwapChainSurface
 {
     public Win32SwapChainSurface(IntPtr hwnd)
     {
@@ -61,7 +60,8 @@ internal class Win32SwapChainSurface : SwapChainSurface
     /// <inheritdoc />
     public override SwapChainSurfaceType Type => SwapChainSurfaceType.Win32;
 }
-#else
+
+#if WINDOWS
 internal class CoreWindowSwapChainSurface : SwapChainSurface
 {
     public CoreWindowSwapChainSurface(CoreWindow coreWindow)
@@ -87,5 +87,4 @@ internal class SwapChainPanelSwapChainSurface : SwapChainSurface
     /// <inheritdoc />
     public override SwapChainSurfaceType Type => SwapChainSurfaceType.SwapChainPanel;
 }
-
 #endif

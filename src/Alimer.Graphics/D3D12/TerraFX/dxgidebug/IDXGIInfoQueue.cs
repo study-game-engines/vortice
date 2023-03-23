@@ -3,16 +3,17 @@
 // Ported from um/dxgidebug.h in the Windows SDK for Windows 10.0.22621.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
-using System;
+#if DEBUG
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.IID;
 
+#pragma warning disable CS0649
+
 namespace TerraFX.Interop.DirectX;
 
-/// <include file='IDXGIInfoQueue.xml' path='doc/member[@name="IDXGIInfoQueue"]/*' />
 [Guid("D67441C7-672A-476F-9E82-CD55B44949CE")]
 [NativeTypeName("struct IDXGIInfoQueue : IUnknown")]
 [NativeInheritance("IUnknown")]
@@ -433,4 +434,5 @@ internal unsafe partial struct IDXGIInfoQueue : IDXGIInfoQueue.Interface, INativ
         //[VtblIndex(39)]
         //BOOL GetMuteDebugOutput([NativeTypeName("DXGI_DEBUG_ID")] Guid Producer); 
     }
-}
+} 
+#endif

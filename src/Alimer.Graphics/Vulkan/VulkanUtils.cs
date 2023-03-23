@@ -104,42 +104,43 @@ internal static unsafe class VulkanUtils
     {
         switch (format)
         {
-            case VertexFormat.Uint8x2: return VkFormat.R8G8Uint;
-            case VertexFormat.Uint8x4: return VkFormat.R8G8B8A8Uint;
-            case VertexFormat.Sint8x2: return VkFormat.R8G8Sint;
-            case VertexFormat.Sint8x4: return VkFormat.R8G8B8A8Sint;
-            case VertexFormat.Unorm8x2: return VkFormat.R8G8Unorm;
-            case VertexFormat.Unorm8x4: return VkFormat.R8G8B8A8Unorm;
-            case VertexFormat.Snorm8x2: return VkFormat.R8G8Snorm;
-            case VertexFormat.Snorm8x4: return VkFormat.R8G8B8A8Snorm;
+            case VertexFormat.UByte2: return VkFormat.R8G8Uint;
+            case VertexFormat.UByte4: return VkFormat.R8G8B8A8Uint;
+            case VertexFormat.Byte2: return VkFormat.R8G8Sint;
+            case VertexFormat.Byte4: return VkFormat.R8G8B8A8Sint;
+            case VertexFormat.UByte2Normalized: return VkFormat.R8G8Unorm;
+            case VertexFormat.UByte4Normalized: return VkFormat.R8G8B8A8Unorm;
+            case VertexFormat.Byte2Normalized: return VkFormat.R8G8Snorm;
+            case VertexFormat.Byte4Normalized: return VkFormat.R8G8B8A8Snorm;
 
-            case VertexFormat.Uint16x2: return VkFormat.R16G16Uint;
-            case VertexFormat.Uint16x4: return VkFormat.R16G16B16A16Uint;
-            case VertexFormat.Sint16x2: return VkFormat.R16G16Sint;
-            case VertexFormat.Sint16x4: return VkFormat.R16G16B16A16Sint;
-            case VertexFormat.Unorm16x2: return VkFormat.R16G16Unorm;
-            case VertexFormat.Unorm16x4: return VkFormat.R16G16B16A16Unorm;
-            case VertexFormat.Snorm16x2: return VkFormat.R16G16Snorm;
-            case VertexFormat.Snorm16x4: return VkFormat.R16G16B16A16Snorm;
-            case VertexFormat.Float16x2: return VkFormat.R16G16Sfloat;
-            case VertexFormat.Float16x4: return VkFormat.R16G16B16A16Sfloat;
+            case VertexFormat.UShort2: return VkFormat.R16G16Uint;
+            case VertexFormat.UShort4: return VkFormat.R16G16B16A16Uint;
+            case VertexFormat.Short2: return VkFormat.R16G16Sint;
+            case VertexFormat.Short4: return VkFormat.R16G16B16A16Sint;
+            case VertexFormat.UShort2Normalized: return VkFormat.R16G16Unorm;
+            case VertexFormat.UShort4Normalized: return VkFormat.R16G16B16A16Unorm;
+            case VertexFormat.Short2Normalized: return VkFormat.R16G16Snorm;
+            case VertexFormat.Short4Normalized: return VkFormat.R16G16B16A16Snorm;
+            case VertexFormat.Half2: return VkFormat.R16G16Sfloat;
+            case VertexFormat.Half4: return VkFormat.R16G16B16A16Sfloat;
 
-            case VertexFormat.Float32: return VkFormat.R32Sfloat;
-            case VertexFormat.Float32x2: return VkFormat.R32G32Sfloat;
-            case VertexFormat.Float32x3: return VkFormat.R32G32B32Sfloat;
-            case VertexFormat.Float32x4: return VkFormat.R32G32B32A32Sfloat;
+            case VertexFormat.Float: return VkFormat.R32Sfloat;
+            case VertexFormat.Float2: return VkFormat.R32G32Sfloat;
+            case VertexFormat.Float3: return VkFormat.R32G32B32Sfloat;
+            case VertexFormat.Float4: return VkFormat.R32G32B32A32Sfloat;
 
             case VertexFormat.UInt: return VkFormat.R32Uint;
             case VertexFormat.UInt2: return VkFormat.R32G32Uint;
             case VertexFormat.UInt3: return VkFormat.R32G32B32Uint;
             case VertexFormat.UInt4: return VkFormat.R32G32B32A32Uint;
 
-            case VertexFormat.Sint32: return VkFormat.R32Sint;
-            case VertexFormat.Sint32x2: return VkFormat.R32G32Sint;
-            case VertexFormat.Sint32x3: return VkFormat.R32G32B32Sint;
-            case VertexFormat.Sint32x4: return VkFormat.R32G32B32A32Sint;
+            case VertexFormat.Int: return VkFormat.R32Sint;
+            case VertexFormat.Int2: return VkFormat.R32G32Sint;
+            case VertexFormat.Int3: return VkFormat.R32G32B32Sint;
+            case VertexFormat.Int4: return VkFormat.R32G32B32A32Sint;
 
-            case VertexFormat.RGB10A2Unorm: return VkFormat.A2B10G10R10UnormPack32;
+            case VertexFormat.Int1010102Normalized: return VkFormat.A2B10G10R10SnormPack32;
+            case VertexFormat.UInt1010102Normalized: return VkFormat.A2B10G10R10UnormPack32;
 
             default:
                 return VkFormat.Undefined;

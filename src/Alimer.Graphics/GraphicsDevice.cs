@@ -15,6 +15,7 @@ public abstract class GraphicsDevice : IDisposable
 
     private readonly Dictionary<IntPtr, CommandBuffer> _commandBuffers = new();
     private ulong _frameCount;
+    private uint _frameIndex;
 
     public GraphicsDevice(GraphicsBackend backend, string? label)
     {
@@ -78,6 +79,19 @@ public abstract class GraphicsDevice : IDisposable
 
     /// <summary>Marks the object as being disposed.</summary>
     protected void MarkDisposed() => Interlocked.Exchange(ref _isDisposed, 1);
+
+    public static GraphicsDevice CreateDefault(in GraphicsDeviceDescription description)
+    {
+#if !EXCLUDE_D3D12_BACKEND
+        return new D3D12.D3D12GraphicsDevice(in description);
+#endif
+
+#if !EXCLUDE_VULKAN_BACKEND
+        return new Vulkan.VulkanGraphicsDevice(in description);
+#endif
+
+        throw new GraphicsException("No backend supported");
+    }
 
     public abstract bool QueryFeature(Feature feature);
 

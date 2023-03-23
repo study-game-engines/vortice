@@ -6,6 +6,8 @@
 using TerraFX.Interop.Windows;
 using Vortice.Mathematics;
 
+#pragma warning disable CS0649
+
 namespace TerraFX.Interop.DirectX;
 
 internal unsafe partial struct DXGI_PRESENT_PARAMETERS

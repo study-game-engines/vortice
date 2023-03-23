@@ -3,6 +3,7 @@
 // Ported from um/dxgidebug.h in the Windows SDK for Windows 10.0.22621.0
 // Original source is Copyright © Microsoft. All rights reserved.
 
+#if DEBUG
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -111,3 +112,5 @@ internal static partial class DXGI
         }
     }
 }
+
+#endif
