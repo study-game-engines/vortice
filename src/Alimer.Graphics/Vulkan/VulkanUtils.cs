@@ -99,6 +99,53 @@ internal static unsafe class VulkanUtils
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static VkFormat ToVkFormat(VertexFormat format)
+    {
+        switch (format)
+        {
+            case VertexFormat.Uint8x2: return VkFormat.R8G8Uint;
+            case VertexFormat.Uint8x4: return VkFormat.R8G8B8A8Uint;
+            case VertexFormat.Sint8x2: return VkFormat.R8G8Sint;
+            case VertexFormat.Sint8x4: return VkFormat.R8G8B8A8Sint;
+            case VertexFormat.Unorm8x2: return VkFormat.R8G8Unorm;
+            case VertexFormat.Unorm8x4: return VkFormat.R8G8B8A8Unorm;
+            case VertexFormat.Snorm8x2: return VkFormat.R8G8Snorm;
+            case VertexFormat.Snorm8x4: return VkFormat.R8G8B8A8Snorm;
+
+            case VertexFormat.Uint16x2: return VkFormat.R16G16Uint;
+            case VertexFormat.Uint16x4: return VkFormat.R16G16B16A16Uint;
+            case VertexFormat.Sint16x2: return VkFormat.R16G16Sint;
+            case VertexFormat.Sint16x4: return VkFormat.R16G16B16A16Sint;
+            case VertexFormat.Unorm16x2: return VkFormat.R16G16Unorm;
+            case VertexFormat.Unorm16x4: return VkFormat.R16G16B16A16Unorm;
+            case VertexFormat.Snorm16x2: return VkFormat.R16G16Snorm;
+            case VertexFormat.Snorm16x4: return VkFormat.R16G16B16A16Snorm;
+            case VertexFormat.Float16x2: return VkFormat.R16G16Sfloat;
+            case VertexFormat.Float16x4: return VkFormat.R16G16B16A16Sfloat;
+
+            case VertexFormat.Float32: return VkFormat.R32Sfloat;
+            case VertexFormat.Float32x2: return VkFormat.R32G32Sfloat;
+            case VertexFormat.Float32x3: return VkFormat.R32G32B32Sfloat;
+            case VertexFormat.Float32x4: return VkFormat.R32G32B32A32Sfloat;
+
+            case VertexFormat.UInt: return VkFormat.R32Uint;
+            case VertexFormat.UInt2: return VkFormat.R32G32Uint;
+            case VertexFormat.UInt3: return VkFormat.R32G32B32Uint;
+            case VertexFormat.UInt4: return VkFormat.R32G32B32A32Uint;
+
+            case VertexFormat.Sint32: return VkFormat.R32Sint;
+            case VertexFormat.Sint32x2: return VkFormat.R32G32Sint;
+            case VertexFormat.Sint32x3: return VkFormat.R32G32B32Sint;
+            case VertexFormat.Sint32x4: return VkFormat.R32G32B32A32Sint;
+
+            case VertexFormat.RGB10A2Unorm: return VkFormat.A2B10G10R10UnormPack32;
+
+            default:
+                return VkFormat.Undefined;
+        }
+    }
+
     public static VkSampleCountFlags ToVkSampleCount(this TextureSampleCount sampleCount)
     {
         switch (sampleCount)

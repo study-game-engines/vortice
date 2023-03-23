@@ -15,8 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TerraFX\**\*.cs" Condition=" '$(ExcludeD3D12)' == 'true' " />
-    <Compile Remove="D3DCommon\**\*.cs" Condition=" '$(ExcludeD3D12)' == 'true' " />
     <Compile Remove="D3D12\**\*.cs" Condition="'$(ExcludeD3D12)' == 'true'" />
     <Compile Remove="Vulkan\**\*.cs" Condition="'$(ExcludeVulkan)' == 'true'" />
   </ItemGroup>
@@ -27,5 +25,7 @@
 
     <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
   </ItemGroup>
+
+  <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" Condition="'$(ExcludeD3D12)' != 'true'" />
 
 </Project>

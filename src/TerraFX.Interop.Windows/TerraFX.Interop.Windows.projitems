@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BOOL.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ComPtrExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ComPtr`1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HWND.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HRESULT.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)INativeGuid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IID.cs" />
@@ -20,6 +21,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)HANDLE.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LARGE_INTEGER.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LUID.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RECT.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RECT.Manual.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Windows.cs" />
   </ItemGroup>
 </Project>

@@ -5,10 +5,7 @@ namespace Alimer.Graphics;
 
 public enum GraphicsBackend
 {
-    Default,
-    Vulkan,
     Direct3D12,
-    Direct3D11,
-    WebGPU,
+    Vulkan,
     Count,
 }
