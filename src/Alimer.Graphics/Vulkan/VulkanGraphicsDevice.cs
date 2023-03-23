@@ -25,10 +25,6 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
     //private readonly GraphicsDeviceFeatures _features;
     private readonly GraphicsDeviceLimits _limits;
 
-    public override string ApiName => "Vulkan";
-
-    public override Version ApiVersion { get; }
-
     public bool DebugUtils => _debugUtils;
     public VkInstance Instance => _instance;
     public VkPhysicalDevice PhysicalDevice { get; }
@@ -47,11 +43,10 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
     public static bool IsSupported() => s_isSupported.Value;
 
     public VulkanGraphicsDevice(in GraphicsDeviceDescription description)
-        : base(GraphicsBackend.Vulkan)
+        : base(GraphicsBackend.Vulkan, description.Label)
     {
         Guard.IsTrue(IsSupported(), nameof(VulkanGraphicsDevice), "Vulkan is not supported");
 
-        ApiVersion = new Version(1, 3, 0);
         VkResult result = VkResult.Success;
 
         // Create instance first.

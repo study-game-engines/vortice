@@ -16,8 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Alimer.Physics\Alimer.Physics.csproj" />
     <ProjectReference Include="..\..\src\modules\Alimer.Audio.XAudio2\Alimer.Audio.XAudio2.csproj" />
-    <ProjectReference Include="..\..\src\modules\Alimer.Graphics.D3D12\Alimer.Graphics.D3D12.csproj" />
-    <ProjectReference Include="..\..\src\modules\Alimer.Graphics.Vulkan\Alimer.Graphics.Vulkan.csproj" />
     <ProjectReference Include="..\..\src\modules\Alimer.Platform.SDL\Alimer.Platform.SDL.csproj" />
   </ItemGroup>
 

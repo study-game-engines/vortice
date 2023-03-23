@@ -21,4 +21,8 @@
     <PackageReference Include="Vortice.Mathematics" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Alimer.Graphics\Alimer.Graphics.csproj" />
+  </ItemGroup>
+
 </Project>
