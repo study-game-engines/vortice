@@ -1,10 +1,11 @@
 # Alimer
 
-[![Build status](https://github.com/amerkoleci/alimer/workflows/Build/badge.svg)](https://github.com/amerkoleci/alimer/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/amerkoleci/alimer_cs/blob/main/LICENSE)
+[![Build status](https://github.com/amerkoleci/alimer_cs/workflows/Build/badge.svg)](https://github.com/amerkoleci/alimer_cs/actions)
 
-**Alimer** is a modern cross-platform .NET 7 game engine and distributed under [MIT license](https://github.com/amerkoleci/alimer/blob/main/LICENSE).
+**Alimer** is a modern cross-platform .NET 7 game engine written in C# 11.
 
-Note that **Alimer** is undergoing active developement. Please report all spotted bugs in the [issue tracker](https://github.com/amerkoleci/alimer/issues).
+Note that **Alimer** is undergoing active developement. Please report all spotted bugs in the [issue tracker](https://github.com/amerkoleci/alimer_cs/issues).
 
 ## Features
 
@@ -19,4 +20,4 @@ Please consider [SPONSOR](https://github.com/sponsors/amerkoleci) me to further 
 Uses the following open-source and third-party libraries:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan): Cross platform .NET bindings for Vulkan
-- [terrafx.interop.windows](https://github.com/terrafx/terrafx.interop.windows): Interop bindings for Windows.
+- [terrafx.interop.windows](https://github.com/terrafx/terrafx.interop.windows): Interop bindings for Windows, added as part of the code.

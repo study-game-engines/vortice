@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/amerkoleci/alimer</RepositoryUrl>
+    <RepositoryUrl>https://github.com/amerkoleci/alimer_cs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
