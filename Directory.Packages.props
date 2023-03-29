@@ -19,7 +19,7 @@
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
 
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="JoltPhysicsSharp" Version="1.4.0" />
+    <PackageVersion Include="JoltPhysicsSharp" Version="1.4.1" />
 
     <!-- Asset Pipeline -->
     <PackageVersion Include="SkiaSharp" Version="2.88.3" />
