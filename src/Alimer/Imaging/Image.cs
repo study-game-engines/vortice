@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Alimer.Imaging;
 
-public sealed class Image : GraphicsObject
+public sealed class Image 
 {
     public int Width { get; }
 
@@ -60,11 +60,6 @@ public sealed class Image : GraphicsObject
 #endif
 
         return default;
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-
     }
 
     private static bool IsKTX1(byte[] data)

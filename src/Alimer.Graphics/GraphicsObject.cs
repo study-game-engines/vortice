@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using CommunityToolkit.Diagnostics;
 
 namespace Alimer.Graphics;
 
@@ -76,7 +75,5 @@ public abstract class GraphicsObject : IDisposable
     /// <inheritdoc />
     public override string ToString() => _label;
 
-    protected virtual void OnLabelChanged(string newLabel)
-    {
-    }
+    protected abstract void OnLabelChanged(string newLabel);
 }

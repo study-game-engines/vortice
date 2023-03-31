@@ -13,6 +13,6 @@ public class ImageTests
     public void KTX1_Load()
     {
         string texturesFolder = Path.Combine(AppContext.BaseDirectory, "assets", "textures");
-        using Image image = Image.FromFile(Path.Combine(texturesFolder, "checkerboard_rgba.ktx"))!;
+        Image image = Image.FromFile(Path.Combine(texturesFolder, "checkerboard_rgba.ktx"))!;
     }
 }

@@ -7,4 +7,6 @@ public enum GpuPowerPreference
 {
     HighPerformance,
     LowPower,
+
+    Count
 }

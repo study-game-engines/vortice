@@ -13,6 +13,11 @@ namespace Alimer.Graphics.D3D12;
 
 internal static unsafe class D3DUtils
 {
+    private static readonly DXGI_GPU_PREFERENCE[] s_d3dGpuPreferenceMap = new DXGI_GPU_PREFERENCE[(int)GpuPowerPreference.Count] {
+        DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+        DXGI_GPU_PREFERENCE_MINIMUM_POWER
+    };
+
     private static readonly D3D_PRIMITIVE_TOPOLOGY[] s_d3dPrimitiveTopologyMap = new D3D_PRIMITIVE_TOPOLOGY[(int)PrimitiveTopology.Count] {
         D3D_PRIMITIVE_TOPOLOGY_POINTLIST,
         D3D_PRIMITIVE_TOPOLOGY_LINELIST,
@@ -325,18 +330,8 @@ internal static unsafe class D3DUtils
         };
     }
 
-    public static DXGI_GPU_PREFERENCE ToDxgi(this GpuPowerPreference preference)
-    {
-        switch (preference)
-        {
-            case GpuPowerPreference.LowPower:
-                return DXGI_GPU_PREFERENCE_MINIMUM_POWER;
-
-            default:
-            case GpuPowerPreference.HighPerformance:
-                return DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE;
-        }
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DXGI_GPU_PREFERENCE ToDxgi(this GpuPowerPreference value) => s_d3dGpuPreferenceMap[(uint)value];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static D3D_PRIMITIVE_TOPOLOGY ToD3DPrimitiveTopology(this PrimitiveTopology value) => s_d3dPrimitiveTopologyMap[(uint)value];
@@ -366,6 +361,18 @@ internal static unsafe class D3DUtils
                 return ThrowHelper.ThrowArgumentException<uint>("Invalid present mode");
         }
     }
+
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SetName<TD3D12Object>(ref this TD3D12Object self, string name)
+        where TD3D12Object : unmanaged, ID3D12Object.Interface
+    {
+        fixed (char* pName = name)
+        {
+            _ = self.SetName((ushort*)pName);
+        }
+    }
+
 }
 
 unsafe partial class Kernel32
