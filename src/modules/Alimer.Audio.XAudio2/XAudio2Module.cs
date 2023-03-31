@@ -7,8 +7,8 @@ using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.Windows;
 using static TerraFX.Interop.DirectX.DirectX;
 using static TerraFX.Interop.Windows.AUDIO_STREAM_CATEGORY;
-//using static TerraFX.Interop.DirectX.XAUDIO2;
-//using static TerraFX.Interop.DirectX.X3DAUDIO;
+using static TerraFX.Interop.DirectX.XAUDIO2;
+using static TerraFX.Interop.DirectX.X3DAUDIO;
 using System.Runtime.InteropServices;
 
 namespace Alimer.Audio.XAudio2;

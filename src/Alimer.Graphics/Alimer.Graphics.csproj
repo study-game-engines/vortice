@@ -24,12 +24,12 @@
     <PackageReference Include="Vortice.Mathematics" />
 
     <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
+    <PackageReference Include="TerraFX.Interop.Windows" Condition="'$(ExcludeD3D12)' != 'true'" />
+    <PackageReference Include="TerraFX.Interop.D3D12MemoryAllocator" Condition="'$(ExcludeD3D12)' != 'true'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(_AlimerTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
     <PackageReference Include="Microsoft.WindowsAppSDK" />
   </ItemGroup>
-
-  <Import Project="..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" Condition="'$(ExcludeD3D12)' != 'true'" />
 
 </Project>

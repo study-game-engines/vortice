@@ -10,7 +10,7 @@ Note that **Alimer** is undergoing active developement. Please report all spotte
 ## Features
 
 * Support for Windows, Linux, macOS.
-* Modern rendering using Vulkan, Direct3D12 and Direct3D11.
+* Modern rendering using Direct3D12 and Vulkan.
 
 ## Sponsors
 Please consider [SPONSOR](https://github.com/sponsors/amerkoleci) me to further help development and to allow faster issue triaging and new features to be implemented.
@@ -19,5 +19,6 @@ Please consider [SPONSOR](https://github.com/sponsors/amerkoleci) me to further 
 
 Uses the following open-source and third-party libraries:
 
+- [terrafx.interop.windows](https://github.com/terrafx/terrafx.interop.windows): Interop bindings for Windows.
+- [terrafx.interop.d3d12memoryallocator](https://github.com/terrafx/terrafx.interop.d3d12memoryallocator): Interop bindings for D3D12MemoryAllocator
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan): Cross platform .NET bindings for Vulkan
-- [terrafx.interop.windows](https://github.com/terrafx/terrafx.interop.windows): Interop bindings for Windows, added as part of the code.

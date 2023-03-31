@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="TerraFX.Interop.Windows" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="runtimes\win-x64\native\dxil.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
       <Pack>true</Pack>
@@ -14,7 +18,5 @@
       <Pack>true</Pack>
     </Content>
   </ItemGroup>
-
-  <Import Project="..\..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />
 
 </Project>

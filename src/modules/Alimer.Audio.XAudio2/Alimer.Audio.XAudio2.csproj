@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Alimer\Alimer.csproj" />
-  </ItemGroup>
 
-  <Import Project="..\..\TerraFX.Interop.Windows\TerraFX.Interop.Windows.projitems" Label="Shared" />
+    <PackageReference Include="TerraFX.Interop.Windows" />
+  </ItemGroup>
 
 </Project>

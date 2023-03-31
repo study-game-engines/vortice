@@ -1,8 +1,7 @@
-// https://github.com/Sergio0694/ComputeSharp/blob/main/LICENSE
-
 using System.Runtime.CompilerServices;
+using TerraFX.Interop.Windows;
 
-namespace TerraFX.Interop.Windows;
+namespace Alimer.Graphics.D3D12;
 
 /// <summary>
 /// Helper methods for working with the <see cref="ComPtr{T}"/> type.
@@ -21,7 +20,7 @@ internal static class ComPtrExtensions
     {
         if (ptr.Get() is not null)
         {
-            return ((IUnknown*)ptr.Get())->AddRef();
+            return ptr.Get()->AddRef();
         }
 
         return 0;
@@ -40,7 +39,7 @@ internal static class ComPtrExtensions
     {
         if (ptr.Get() is not null)
         {
-            uint count = ((IUnknown*)ptr.Get())->Release();
+            uint count = ptr.Get()->Release();
 
             if (count == 0)
             {
