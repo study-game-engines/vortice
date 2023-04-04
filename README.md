@@ -1,11 +1,11 @@
-# Alimer
+# Vortice
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/amerkoleci/alimer/blob/main/LICENSE)
-[![Build status](https://github.com/amerkoleci/alimer/workflows/Build/badge.svg)](https://github.com/amerkoleci/alimer/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/amerkoleci/vortice/blob/main/LICENSE)
+[![Build status](https://github.com/amerkoleci/vortice/workflows/Build/badge.svg)](https://github.com/amerkoleci/vortice/actions)
 
-**Alimer** is a modern cross-platform .NET 7 game engine written in C# 11.
+**Vortice** is a modern cross-platform .NET 7 game engine written in C# 11.
 
-Note that **Alimer** is undergoing active developement. Please report all spotted bugs in the [issue tracker](https://github.com/amerkoleci/alimer/issues).
+Note that **Vortice** is undergoing active developement. Please report all spotted bugs in the [issue tracker](https://github.com/amerkoleci/vortice/issues).
 
 ## Features
 

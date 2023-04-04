@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/amerkoleci/alimer</RepositoryUrl>
+    <RepositoryUrl>https://github.com/amerkoleci/vortice</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
@@ -36,7 +36,7 @@
   <PropertyGroup>
     <Authors>Amer Koleci and Contributors</Authors>
     <Copyright>Copyright © Amer Koleci and Contributors</Copyright>
-    <Product>Alimer</Product>
+    <Product>Vortice</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
