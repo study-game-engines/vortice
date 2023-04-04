@@ -1,7 +1,7 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Alimer.Input;
+using Vortice.Input;
 using Alimer.Bindings.SDL;
 using static Alimer.Bindings.SDL.SDL;
 using static Alimer.Bindings.SDL.SDL_InitFlags;
@@ -9,7 +9,7 @@ using static Alimer.Bindings.SDL.SDL_EventType;
 using static Alimer.Bindings.SDL.SDL_LogPriority;
 using System.Runtime.InteropServices;
 
-namespace Alimer.Platform.SDL;
+namespace Vortice.Platform.SDL;
 
 internal unsafe class SDLPlatform : AppPlatform
 {

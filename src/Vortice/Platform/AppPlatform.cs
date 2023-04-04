@@ -2,9 +2,9 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.InteropServices;
-using Alimer.Input;
+using Vortice.Input;
 
-namespace Alimer.Platform;
+namespace Vortice.Platform;
 
 /// <summary>
 /// Core application platform Module, used for managing Windows, Monitors, Input and Settings.

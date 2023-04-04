@@ -2,9 +2,9 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 // Code based on Foster implementation: https://github.com/NoelFB/Foster/blob/master/LICENSE.txt
 
-using Alimer.Platform;
+using Vortice.Platform;
 
-namespace Alimer;
+namespace Vortice;
 
 /// <summary>
 /// Base module class, used to get callbacks during Application Events.

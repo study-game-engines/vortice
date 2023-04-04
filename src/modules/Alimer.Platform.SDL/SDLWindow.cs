@@ -2,13 +2,13 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Drawing;
-using Alimer.Graphics;
+using Vortice.Graphics;
 using Alimer.Bindings.SDL;
 using static Alimer.Bindings.SDL.SDL;
 using static Alimer.Bindings.SDL.SDL_EventType;
 using static Alimer.Bindings.SDL.SDL_WindowFlags;
 
-namespace Alimer.Platform.SDL;
+namespace Vortice.Platform.SDL;
 
 internal unsafe class SDLWindow : Window
 {

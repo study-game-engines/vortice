@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net7.0-windows10.0.19041;</TargetFrameworks>
+    <TargetFrameworks>net7.0;$(AlimerPlatforms)</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(_VorticeTargetPlatformIsWindows)' == 'True' ">
+  <PropertyGroup Condition="'$(_AlimerTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
     <ExcludeVulkan>True</ExcludeVulkan>
   </PropertyGroup>
 
@@ -16,9 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TerraFX\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true' AND '$(ExcludeD3D12)' == 'true'" />
-    <Compile Remove="D3DCommon\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true' AND '$(ExcludeD3D12)' == 'true'" />
-    <Compile Remove="D3D11\**\*.cs" Condition="'$(ExcludeD3D11)' == 'true'" />
     <Compile Remove="D3D12\**\*.cs" Condition="'$(ExcludeD3D12)' == 'true'" />
     <Compile Remove="Vulkan\**\*.cs" Condition="'$(ExcludeVulkan)' == 'true'" />
   </ItemGroup>
@@ -26,9 +22,14 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Vortice.Mathematics" />
-    
-    <PackageReference Include="Vortice.Win32.Graphics.Direct3D11" Condition="'$(ExcludeD3D11)' != 'true'" />
+
     <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
+    <PackageReference Include="TerraFX.Interop.Windows" Condition="'$(ExcludeD3D12)' != 'true'" />
+    <PackageReference Include="TerraFX.Interop.D3D12MemoryAllocator" Condition="'$(ExcludeD3D12)' != 'true'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(_AlimerTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿// Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-namespace Alimer.Audio;
+namespace Vortice.Audio;
 
 /// <summary>
 /// Represents errors that occurs in this Audio library.

@@ -3,9 +3,9 @@
 // Code based on Foster implementation: https://github.com/NoelFB/Foster/blob/master/LICENSE.txt
 
 using System.Collections;
-using Alimer.Platform;
+using Vortice.Platform;
 
-namespace Alimer;
+namespace Vortice;
 
 /// <summary>
 /// List of <see cref="Module"/>

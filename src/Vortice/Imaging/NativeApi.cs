@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 
-namespace Alimer;
+namespace Vortice;
 
 #if TODO
 internal static unsafe partial class NativeApi

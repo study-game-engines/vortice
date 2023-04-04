@@ -4,7 +4,7 @@
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Diagnostics;
 
-namespace Alimer.Audio;
+namespace Vortice.Audio;
 
 public abstract class AudioModule : AppModule
 {

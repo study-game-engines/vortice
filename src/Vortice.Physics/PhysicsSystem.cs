@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using JoltPhysicsSharp;
-using Alimer.Engine;
+using Vortice.Engine;
 
-namespace Alimer.Physics;
+namespace Vortice.Physics;
 
 public class PhysicsSystem : EntitySystem<PhysicsComponent>, IDisposable
 {

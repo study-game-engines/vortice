@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using TerraFX.Interop.Windows;
 
-namespace Alimer.Audio.XAudio2;
+namespace Vortice.Audio.XAudio2;
 
 internal unsafe struct XAudio2EngineCallback
 {

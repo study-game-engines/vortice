@@ -26,11 +26,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{861A4A67
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice", "src\Vortice\Vortice.csproj", "{EA44EF00-245A-440C-A5E0-A820E6666626}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Graphics", "src\Vortice.Graphics\Vortice.Graphics.csproj", "{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Physics", "src\Vortice.Physics\Vortice.Physics.csproj", "{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Tests", "tests\Alimer.Tests\Alimer.Tests.csproj", "{0944344B-D7A6-4495-A6D4-08B5C5EEF0B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Tests", "tests\Vortice.Tests\Vortice.Tests.csproj", "{0944344B-D7A6-4495-A6D4-08B5C5EEF0B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Samples", "samples\Alimer.Samples\Alimer.Samples.csproj", "{0DB41C96-7D02-41EE-8E7B-F2B1024A8659}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Samples", "samples\Vortice.Samples\Vortice.Samples.csproj", "{0DB41C96-7D02-41EE-8E7B-F2B1024A8659}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Engine", "src\Vortice.Engine\Vortice.Engine.csproj", "{591C90AA-202D-48AE-A962-883F090726F0}"
 EndProject
@@ -47,8 +49,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Audio.OpenAL", "src\modules\Alimer.Audio.OpenAL\Alimer.Audio.OpenAL.csproj", "{40972442-4561-4C3C-9876-8682812EA666}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Audio.XAudio2", "src\modules\Alimer.Audio.XAudio2\Alimer.Audio.XAudio2.csproj", "{6AEFCC5A-AE72-40AE-8FEC-03070A861029}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Graphics", "src\Alimer.Graphics\Alimer.Graphics.csproj", "{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,11 +1,11 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Alimer.Graphics;
+using Vortice.Graphics;
 using System.IO;
 //using static Alimer.NativeApi;
 
-namespace Alimer.Imaging;
+namespace Vortice.Imaging;
 
 public sealed class Image 
 {

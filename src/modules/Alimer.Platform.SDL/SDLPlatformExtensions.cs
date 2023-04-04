@@ -1,9 +1,9 @@
 // Copyright © Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using Alimer.Platform.SDL;
+using Vortice.Platform.SDL;
 
-namespace Alimer.Platform;
+namespace Vortice.Platform;
 
 public static class SDLPlatformExtensions
 {

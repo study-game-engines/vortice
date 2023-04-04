@@ -4,12 +4,12 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Alimer.Audio;
-using Alimer.Graphics;
-using Alimer.Input;
-using Alimer.Platform;
+using Vortice.Audio;
+using Vortice.Graphics;
+using Vortice.Input;
+using Vortice.Platform;
 
-namespace Alimer;
+namespace Vortice;
 
 public abstract class Application : DisposableObject, IGame
 {

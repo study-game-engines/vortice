@@ -2,7 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 // Code based on Foster implementation: https://github.com/NoelFB/Foster/blob/master/LICENSE.txt
 
-namespace Alimer;
+namespace Vortice;
 
 /// <summary>
 /// A core <see cref="Application"/> ,odule that is created earlier and has specific Application callbacks.

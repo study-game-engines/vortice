@@ -4,7 +4,7 @@
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Diagnostics;
 
-namespace Alimer;
+namespace Vortice;
 
 /// <summary>
 /// Base class for a <see cref="IDisposable"/> interface.

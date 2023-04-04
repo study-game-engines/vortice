@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Runtime.Serialization;
 using Vortice.Mathematics;
 
-namespace Alimer.Engine;
+namespace Vortice.Engine;
 
 [DefaultEntitySystem(typeof(TransformSystem))]
 public sealed class TransformComponent : EntityComponent//, IEnumerable<TransformComponent>, INotifyPropertyChanged
