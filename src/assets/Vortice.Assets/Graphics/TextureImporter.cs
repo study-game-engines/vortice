@@ -2,9 +2,9 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using SkiaSharp;
-using Alimer.Graphics;
+using Vortice.Graphics;
 
-namespace Alimer.Assets.Graphics;
+namespace Vortice.Assets.Graphics;
 
 /// <summary>
 /// Defines a <see cref="Texture"/> asset importer.

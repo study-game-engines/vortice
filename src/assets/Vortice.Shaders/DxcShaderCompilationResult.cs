@@ -4,7 +4,7 @@
 using TerraFX.Interop.DirectX;
 using TerraFX.Interop.Windows;
 
-namespace Alimer.Shaders;
+namespace Vortice.Shaders;
 
 internal unsafe class DxcShaderCompilationResult : ShaderCompilationResult
 {

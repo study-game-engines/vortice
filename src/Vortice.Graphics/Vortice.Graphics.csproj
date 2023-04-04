@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;$(AlimerPlatforms)</TargetFrameworks>
+    <TargetFrameworks>net7.0;$(VorticePlatforms)</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(_AlimerTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
+  <PropertyGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
     <ExcludeVulkan>True</ExcludeVulkan>
   </PropertyGroup>
 
@@ -28,7 +28,7 @@
     <PackageReference Include="TerraFX.Interop.D3D12MemoryAllocator" Condition="'$(ExcludeD3D12)' != 'true'" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(_AlimerTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
+  <ItemGroup Condition="'$(_VorticeTargetPlatformIsWindows)' == 'True' AND $(TargetFramework.Contains('-windows10'))">
     <PackageReference Include="Microsoft.WindowsAppSDK" />
   </ItemGroup>
 

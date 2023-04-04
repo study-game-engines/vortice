@@ -4,7 +4,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace Alimer.Shaders;
+namespace Vortice.Shaders;
 
 partial class ShaderCompiler
 {

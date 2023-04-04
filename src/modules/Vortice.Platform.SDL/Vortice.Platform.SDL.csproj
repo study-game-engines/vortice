@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;$(AlimerPlatforms)</TargetFrameworks>
+    <TargetFrameworks>net7.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
 
-    <PackageReference Include="TerraFX.Interop.Windows" />
+    <PackageReference Include="Alimer.Bindings.SDL" />
   </ItemGroup>
 
 </Project>

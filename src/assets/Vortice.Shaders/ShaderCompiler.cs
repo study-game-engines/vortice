@@ -10,7 +10,7 @@ using static TerraFX.Interop.Windows.CLSID;
 using static TerraFX.Interop.DirectX.DirectX;
 using static TerraFX.Interop.DirectX.DXC;
 
-namespace Alimer.Shaders;
+namespace Vortice.Shaders;
 
 public sealed partial class ShaderCompiler
 {

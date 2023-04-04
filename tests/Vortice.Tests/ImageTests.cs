@@ -2,9 +2,9 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using NUnit.Framework;
-using Alimer.Imaging;
+using Vortice.Imaging;
 
-namespace Alimer.Tests;
+namespace Vortice.Tests;
 
 [TestFixture(TestOf = typeof(Image))]
 public class ImageTests

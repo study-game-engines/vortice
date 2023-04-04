@@ -55,9 +55,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <_AlimerTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_AlimerTargetPlatformIdentifier>
-    <_AlimerTargetPlatformIsWindows>false</_AlimerTargetPlatformIsWindows>
-    <_AlimerTargetPlatformIsWindows Condition="$(_AlimerTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_AlimerTargetPlatformIsWindows>
+    <_VorticeTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_VorticeTargetPlatformIdentifier>
+    <_VorticeTargetPlatformIsWindows>false</_VorticeTargetPlatformIsWindows>
+    <_VorticeTargetPlatformIsWindows Condition="$(_VorticeTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_VorticeTargetPlatformIsWindows>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -65,10 +65,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!--<AlimerWindowsPlatforms Condition="'$(AlimerWindowsPlatforms)' == ''">net7.0-windows10.0.19041;net7.0-windows10.0.20348</AlimerWindowsPlatforms>-->
-    <AlimerWindowsPlatforms Condition="'$(AlimerWindowsPlatforms)' == ''">net7.0-windows10.0.19041</AlimerWindowsPlatforms>
-
-    <AlimerPlatforms Condition="'$(IncludeWindowsTargetFrameworks)' == 'true'">$(AlimerWindowsPlatforms);$(AlimerPlatforms)</AlimerPlatforms>
+    <!--<VorticeWindowsPlatforms Condition="'$(VorticeWindowsPlatforms)' == ''">net7.0-windows10.0.19041;net7.0-windows10.0.20348</VorticeWindowsPlatforms>-->
+    <VorticeWindowsPlatforms Condition="'$(VorticeWindowsPlatforms)' == ''">net7.0-windows10.0.19041</VorticeWindowsPlatforms>
+    <VorticePlatforms Condition="'$(IncludeWindowsTargetFrameworks)' == 'true'">$(VorticeWindowsPlatforms);$(VorticePlatforms)</VorticePlatforms>
   </PropertyGroup>
 
 </Project>

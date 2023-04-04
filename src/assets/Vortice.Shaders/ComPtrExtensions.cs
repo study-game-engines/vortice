@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using TerraFX.Interop.Windows;
 
-namespace Alimer.Shaders;
+namespace Vortice.Shaders;
 
 /// <summary>
 /// Helper methods for working with the <see cref="ComPtr{T}"/> type.

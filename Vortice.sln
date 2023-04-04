@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4205B2
 		LICENSE = LICENSE
 		NuGet.config = NuGet.config
 		README.md = README.md
-		src\Vortice.MultiTargeting.targets = src\Vortice.MultiTargeting.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{79F5EB4A-3A5E-4A7F-8884-1D93E9D16E4D}"
@@ -36,19 +35,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Samples", "samples\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Engine", "src\Vortice.Engine\Vortice.Engine.csproj", "{591C90AA-202D-48AE-A962-883F090726F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Shaders", "src\assets\Alimer.Shaders\Alimer.Shaders.csproj", "{F050BF61-8EA2-4ED2-A1F3-6D3AE182EC66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Shaders", "src\assets\Vortice.Shaders\Vortice.Shaders.csproj", "{F050BF61-8EA2-4ED2-A1F3-6D3AE182EC66}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Assets", "src\assets\Alimer.Assets\Alimer.Assets.csproj", "{F6A4373B-0A3F-45F1-BA64-7AD30BB7F04C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Assets", "src\assets\Vortice.Assets\Vortice.Assets.csproj", "{F6A4373B-0A3F-45F1-BA64-7AD30BB7F04C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Audio", "Audio", "{6BF1CCB8-E6A3-44A3-AAD1-16C1F4F346A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{43093620-1B2D-4BD7-8E9E-2ACAFA4D8967}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Platform.SDL", "src\modules\Alimer.Platform.SDL\Alimer.Platform.SDL.csproj", "{3B1CA2ED-D457-4482-8F37-C2B22E24EC8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Platform.SDL", "src\modules\Vortice.Platform.SDL\Vortice.Platform.SDL.csproj", "{3B1CA2ED-D457-4482-8F37-C2B22E24EC8C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Audio.OpenAL", "src\modules\Alimer.Audio.OpenAL\Alimer.Audio.OpenAL.csproj", "{40972442-4561-4C3C-9876-8682812EA666}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Audio.OpenAL", "src\modules\Vortice.Audio.OpenAL\Vortice.Audio.OpenAL.csproj", "{40972442-4561-4C3C-9876-8682812EA666}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Audio.XAudio2", "src\modules\Alimer.Audio.XAudio2\Alimer.Audio.XAudio2.csproj", "{6AEFCC5A-AE72-40AE-8FEC-03070A861029}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Audio.XAudio2", "src\modules\Vortice.Audio.XAudio2\Vortice.Audio.XAudio2.csproj", "{6AEFCC5A-AE72-40AE-8FEC-03070A861029}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,6 +71,18 @@ Global
 		{EA44EF00-245A-440C-A5E0-A820E6666626}.Release|ARM64.Build.0 = Release|Any CPU
 		{EA44EF00-245A-440C-A5E0-A820E6666626}.Release|x64.ActiveCfg = Release|Any CPU
 		{EA44EF00-245A-440C-A5E0-A820E6666626}.Release|x64.Build.0 = Release|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|x64.Build.0 = Debug|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|ARM64.Build.0 = Release|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|x64.ActiveCfg = Release|Any CPU
+		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|x64.Build.0 = Release|Any CPU
 		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
@@ -180,18 +191,6 @@ Global
 		{6AEFCC5A-AE72-40AE-8FEC-03070A861029}.Release|ARM64.Build.0 = Release|Any CPU
 		{6AEFCC5A-AE72-40AE-8FEC-03070A861029}.Release|x64.ActiveCfg = Release|Any CPU
 		{6AEFCC5A-AE72-40AE-8FEC-03070A861029}.Release|x64.Build.0 = Release|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Debug|x64.Build.0 = Debug|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|ARM64.Build.0 = Release|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|x64.ActiveCfg = Release|Any CPU
-		{9E6AAE3D-3046-4382-BA12-563DCEB3CA07}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
