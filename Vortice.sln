@@ -24,15 +24,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{D8EC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{861A4A67-56CA-41A3-B395-270AEC746B3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer", "src\Alimer\Alimer.csproj", "{EA44EF00-245A-440C-A5E0-A820E6666626}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice", "src\Vortice\Vortice.csproj", "{EA44EF00-245A-440C-A5E0-A820E6666626}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Physics", "src\Alimer.Physics\Alimer.Physics.csproj", "{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Physics", "src\Vortice.Physics\Vortice.Physics.csproj", "{BF6CDA2F-2280-41D2-A4CB-A4299E61ED4C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Tests", "tests\Alimer.Tests\Alimer.Tests.csproj", "{0944344B-D7A6-4495-A6D4-08B5C5EEF0B4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Samples", "samples\Alimer.Samples\Alimer.Samples.csproj", "{0DB41C96-7D02-41EE-8E7B-F2B1024A8659}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Engine", "src\Alimer.Engine\Alimer.Engine.csproj", "{591C90AA-202D-48AE-A962-883F090726F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortice.Engine", "src\Vortice.Engine\Vortice.Engine.csproj", "{591C90AA-202D-48AE-A962-883F090726F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alimer.Shaders", "src\assets\Alimer.Shaders\Alimer.Shaders.csproj", "{F050BF61-8EA2-4ED2-A1F3-6D3AE182EC66}"
 EndProject

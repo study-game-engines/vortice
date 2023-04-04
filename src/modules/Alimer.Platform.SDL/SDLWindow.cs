@@ -33,11 +33,9 @@ internal unsafe class SDLWindow : Window
     {
         _platform = platform;
 
-        SDL_WindowFlags flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
+        SDL_WindowFlags flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
 
-        Handle = SDL_CreateWindow("Vortice", 1200, 800, flags);
-        SDL_SetWindowPosition(Handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-        SDL_ShowWindow(Handle);
+        Handle = SDL_CreateWindowWithPosition("Vortice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 800, flags);
         Id = SDL_GetWindowID(Handle);
 
         // Native handle

@@ -9,7 +9,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\Alimer\Alimer.csproj" />
+    <ProjectReference Include="..\..\Vortice\Vortice.csproj" />
 
     <PackageReference Include="Alimer.Bindings.SDL" />
   </ItemGroup>
